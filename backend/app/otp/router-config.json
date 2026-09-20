@@ -1,0 +1,30 @@
+{
+  "routingDefaults": {
+    "numItineraries": 5,
+    "transferPenalty": 180,
+    "walkReluctance": 2.0,
+    "waitReluctance": 1.0,
+    "maxTransfers": 3,
+    "wheelchairAccessibility": { "enabled": true }
+  },
+  "updaters": [
+    {
+      "type": "real-time-alerts",
+      "frequencySec": 30,
+      "url": "https://api.example.com/gtfs-rt/alerts.pb",
+      "feedId": "tsppk"
+    },
+    {
+      "type": "stop-time-updater",
+      "frequencySec": 30,
+      "url": "https://api.example.com/gtfs-rt/trip-updates.pb",
+      "feedId": "tsppk"
+    },
+    {
+      "type": "vehicle-positions",
+      "frequencySec": 15,
+      "url": "https://api.example.com/gtfs-rt/vehicle-positions.pb",
+      "feedId": "tsppk"
+    }
+  ]
+}

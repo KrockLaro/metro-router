@@ -1,0 +1,17 @@
+{
+  "expo": {
+    "name": "Маршрутизатор",
+    "slug": "marshrutizator",
+    "scheme": "marshrutizator",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "userInterfaceStyle": "automatic",
+    "ios": {
+      "supportsTablet": true,
+      "bundleIdentifier": "com.example.marshrutizator"
+    },
+    "android": {
+      "package": "com.example.marshrutizator"
+    }
+  }
+}

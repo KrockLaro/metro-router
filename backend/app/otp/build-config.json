@@ -1,0 +1,20 @@
+{
+  "transitServiceStart": "2026-01-01",
+  "transitServiceEnd": "2027-12-31",
+  "transitFeeds": [
+    {
+      "type": "gtfs",
+      "source": "/var/opentripplanner/tsppk_gtfs.zip",
+      "feedId": "tsppk"
+    }
+  ],
+  "osm": [
+    {
+      "source": "/var/opentripplanner/moscow.osm.pbf"
+    }
+  ],
+  "elevationBucket": {
+    "enabled": false
+  },
+  "matchBusRoutesToStreets": false
+}

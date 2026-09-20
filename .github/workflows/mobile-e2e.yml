@@ -1,0 +1,35 @@
+name: Mobile E2E
+
+on:
+  push: { branches: [main] }
+  pull_request: { branches: [main] }
+
+jobs:
+  ios-e2e:
+    runs-on: macos-14
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with: { node-version: '20' }
+      - run: cd mobile && npm ci
+      - run: cd mobile && npx detox build -c ios.sim.debug
+      - run: cd mobile && npx detox test -c ios.sim.debug --headless
+
+  android-e2e:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with: { node-version: '20' }
+      - uses: actions/setup-java@v4
+        with: { distribution: 'temurin', java-version: '17' }
+      - run: cd mobile && npm ci
+      - uses: reactivecircus/android-emulator-runner@v2
+        with:
+          api-level: 34
+          arch: x86_64
+          profile: pixel_7
+          script: |
+            cd mobile
+            npx detox build -c android.emu.debug
+            npx detox test -c android.emu.debug --headless
