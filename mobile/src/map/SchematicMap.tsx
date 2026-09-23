@@ -20,12 +20,13 @@ const ASPECT = SCREEN_W / SCREEN_H;
 const _bounds = (() => {
   let minX = Infinity, maxX = -Infinity, minY = Infinity, maxY = -Infinity;
   for (const s of Object.values(STATIONS)) {
+    if (s.isJunction) continue;
     if (s.x < minX) minX = s.x;
     if (s.x > maxX) maxX = s.x;
     if (s.y < minY) minY = s.y;
     if (s.y > maxY) maxY = s.y;
   }
-  const PAD = 200;
+  const PAD = 150;
   return {
     x: minX - PAD,
     y: minY - PAD,
@@ -48,7 +49,7 @@ if (BOUNDS_ASPECT > ASPECT) {
 const initVbX = _bounds.x + _bounds.w / 2 - initVbW / 2;
 const initVbY = _bounds.y + _bounds.h / 2 - initVbH / 2;
 
-const TAP_RADIUS = 35;
+const TAP_RADIUS = 30;
 
 export interface SchematicMapHandle {
   focusStation: (id: string, targetScale?: number) => void;
@@ -64,9 +65,6 @@ interface Props {
 
 const estimateWidth = (text: string, size: number) => text.length * size * 0.55;
 
-// ------------------------------------------------------------
-// Размещение подписи и значка экспресса
-// ------------------------------------------------------------
 interface LabelLayout {
   tx: number;
   ty: number;
@@ -74,17 +72,23 @@ interface LabelLayout {
   badgeY: number;
 }
 
+// ------------------------------------------------------------
+// ИЗМЕНЕНИЕ: отступ зависит от наличия значка "Э" и радиуса кружка
+// ------------------------------------------------------------
 function computeLabelLayout(s: SchemaStation, size: number, textW: number): LabelLayout {
+  const hasBadge = !!s.expressStop;
   const badgeW = 20;
   const badgeH = 16;
-  const gap = 8;
-  const off = 16;
+  const gap = hasBadge ? 8 : 0;
+  // Радиус кружка: 18 для хабов (несколько линий), 11 для обычных
+  const r = s.lines.length > 1 ? 18 : 11;
+  // Отступ от центра до края значка/текста
+  const off = r + 5;
 
-  // Явная ориентация приоритетна
   switch (s.orientation) {
     case 'left':
       return {
-        tx: s.x - off - badgeW - gap - textW,
+        tx: s.x - off - (hasBadge ? badgeW + gap : 0) - textW,
         ty: s.y + size / 3,
         badgeX: s.x - off - badgeW,
         badgeY: s.y - badgeH / 2,
@@ -92,21 +96,21 @@ function computeLabelLayout(s: SchemaStation, size: number, textW: number): Labe
     case 'top':
       return {
         tx: s.x - textW / 2,
-        ty: s.y - off - badgeH - gap,
+        ty: s.y - off - (hasBadge ? badgeH + gap : 0),
         badgeX: s.x - badgeW / 2,
         badgeY: s.y - off - badgeH,
       };
     case 'bottom':
       return {
         tx: s.x - textW / 2,
-        ty: s.y + off + size,
+        ty: s.y + off + (hasBadge ? badgeH + gap : 0) + size,
         badgeX: s.x - badgeW / 2,
         badgeY: s.y + off,
       };
     case 'right':
     default:
       return {
-        tx: s.x + off + badgeW + gap,
+        tx: s.x + off + (hasBadge ? badgeW + gap : 0),
         ty: s.y + size / 3,
         badgeX: s.x + off,
         badgeY: s.y - badgeH / 2,
@@ -280,6 +284,7 @@ const SchematicMap: React.FC<Props> = ({
       let closest: SchemaStation | null = null;
       let minDist = Infinity;
       for (const s of Object.values(STATIONS)) {
+        if (s.isJunction) continue;
         const dx = s.x - canvasX;
         const dy = s.y - canvasY;
         const d = dx * dx + dy * dy;
@@ -318,6 +323,7 @@ const SchematicMap: React.FC<Props> = ({
 
             {/* Станции */}
             {Object.values(STATIONS).map((s) => {
+              if (s.isJunction) return null;
               const isHub = s.lines.length > 1;
               const isHighlighted = highlightSet.has(s.id);
               const isActive = s.id === activeStationId;
@@ -348,6 +354,7 @@ const SchematicMap: React.FC<Props> = ({
 
             {/* Значки доступности */}
             {Object.values(STATIONS).map((s) => {
+              if (s.isJunction) return null;
               if (s.facilities.wheelchair !== 'full') return null;
               return (
                 <React.Fragment key={`acc-${s.id}`}>
@@ -359,6 +366,7 @@ const SchematicMap: React.FC<Props> = ({
 
             {/* Значки экспресса */}
             {Object.values(STATIONS).map((s) => {
+              if (s.isJunction) return null;
               if (!s.expressStop) return null;
               const size = s.lines.length > 1 ? 18 : 15;
               const w = estimateWidth(s.name, size);
@@ -379,6 +387,7 @@ const SchematicMap: React.FC<Props> = ({
             {/* Буквы Э */}
             {expressFont &&
               Object.values(STATIONS).map((s) => {
+                if (s.isJunction) return null;
                 if (!s.expressStop) return null;
                 const size = s.lines.length > 1 ? 18 : 15;
                 const w = estimateWidth(s.name, size);
@@ -398,6 +407,7 @@ const SchematicMap: React.FC<Props> = ({
             {/* Подписи станций */}
             {labelFont &&
               Object.values(STATIONS).map((s) => {
+                if (s.isJunction) return null;
                 const isHub = s.lines.length > 1;
                 const font = isHub && labelFontBold ? labelFontBold : labelFont;
                 if (!font) return null;

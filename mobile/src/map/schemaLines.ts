@@ -63,7 +63,7 @@ export const LINES: SchemaLine[] = [
       'm_pav', 'derbenevskaya', 'tulskaya', 'varshavskaya',
       'verhnie_kotly', 'nagatinskaya', 'kolomenskoye', 'chertanovo',
       'biryulyovo_tov', 'biryulyovo_pass', 'bulatnikovo', 'rastorguevo', 'kalinina',
-      'leninskaya', 'km32', 'domodedovo', 'aviacionnaya', 'kosmos', 'aeroport_domodedovo',
+      'leninskaya', 'km32', 'domodedovo',
       'vzlyotnaya', 'vostryakovo', 'belye_stolby', 'barybino',
       'danilovo_52', 'privalovo', 'velyaminovo', 'mihnevo', 'shugarovo',
       'km85', 'zhilyovo', 'sitenka',
@@ -74,20 +74,19 @@ export const LINES: SchemaLine[] = [
       'novosyolki_152', 'uzunovo',
     ],
   },
-// ─── АЭРОЭКСПРЕСС (отдельная линия) ─────────────────────
+  // ─── АЭРОЭКСПРЕСС (отдельная линия) ─────────────────────
   {
     id: 'pav_aero',
     name: 'Аэроэкспресс',
     color: '#00A651',
     kind: 'cppk',
-    path: ['m_pav', 'verhnie_kotly', 'aviacionnaya', 'kosmos', 'aeroport_domodedovo'],
+    path: ['m_pav', 'verhnie_kotly', 'domodedovo_junction', 'aviacionnaya', 'kosmos', 'aeroport_domodedovo'],
   },
-  
   {
     id: 'pav_aero_sub',
     name: 'Электричка до аэропорта',
     color: '#00A651',
     kind: 'cppk',
-    path: ["domodedovo", 'aviacionnaya', "kosmos", "aeroport_domodedovo"],
+    path: ['domodedovo', 'domodedovo_junction', 'aviacionnaya', 'kosmos', 'aeroport_domodedovo'],
   },
 ];
