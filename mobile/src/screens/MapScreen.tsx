@@ -53,20 +53,20 @@ export default function MapScreen() {
   // ------------------------------------------------------------------
 
   const handleSetFrom = useCallback(() => {
-  if (selected) {
-    setFrom(selected);
-    setSelected(null);
-    mapApiRef.current?.resetView();   // ← добавь
-  }
-}, [selected]);
+    if (selected) {
+      setFrom(selected);
+      setSelected(null);
+      mapApiRef.current?.resetView();
+    }
+  }, [selected]);
 
-const handleSetTo = useCallback(() => {
-  if (selected) {
-    setTo(selected);
-    setSelected(null);
-    mapApiRef.current?.resetView();   // ← добавь
-  }
-}, [selected]);
+  const handleSetTo = useCallback(() => {
+    if (selected) {
+      setTo(selected);
+      setSelected(null);
+      mapApiRef.current?.resetView();
+    }
+  }, [selected]);
 
   const handleSwap = useCallback(() => {
     setFrom(to);
@@ -137,6 +137,7 @@ const handleSetTo = useCallback(() => {
 
         <SearchBar onPick={handleSearchPick} />
 
+        {/* Кнопка темы */}
         <TouchableOpacity
           testID="theme-toggle"
           style={[styles.themeBtn, { backgroundColor: theme.card, borderColor: theme.border }]}
@@ -145,6 +146,14 @@ const handleSetTo = useCallback(() => {
           {theme.name === 'dark'
             ? <SunIcon size={22} color={theme.icon} />
             : <MoonIcon size={22} color={theme.icon} />}
+        </TouchableOpacity>
+
+        {/* Кнопка "Сброс вида" */}
+        <TouchableOpacity
+          style={[styles.resetBtn, { backgroundColor: theme.card, borderColor: theme.border }]}
+          onPress={() => mapApiRef.current?.resetView()}
+        >
+          <Text style={[styles.resetText, { color: theme.icon }]}>⌂</Text>
         </TouchableOpacity>
 
         {/* Панель "Откуда / Куда" */}
@@ -215,14 +224,14 @@ const handleSetTo = useCallback(() => {
         )}
 
         <StationInfoSheet
-  station={selected}
-  onClose={() => {
-    setSelected(null);
-    mapApiRef.current?.resetView();   // ← добавь
-  }}
-  onFrom={handleSetFrom}
-  onTo={handleSetTo}
-/>
+          station={selected}
+          onClose={() => {
+            setSelected(null);
+            mapApiRef.current?.resetView();
+          }}
+          onFrom={handleSetFrom}
+          onTo={handleSetTo}
+        />
       </View>
     </GestureHandlerRootView>
   );
@@ -248,6 +257,28 @@ const styles = StyleSheet.create({
     shadowOffset: { width: 0, height: 3 },
     elevation: 3,
     zIndex: 20,
+  },
+
+  resetBtn: {
+    position: 'absolute',
+    top: 172,
+    right: 16,
+    width: 44,
+    height: 44,
+    borderRadius: 22,
+    justifyContent: 'center',
+    alignItems: 'center',
+    borderWidth: 1,
+    shadowColor: '#000',
+    shadowOpacity: 0.1,
+    shadowRadius: 8,
+    shadowOffset: { width: 0, height: 3 },
+    elevation: 3,
+    zIndex: 20,
+  },
+  resetText: {
+    fontSize: 22,
+    fontWeight: '400',
   },
 
   routePanel: {

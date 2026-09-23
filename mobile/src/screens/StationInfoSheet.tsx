@@ -1,21 +1,15 @@
 import React, { useEffect, useState } from 'react';
 import {
-  View,
-  Text,
-  StyleSheet,
-  ScrollView,
-  TouchableOpacity,
-  Dimensions,
-  Pressable,
+  View, Text, StyleSheet, ScrollView,
+  TouchableOpacity, TouchableWithoutFeedback, Dimensions,
 } from 'react-native';
 import Animated, {
-  useSharedValue,
-  useAnimatedStyle,
-  withTiming,
+  useSharedValue, useAnimatedStyle, withTiming,
 } from 'react-native-reanimated';
 
 import { SchemaStation } from '../map/schemaStations';
 import { useTheme } from '../theme/ThemeProvider';
+import ScheduleBlock from './ScheduleBlock';
 import {
   WheelchairIcon, WheelchairPartialIcon, WheelchairNoneIcon,
   TicketOfficeIcon, TicketMachineIcon, TurnstileIcon,
@@ -25,7 +19,7 @@ import {
 } from '../icons';
 
 const { height: SCREEN_H } = Dimensions.get('window');
-const SHEET_HEIGHT = SCREEN_H * 0.55;
+const SHEET_HEIGHT = SCREEN_H * 0.62;
 
 interface Props {
   station: SchemaStation | null;
@@ -44,7 +38,7 @@ export default function StationInfoSheet({ station, onClose, onFrom, onTo }: Pro
     if (station) {
       setRenderStation(station);
       translateY.value = withTiming(0, { duration: 250 });
-      backdropOpacity.value = withTiming(0.5, { duration: 250 });
+      backdropOpacity.value = withTiming(1, { duration: 250 });
     } else {
       translateY.value = withTiming(SHEET_HEIGHT, { duration: 200 });
       backdropOpacity.value = withTiming(0, { duration: 200 });
@@ -66,15 +60,16 @@ export default function StationInfoSheet({ station, onClose, onFrom, onTo }: Pro
 
   return (
     <>
-      {/* Затемнение */}
+      {/* Затемнение фона */}
       <Animated.View
-        style={[styles.backdrop, backdropStyle]}
-        pointerEvents={station ? 'auto' : 'none'}
+        style={[StyleSheet.absoluteFill, styles.backdrop, backdropStyle]}
       >
-        <Pressable style={StyleSheet.absoluteFill} onPress={onClose} />
+        <TouchableWithoutFeedback onPress={onClose}>
+          <View style={{ flex: 1 }} />
+        </TouchableWithoutFeedback>
       </Animated.View>
 
-      {/* Карточка */}
+      {/* Сама карточка */}
       <Animated.View
         style={[styles.sheet, sheetStyle, { backgroundColor: theme.sheetBg }]}
       >
@@ -117,6 +112,8 @@ export default function StationInfoSheet({ station, onClose, onFrom, onTo }: Pro
               <Text style={[styles.routeBtnText, { color: theme.text }]}>Сюда</Text>
             </TouchableOpacity>
           </View>
+
+          <ScheduleBlock stationId={renderStation.id} />
 
           <Section title="Доступность" theme={theme}>
             <Facility
@@ -206,9 +203,8 @@ function Facility({
 
 const styles = StyleSheet.create({
   backdrop: {
-    ...StyleSheet.absoluteFill,
-    backgroundColor: '#000',
-    zIndex: 100,
+    backgroundColor: 'rgba(0,0,0,0.45)',
+    zIndex: 5,
   },
   sheet: {
     position: 'absolute',
@@ -221,10 +217,10 @@ const styles = StyleSheet.create({
     paddingTop: 8,
     shadowColor: '#000',
     shadowOpacity: 0.2,
-    shadowRadius: 12,
+    shadowRadius: 14,
     shadowOffset: { width: 0, height: -4 },
-    elevation: 12,
-    zIndex: 101,
+    elevation: 14,
+    zIndex: 10,
   },
   handle: {
     width: 40, height: 4, borderRadius: 2,
@@ -233,8 +229,7 @@ const styles = StyleSheet.create({
   closeBtn: {
     position: 'absolute', top: 8, right: 14,
     width: 32, height: 32,
-    alignItems: 'center', justifyContent: 'center',
-    zIndex: 10,
+    alignItems: 'center', justifyContent: 'center', zIndex: 10,
   },
   closeText: { fontSize: 22, fontWeight: '400', lineHeight: 24 },
   scrollContent: { paddingHorizontal: 20, paddingBottom: 40 },

@@ -37,3 +37,29 @@ export const buildRoute = (fromId: string, toId: string) =>
   api
     .post<RouteResult>('/api/route/simple', { from_id: fromId, to_id: toId })
     .then((r) => r.data);
+
+    export interface ScheduleItem {
+  trip_id: string;
+  route_name: string;
+  train_number: string;
+  departure_time: string;
+  departure_iso: string;
+  minutes_until: number;
+  platform: string;
+  track: string;
+  is_express: boolean;
+}
+
+export interface StationSchedule {
+  station_id: string;
+  station_name: string;
+  to_moscow: ScheduleItem[];
+  from_moscow: ScheduleItem[];
+}
+
+export const getStationSchedule = (stationId: string, limit = 3) =>
+  api
+    .get<StationSchedule>(`/api/stations/${stationId}/schedule`, {
+      params: { limit },
+    })
+    .then((r) => r.data);

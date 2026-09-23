@@ -224,3 +224,85 @@ export const ShareIcon: React.FC<IconProps> = ({ size = 24, color = '#222' }) =>
       strokeLinecap="round" />
   </Svg>
 );
+
+export const PlaneIcon: React.FC<IconProps> = ({ size = 24, color = '#222' }) => (
+  <Svg width={size} height={size} viewBox="0 0 24 24" fill="none">
+    <Path
+      d="M21 16v-2l-8-5V3.5a1.5 1.5 0 00-3 0V9l-8 5v2l8-2.5V19l-2 1.5V22l3.5-1 3.5 1v-1.5L13 19v-5.5l8 2.5z"
+      fill={color}
+    />
+  </Svg>
+);
+/**
+ * Логотип Аэроэкспресса — красная звезда из пяти человечков.
+ * Используется как бейдж рядом с названием станций, где останавливается Аэроэкспресс.
+ */
+export const AeroexpressIcon: React.FC<IconProps> = ({ size = 24, color = '#E5231B' }) => (
+  <Svg width={size} height={size} viewBox="0 0 100 100" fill="none">
+    {/* Верхняя фигура (голова вверх) */}
+    <Path
+      d="M50 4
+         a6 6 0 1 1 0 12
+         a6 6 0 1 1 0 -12
+         z
+         M46 17 h8 v18 l6 3 v4 h-6 l4 8 h-5 l-5 -9 h-2
+         l-5 9 h-5 l4 -8 h-6 v-4 l6 -3 v-18 z"
+      fill={color}
+    />
+    {/* Правая-верхняя фигура */}
+    <Path
+      d="M86 22
+         a6 6 0 1 1 -11 4
+         a6 6 0 1 1 11 -4
+         z
+         M76 32 l7 -2 8 16 6 -2 3 4 -6 4 8 3 -3 4 -9 -3 -1 2 4 10 -4 2 -5 -10 -5 3 -3 -4 6 -5 -5 -16 z"
+      fill={color}
+    />
+    {/* Левая-верхняя фигура */}
+    <Path
+      d="M14 22
+         a6 6 0 1 1 11 4
+         a6 6 0 1 1 -11 -4
+         z
+         M24 32 l-7 -2 -8 16 -6 -2 -3 4 6 4 -8 3 3 4 9 -3 1 2 -4 10 4 2 5 -10 5 3 3 -4 -6 -5 5 -16 z"
+      fill={color}
+    />
+    {/* Правая-нижняя фигура */}
+    <Path
+      d="M86 74
+         a6 6 0 1 1 -11 -4
+         a6 6 0 1 1 11 4
+         z
+         M76 64 l7 2 8 -16 6 2 3 -4 -6 -4 8 -3 -3 -4 -9 3 -1 -2 4 -10 -4 -2 -5 10 -5 -3 -3 4 6 5 -5 16 z"
+      fill={color}
+    />
+    {/* Левая-нижняя фигура */}
+    <Path
+      d="M14 74
+         a6 6 0 1 1 11 -4
+         a6 6 0 1 1 -11 4
+         z
+         M24 64 l-7 2 -8 -16 -6 2 -3 -4 6 -4 -8 -3 3 -4 9 3 1 -2 -4 -10 4 -2 5 10 5 -3 3 4 -6 5 5 16 z"
+      fill={color}
+    />
+  </Svg>
+);
+export const TrainBadgeIcon: React.FC<IconProps & { bgColor?: string }> = ({
+  size = 40,
+  color = '#FFFFFF',
+  bgColor = '#8E8E93',
+}) => (
+  <Svg width={size} height={size} viewBox="0 0 40 40" fill="none">
+    <Rect width="40" height="40" rx="8" fill={bgColor} />
+    <Path
+      d="M13 11h14a2 2 0 012 2v11a2 2 0 01-2 2H13a2 2 0 01-2-2V13a2 2 0 012-2z"
+      stroke={color}
+      strokeWidth="1.6"
+      strokeLinejoin="round"
+    />
+    <Rect x="14" y="14" width="12" height="5" rx="1" fill={color} />
+    <Circle cx="16" cy="23" r="1.2" fill={color} />
+    <Circle cx="24" cy="23" r="1.2" fill={color} />
+    <Line x1="11" y1="31" x2="29" y2="31" stroke={color} strokeWidth="1.6" strokeLinecap="round" />
+  </Svg>
+);
