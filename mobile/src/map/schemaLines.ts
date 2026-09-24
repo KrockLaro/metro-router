@@ -61,7 +61,7 @@ export const LINES: SchemaLine[] = [
     kind: 'cppk',
     path: [
       'm_pav', 'derbenevskaya', 'tulskaya', 'varshavskaya',
-      'verhnie_kotly', 'nagatinskaya', 'kolomenskoye', 'chertanovo',
+      'verhnie_kotly', 'nagatinskaya', 'chertanovo',
       'biryulyovo_tov', 'biryulyovo_pass', 'bulatnikovo', 'rastorguevo', 'kalinina',
       'leninskaya', 'km32', 'domodedovo',
       'vzlyotnaya', 'vostryakovo', 'belye_stolby', 'barybino',

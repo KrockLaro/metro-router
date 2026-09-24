@@ -8,16 +8,28 @@ import {
 } from 'react-native';
 
 import { useTheme, Theme } from '../theme/ThemeProvider';
-import { getStationSchedule, StationSchedule, ScheduleItem } from '../api/client';
+import {
+  getStationSchedule,
+  StationSchedule,
+  ScheduleItem,
+  TrainType,
+} from '../api/client';
 import { ChevronDownIcon, TrainBadgeIcon } from '../icons';
 
 interface Props {
   stationId: string;
 }
 
-const GRAY = '#8E8E93';
-const BLUE = '#0A84FF';
-const RED = '#FF3B30';
+// ── Цвета иконок по типу поезда ────────────────────────────
+const GRAY = '#8E8E93';   // пригород
+const BLUE = '#0A84FF';   // экспресс
+const RED = '#FF3B30';    // аэроэкспресс
+
+const TYPE_COLOR: Record<TrainType, string> = {
+  local: GRAY,
+  express: BLUE,
+  aeroexpress: RED,
+};
 
 export default function ScheduleBlock({ stationId }: Props) {
   const { theme } = useTheme();
@@ -52,61 +64,63 @@ export default function ScheduleBlock({ stationId }: Props) {
     }
   }, [expanded, data, loading, error, fetchData]);
 
+  // локальный «тик» раз в 30 сек, чтобы обновлять «через N мин»
   useEffect(() => {
     const t = setInterval(() => setNow(Date.now()), 30000);
     return () => clearInterval(t);
   }, []);
 
+  // авто-рефетч раз в 2 минуты, пока блок раскрыт
   useEffect(() => {
     if (!expanded) return;
     const t = setInterval(() => fetchData(), 120000);
     return () => clearInterval(t);
   }, [expanded, fetchData]);
 
+  // ── Одна строка расписания ───────────────────────────────
   const renderRow = (item: ScheduleItem) => {
     const minutes = recalc(item, now);
     if (minutes < -1) return null;
 
     const isSoon = minutes <= 1;
-    const badgeColor = item.is_express ? BLUE : GRAY;
-
-    const metaParts = [
-      item.track ? `Путь ${item.track}` : null,
-      item.platform ? `Платформа ${item.platform}` : null,
-      item.train_number ? `№ ${item.train_number}` : null,
-    ].filter(Boolean);
+    const iconColor = TYPE_COLOR[item.train_type ?? 'local'] ?? GRAY;
 
     return (
       <View
         key={item.trip_id + item.departure_iso}
         style={[styles.row, { borderBottomColor: theme.border }]}
       >
+        {/* Иконка по типу поезда */}
         <View style={styles.badge}>
-          <TrainBadgeIcon size={40} bgColor={badgeColor} color="#FFFFFF" />
+          <TrainBadgeIcon size={40} bgColor={iconColor} color="#FFFFFF" />
         </View>
 
         <View style={styles.center}>
-          <Text style={[styles.route, { color: theme.text }]} numberOfLines={2}>
-            {item.route_name}
-          </Text>
-          {metaParts.length > 0 && (
-            <Text style={[styles.meta, { color: theme.textMuted }]} numberOfLines={1}>
-              {metaParts.join(' · ')}
+          {/* ── Строка 1: маршрут + время, ЖИРНЫМ, в одну строку ── */}
+          <View style={styles.line1}>
+            <Text
+              style={[styles.route, { color: theme.text }]}
+              numberOfLines={1}
+              ellipsizeMode="middle"
+            >
+              {item.route_name}
             </Text>
-          )}
-        </View>
+            <Text style={[styles.timeBold, { color: theme.text }]}>
+              {item.departure_time}
+            </Text>
+          </View>
 
-        <View style={styles.right}>
-          <Text style={[styles.time, { color: theme.text }]}>
-            {item.departure_time}
-          </Text>
+          {/* ── Строка 2: номер + ETA, НЕжирным, меньше ── */}
           <Text
             style={[
-              styles.countdown,
+              styles.line2,
               { color: isSoon ? RED : theme.textMuted },
             ]}
+            numberOfLines={1}
           >
-            Через {formatMinutes(minutes)}
+            {item.train_number ? `№ ${item.train_number} · ` : ''}
+            {isSoon ? 'отправляется' : `через ${formatMinutes(minutes)}`}
+            {item.track ? ` · путь ${item.track}` : ''}
           </Text>
         </View>
       </View>
@@ -131,7 +145,10 @@ export default function ScheduleBlock({ stationId }: Props) {
       {expanded && (
         <View style={styles.body}>
           {loading && !data && (
-            <ActivityIndicator color={theme.accent} style={{ marginVertical: 16 }} />
+            <ActivityIndicator
+              color={theme.accent}
+              style={{ marginVertical: 16 }}
+            />
           )}
 
           {error && (
@@ -172,6 +189,10 @@ export default function ScheduleBlock({ stationId }: Props) {
   );
 }
 
+// ─────────────────────────────────────────────────────────────
+// Подкомпоненты и хелперы
+// ─────────────────────────────────────────────────────────────
+
 function DirectionGroup({
   title,
   items,
@@ -191,7 +212,9 @@ function DirectionGroup({
 
   return (
     <View style={styles.group}>
-      <Text style={[styles.groupTitle, { color: theme.textMuted }]}>{title}</Text>
+      <Text style={[styles.groupTitle, { color: theme.textMuted }]}>
+        {title}
+      </Text>
       {visible.map(renderRow)}
     </View>
   );
@@ -230,6 +253,7 @@ const styles = StyleSheet.create({
   },
   headerText: { fontSize: 15, fontWeight: '600' },
   body: { paddingBottom: 8 },
+
   group: { paddingHorizontal: 14, marginBottom: 12 },
   groupTitle: {
     fontSize: 12,
@@ -238,6 +262,7 @@ const styles = StyleSheet.create({
     letterSpacing: 0.5,
     marginBottom: 8,
   },
+
   row: {
     flexDirection: 'row',
     alignItems: 'center',
@@ -245,13 +270,37 @@ const styles = StyleSheet.create({
     borderBottomWidth: 1,
   },
   badge: { width: 40, height: 40, marginRight: 12 },
-  center: { flex: 1, marginRight: 8 },
-  route: { fontSize: 14, fontWeight: '600', marginBottom: 2 },
-  meta: { fontSize: 12 },
-  right: { alignItems: 'flex-end', minWidth: 76 },
-  time: { fontSize: 18, fontWeight: '700', marginBottom: 2 },
-  countdown: { fontSize: 11 },
-  errorBox: { paddingVertical: 16, paddingHorizontal: 14, alignItems: 'center' },
+  center: { flex: 1 },
+
+  // Строка 1: маршрут + время
+  line1: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'baseline',
+    marginBottom: 3,
+  },
+  route: {
+    fontSize: 14.5,
+    fontWeight: '700',
+    flexShrink: 1,
+    marginRight: 8,
+  },
+  timeBold: {
+    fontSize: 16,
+    fontWeight: '700',
+  },
+
+  // Строка 2: номер + ETA
+  line2: {
+    fontSize: 12,
+    fontWeight: '400',
+  },
+
+  errorBox: {
+    paddingVertical: 16,
+    paddingHorizontal: 14,
+    alignItems: 'center',
+  },
   errorText: { fontSize: 13, marginBottom: 6, textAlign: 'center' },
   retryText: { fontSize: 13, fontWeight: '600' },
   empty: { textAlign: 'center', fontSize: 13, paddingVertical: 16 },

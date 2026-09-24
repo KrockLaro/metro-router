@@ -190,7 +190,6 @@ _STATIONS = [
     ("varshavskaya", "Варшавская"),
     ("verhnie_kotly", "Верхние Котлы"),
     ("nagatinskaya", "Нагатинская"),
-    ("kolomenskoye", "Коломенское"),
     ("chertanovo", "Чертаново"),
     ("biryulyovo_tov", "Бирюлёво-Товарная"),
     ("biryulyovo_pass", "Бирюлёво-Пассажирская"),
@@ -212,7 +211,6 @@ _STATIONS = [
     ("velyaminovo", "Вельяминово"),
     ('shugarovo', 'Шугарово'),
     ("mihnevo", "Михнево"),
-    ("shugarovo", "Шугарово"),
     ('km85', '85 км'),
     ("zhilyovo", "Жилёво"),
     ('sitenka', 'Ситенка'),
@@ -286,7 +284,7 @@ def build_moscow_network() -> RailNetwork:
     # --- Павелецкое --- 44 станции
     net.add_segment(pav, [
         "m_pav", "derbenevskaya", "tulskaya", "varshavskaya",
-        "verhnie_kotly", "nagatinskaya", "kolomenskoye", "chertanovo",
+        "verhnie_kotly", "nagatinskaya", "chertanovo",
         "biryulyovo_tov", "biryulyovo_pass", 'bulatnikovo', "rastorguevo", "kalinina",
         "leninskaya", "km32", "domodedovo",
         "vzlyotnaya", "vostryakovo", "belye_stolby", "barybino",
@@ -298,7 +296,7 @@ def build_moscow_network() -> RailNetwork:
         "bogatishchevo", "km146", "korovino",
         "novosyolki_152", "uzunovo",
      ], [
-        4, 3, 3, 4, 4, 4, 5, 5, 5, 5, 5, 5, 4, 5,
+        4, 3, 3, 4, 4, 5, 5, 5, 5, 5, 5, 4, 5,
         4, 4, 4, 5, 5, 5, 5, 5, 6, 5, 5, 6, 5, 5,
         5, 5, 5, 6, 6, 6, 6, 6, 6, 5, 6, 6, 5, 6,
         6,
@@ -309,15 +307,17 @@ def build_moscow_network() -> RailNetwork:
 
     # Аэроэкспресс: Москва Павелецкая → Верхние Котлы → Аэропорт Домодедово
     # Время в пути: 4 мин до Верхних Котлов, 40 мин до аэропорта
+        # Аэроэкспресс: Москва Павелецкая → Верхние Котлы → Аэропорт Домодедово
     net.add_segment(pav_aero, [
         "m_pav", "verhnie_kotly", "aeroport_domodedovo",
     ], [5, 40], kind="local")
-    return net
 
+    # Обычная электричка до аэропорта: Домодедово → Авиационная → Космос → Аэропорт
     net.add_segment(pav_aero_sub, [
-            "domodedovo", 'aviacionnaya', "kosmos", "aeroport_domodedovo",
-            ], [7, 5, 5], kind="local")
-    return net 
+        "domodedovo", "aviacionnaya", "kosmos", "aeroport_domodedovo",
+    ], [7, 5, 5], kind="local")
+
+    return net
 
 # ============================================================
 # МАРШРУТИЗАТОР
@@ -331,7 +331,7 @@ def find_route(net: RailNetwork, start_id: str, end_id: str,
     if start_id == end_id:
         return Route(segments=[], total_minutes=0.0, transfers=0)
 
-        start_state = (start_id, None)
+    start_state = (start_id, None)
     dist: dict[tuple[str, str | None], float] = {start_state: 0.0}
     prev: dict[tuple[str, str | None], tuple] = {}
     pq: list[tuple[float, str, str | None]] = [(0.0, start_id, None)]

@@ -188,7 +188,6 @@ export const STATIONS: Record<string, SchemaStation> = {
   varshavskaya: S('varshavskaya', 'Варшавская', 100, 375, 'pav', 1, { expressStop: true, orientation: 'right' }),
   verhnie_kotly: S('verhnie_kotly', 'Верхние Котлы', 100, 400, 'pav', 1, { expressStop: true, aeroexpress: true, orientation: 'right' }),
   nagatinskaya: S('nagatinskaya', 'Нагатинская', 100, 425, 'pav', 2, { expressStop: true, orientation: 'right' }),
-  kolomenskoye: S('kolomenskoye', 'Коломенское', 100, 450, 'pav', 2, { orientation: 'right' }),
   chertanovo: S('chertanovo', 'Чертаново', 100, 475, 'pav', 2, { orientation: 'right' }),
   biryulyovo_tov: S('biryulyovo_tov', 'Бирюлёво-Товарная', 100, 500, 'pav', 2, { orientation: 'right' }),
   biryulyovo_pass: S('biryulyovo_pass', 'Бирюлёво-Пасс.', 100, 525, 'pav', 2, { expressStop: true, orientation: 'right' }),
