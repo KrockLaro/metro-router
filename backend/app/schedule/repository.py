@@ -14,29 +14,48 @@ from ..db.pool import get_pool
 MSK = timezone(timedelta(hours=3))
 
 
-# Регулярки для разбора строки Яндекса вида
-#   "3 пл 1 путь"
-#   "обычно 2 пл 6 путь"
-_PLATFORM_RE = re.compile(r"(\d+)\s*пл", re.IGNORECASE)
-_TRACK_RE = re.compile(r"(\d+)\s*путь", re.IGNORECASE)
+# Номер: "3", "2а", "6б", "4". Цифра + опциональная буква.
+_NUM = r"\d+[а-яё]?"
+
+# Платформа: "3 пл", "2пл", "3 платф.", "пл.2а", "платф 1"
+# Две альтернативы: цифра перед "пл" ИЛИ цифра после "пл"
+_PLATFORM_RE = re.compile(
+    rf"({_NUM})\s*пл(?:атф)?\b|пл(?:атф)?\.?\s*({_NUM})\b",
+    re.IGNORECASE,
+)
+
+# Путь: "1 путь", "3путь", "6а путь", "путь 4"
+_TRACK_RE = re.compile(
+    rf"({_NUM})\s*путь\b|путь\s*({_NUM})\b",
+    re.IGNORECASE,
+)
 
 
 def _parse_platform(raw: str | None) -> tuple[str | None, str | None]:
-    """Из строки Яндекса 'обычно 2 пл 6 путь' делает ('2', '6').
+    """Разбирает строку Яндекса про платформу и путь.
+
+    Примеры:
+        '3 пл 1 путь'            → ('3', '1')
+        'обычно 2 пл 6 путь'     → ('2', '6')
+        'пл.2а'                  → ('2а', None)
+        '2а пл 6а путь'          → ('2а', '6а')
+        '7 путь 2 пл'            → ('2', '7')
+        'раб 2 пл. вых 1 пл'     → ('2', None)  # берём первое
+        '4 (фрязинская) пл'      → (None, None) # не парсится — ок
+        'возм. 3 путь'           → (None, '3')
 
     Возвращает (platform_number, track_number).
-    Если чего-то нет — возвращает None для соответствующего поля.
+    Если чего-то нет — None для соответствующего поля.
     """
     if not raw:
         return None, None
 
-    plat_m = _PLATFORM_RE.search(raw)
-    track_m = _TRACK_RE.search(raw)
+    pm = _PLATFORM_RE.search(raw)
+    tm = _TRACK_RE.search(raw)
 
-    platform_num = plat_m.group(1) if plat_m else None
-    track_num = track_m.group(1) if track_m else None
+    platform_num = (pm.group(1) or pm.group(2)) if pm else None
+    track_num = (tm.group(1) or tm.group(2)) if tm else None
     return platform_num, track_num
-
 
 def _short(name: str) -> str:
     """Сокращает длинные названия московских вокзалов.

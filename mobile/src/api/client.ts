@@ -3,11 +3,6 @@
  *
  * Единая точка входа к бэкенду metro-router.
  * База URL берётся из EXPO_PUBLIC_API_URL (или .env).
- *
- * Для локальной разработки:
- *   iOS Simulator:     http://localhost:8000
- *   Android Emulator:  http://10.0.2.2:8000
- *   Физическое тело:   http://<IP_компьютера>:8000
  */
 import axios, { AxiosInstance, AxiosError } from 'axios';
 import Constants from 'expo-constants';
@@ -17,15 +12,12 @@ import Constants from 'expo-constants';
 // ──────────────────────────────────────────────────────────
 
 function resolveBaseUrl(): string {
-  // 1) Явно из окружения
   const fromEnv = process.env.EXPO_PUBLIC_API_URL;
   if (fromEnv) return fromEnv.replace(/\/+$/, '');
 
-  // 2) Из extra в app.json (если так настроено)
   const fromExtra = (Constants.expoConfig?.extra as any)?.apiUrl;
   if (fromExtra) return String(fromExtra).replace(/\/+$/, '');
 
-  // 3) Фолбэк для разработки
   return 'http://localhost:8000';
 }
 
@@ -39,11 +31,9 @@ export const apiClient: AxiosInstance = axios.create({
   },
 });
 
-// Разворачиваем ответ сразу в data (чтобы не писать .data каждый раз)
 apiClient.interceptors.response.use(
   (response) => response,
   (error: AxiosError) => {
-    // Логируем для отладки в dev-режиме
     if (__DEV__) {
       const url = `${error.config?.baseURL ?? ''}${error.config?.url ?? ''}`;
       // eslint-disable-next-line no-console
@@ -83,11 +73,8 @@ export interface ScheduleItem {
   departure_time: string;
   departure_iso: string;
   minutes_until: number;
-  /** Номер платформы, e.g. "3" (или null) */
   platform_number?: string | null;
-  /** Номер пути, e.g. "1" (или null) */
   track_number?: string | null;
-  /** Устаревшее — оставляем на случай, если где-то ещё используется */
   track?: string;
   platform?: string;
   is_express?: boolean;
@@ -95,16 +82,10 @@ export interface ScheduleItem {
 
 export interface StationSchedule {
   station_id: string;
-  /** Поезда в сторону Москвы */
   to_moscow: ScheduleItem[];
-  /** Поезда от Москвы */
   from_moscow: ScheduleItem[];
 }
 
-/**
- * Ближайшие электрички для станции.
- * По умолчанию возвращает по 3 поезда в каждую сторону.
- */
 export async function getStationSchedule(
   stationId: string,
   limit: number = 3,
@@ -120,33 +101,45 @@ export async function getStationSchedule(
 // Построение маршрута
 // ──────────────────────────────────────────────────────────
 
-export type SegmentKind = 'ride' | 'transfer' | 'walk';
+export type SegmentKind = 'ride' | 'transfer' | 'walk' | 'express' | 'local' | 'aeroexpress';
 
 export interface RouteSegment {
   kind: SegmentKind;
-  /** Название линии, напр. "Ярославское направление" (null для перехода) */
   line: string | null;
   line_color: string | null;
   line_kind: 'cppk' | 'mcd' | 'mcc' | 'metro' | null;
   from: { id: string; name: string };
   to: { id: string; name: string };
   minutes: number;
+
+  // Реальное расписание (приходит с enrich)
+  departure_time?: string;   // "14:32"
+  arrival_time?: string;     // "17:48"
+  train_number?: string;     // "6712"
+  train_type?: TrainType;    // local | express | aeroexpress
+  wait_minutes?: number;     // сколько ждать до поезда
+  schedule_found?: boolean;  // нашли ли поезд в БД
 }
 
 export interface RouteVariant {
   total_minutes: number;
   transfers: number;
   segments: RouteSegment[];
-  /** Флаги варианта для UI (опционально — заполнит бэкенд) */
-  tags?: Array<'fastest' | 'fewest_transfers' | 'express' | 'aeroexpress'>;
+  tags?: string[];
+  label?: string;
+
+  // Enrich добавляет:
+  departure_time?: string;   // "14:32" — общее отправление маршрута
+  arrival_time?: string;     // "17:48" — прибытие
 }
+
+/** Алиас для совместимости: где-то импортируется как RouteResult */
+export type RouteResult = RouteVariant;
 
 export interface RouteRequest {
   from_id: string;
   to_id: string;
-  /** ISO-строка желаемого времени отправления (опционально) */
   depart_at?: string;
-  /** Максимум вариантов, которые вернёт бэкенд (по умолчанию 3) */
   max_variants?: number;
 }
 
@@ -154,13 +147,7 @@ export interface RouteResponse {
   variants: RouteVariant[];
 }
 
-/**
- * Строит один или несколько вариантов маршрута.
- * Бэкенд (пока) возвращает один вариант в массиве — это ок, потом добавим top-N.
- */
-export async function buildRoute(
-  req: RouteRequest,
-): Promise<RouteResponse> {
+export async function buildRoute(req: RouteRequest): Promise<RouteResponse> {
   const { data } = await apiClient.post<RouteResponse>('/route', req);
   return data;
 }
@@ -181,7 +168,7 @@ export async function searchStations(
 }
 
 // ──────────────────────────────────────────────────────────
-// Health-check (удобно для отладки подключения)
+// Health-check
 // ──────────────────────────────────────────────────────────
 
 export async function pingBackend(): Promise<boolean> {

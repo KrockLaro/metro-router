@@ -26,7 +26,8 @@ export default function MapScreen() {
   const [from, setFrom] = useState<SchemaStation | null>(null);
   const [to, setTo] = useState<SchemaStation | null>(null);
 
-  const [routeData, setRouteData] = useState<RouteResult | null>(null);
+  // Массив вариантов маршрута (или null, если маршрут не построен)
+  const [routeVariants, setRouteVariants] = useState<RouteResult[] | null>(null);
   const [routeLoading, setRouteLoading] = useState(false);
   const [routeDeparture, setRouteDeparture] = useState(new Date());
 
@@ -76,7 +77,7 @@ export default function MapScreen() {
   const handleClear = useCallback(() => {
     setFrom(null);
     setTo(null);
-    setRouteData(null);
+    setRouteVariants(null);
   }, []);
 
   const handleBuildRoute = useCallback(async () => {
@@ -88,11 +89,24 @@ export default function MapScreen() {
 
     setRouteLoading(true);
     try {
-      const data = await buildRoute(from.id, to.id);
-      setRouteDeparture(new Date());
-      setRouteData(data);
+      // Формируем текущее МСК-время как "HH:MM" для depart_at
+      const now = new Date();
+      const msk = new Date(now.getTime() + 3 * 60 * 60 * 1000);
+      const hh = msk.getUTCHours().toString().padStart(2, '0');
+      const mm = msk.getUTCMinutes().toString().padStart(2, '0');
+
+      const res = await buildRoute({
+        from_id: from.id,
+        to_id: to.id,
+        depart_at: `${hh}:${mm}`,
+        max_variants: 3,
+      });
+
+      setRouteDeparture(now);
+      setRouteVariants(res.variants ?? []);
     } catch (e: any) {
-      const details = e?.response?.data?.detail || e?.message || 'Неизвестная ошибка';
+      const details =
+        e?.response?.data?.detail || e?.message || 'Неизвестная ошибка';
       Alert.alert(
         'Не удалось построить маршрут',
         `${details}\n\nПроверь:\n1. Бэкенд запущен (uvicorn)\n2. http://localhost:8000/docs открывается\n3. В .env указан правильный IP`,
@@ -103,17 +117,17 @@ export default function MapScreen() {
   }, [from, to]);
 
   // ------------------------------------------------------------------
-  // Экран маршрута (если построен)
+  // Экран маршрута
   // ------------------------------------------------------------------
 
-  if (routeData && from && to) {
+  if (routeVariants && routeVariants.length > 0 && from && to) {
     return (
       <RouteScreen
-        route={routeData}
+        variants={routeVariants}
         fromName={from.name}
         toName={to.name}
         departure={routeDeparture}
-        onBack={() => setRouteData(null)}
+        onBack={() => setRouteVariants(null)}
       />
     );
   }
@@ -140,17 +154,25 @@ export default function MapScreen() {
         {/* Кнопка темы */}
         <TouchableOpacity
           testID="theme-toggle"
-          style={[styles.themeBtn, { backgroundColor: theme.card, borderColor: theme.border }]}
+          style={[
+            styles.themeBtn,
+            { backgroundColor: theme.card, borderColor: theme.border },
+          ]}
           onPress={toggle}
         >
-          {theme.name === 'dark'
-            ? <SunIcon size={22} color={theme.icon} />
-            : <MoonIcon size={22} color={theme.icon} />}
+          {theme.name === 'dark' ? (
+            <SunIcon size={22} color={theme.icon} />
+          ) : (
+            <MoonIcon size={22} color={theme.icon} />
+          )}
         </TouchableOpacity>
 
         {/* Кнопка "Сброс вида" */}
         <TouchableOpacity
-          style={[styles.resetBtn, { backgroundColor: theme.card, borderColor: theme.border }]}
+          style={[
+            styles.resetBtn,
+            { backgroundColor: theme.card, borderColor: theme.border },
+          ]}
           onPress={() => mapApiRef.current?.resetView()}
         >
           <Text style={[styles.resetText, { color: theme.icon }]}>⌂</Text>
@@ -184,7 +206,9 @@ export default function MapScreen() {
               </Text>
             </View>
 
-            <View style={[styles.routeActions, { borderTopColor: theme.border }]}>
+            <View
+              style={[styles.routeActions, { borderTopColor: theme.border }]}
+            >
               <TouchableOpacity onPress={handleSwap} disabled={!from || !to}>
                 <Text
                   style={[

@@ -1,16 +1,25 @@
 """
 api/route.py — эндпоинты маршрутизации.
-"""
 
+Пути:
+    POST /route           — основной (frontend)
+    POST /route/plan      — алиас
+    POST /api/route/simple — старый путь (совместимость)
+    GET  /route/stations  — список станций графа
+    GET  /route/debug/{from_id}/{to_id}
+"""
 from datetime import datetime
+from datetime import time as time_t
 
 from fastapi import APIRouter, HTTPException
 from pydantic import BaseModel, Field
 
-from app.core.network import build_moscow_network, find_route
+from app.core.network import build_moscow_network, find_routes
+from app.schedule.enrich import enrich_route
+from app.schedule.repository import MSK
 
 
-router = APIRouter(prefix="/api/route", tags=["route"])
+router = APIRouter(tags=["route"])
 net = build_moscow_network()
 
 
@@ -24,44 +33,82 @@ class PlanRequest(BaseModel):
     max_transfers: int = Field(3, ge=0, le=5)
 
 
-class SimpleRouteRequest(BaseModel):
+class RouteRequest(BaseModel):
     from_id: str
     to_id: str
+    depart_at: str | None = None      # "HH:MM" МСК; если нет — берём now
+    max_variants: int | None = None
 
 
-@router.post("/simple")
-def simple(req: SimpleRouteRequest):
-    """
-    Построить маршрут между двумя станциями по их ID.
-    Использует локальный граф (Dijkstra).
-    """
-    if req.from_id not in net.stations:
-        raise HTTPException(404, f"Станция '{req.from_id}' не найдена")
-    if req.to_id not in net.stations:
-        raise HTTPException(404, f"Станция '{req.to_id}' не найдена")
-
-    r = find_route(net, req.from_id, req.to_id)
-    if r is None:
-        raise HTTPException(404, "Маршрут не найден")
-
-    return r.to_dict()
+def _parse_depart_at(s: str | None) -> time_t:
+    if not s:
+        return datetime.now(MSK).time()
+    # Принимаем "14:32" и "14:32:00"
+    parts = s.split(":")
+    if len(parts) < 2:
+        raise HTTPException(400, f"Неверный формат depart_at: {s!r}")
+    try:
+        hh, mm = int(parts[0]), int(parts[1])
+        return time_t(hh, mm)
+    except ValueError:
+        raise HTTPException(400, f"Неверный формат depart_at: {s!r}")
 
 
-@router.get("/stations")
+async def _build_response(from_id: str, to_id: str,
+                          max_variants: int | None = None,
+                          depart_at: str | None = None) -> dict:
+    if from_id not in net.stations:
+        raise HTTPException(404, f"Станция '{from_id}' не найдена")
+    if to_id not in net.stations:
+        raise HTTPException(404, f"Станция '{to_id}' не найдена")
+
+    dep_time = _parse_depart_at(depart_at)
+    k = max(1, min(max_variants or 3, 5))
+
+    routes = find_routes(net, from_id, to_id, k=k)
+
+    variants: list[dict] = []
+    for r in routes:
+        d = r.to_dict()
+        d = await enrich_route(d, dep_time)
+        variants.append(d)
+
+    return {"variants": variants}
+
+
+# ── Основные пути ─────────────────────────────────────────
+
+@router.post("/route")
+async def route_main(req: RouteRequest):
+    return await _build_response(req.from_id, req.to_id,
+                                 req.max_variants, req.depart_at)
+
+
+@router.post("/route/plan")
+async def route_plan(req: RouteRequest):
+    return await _build_response(req.from_id, req.to_id,
+                                 req.max_variants, req.depart_at)
+
+
+@router.post("/api/route/simple")
+async def route_simple(req: RouteRequest):
+    return await _build_response(req.from_id, req.to_id,
+                                 req.max_variants, req.depart_at)
+
+
+# ── Отладка ───────────────────────────────────────────────
+
+@router.get("/route/stations")
 def list_stations():
-    """Список всех станций в графе (для отладки)."""
     return [
         {"id": s.id, "name": s.name}
         for s in sorted(net.stations.values(), key=lambda x: x.name)
     ]
 
 
-@router.get("/debug/{from_id}/{to_id}")
-def debug_route(from_id: str, to_id: str):
-    """
-    Отладочный эндпоинт: показывает, есть ли оба ID в графе,
-    и пытается построить маршрут.
-    """
+@router.get("/route/debug/{from_id}/{to_id}")
+async def debug_route(from_id: str, to_id: str,
+                      depart_at: str | None = None):
     has_from = from_id in net.stations
     has_to = to_id in net.stations
     if not has_from or not has_to:
@@ -69,15 +116,21 @@ def debug_route(from_id: str, to_id: str):
             "ok": False,
             "from_exists": has_from,
             "to_exists": has_to,
-            "hint": "Одна или обе станции не в графе. Перезапусти uvicorn.",
+            "hint": "Одна или обе станции не в графе.",
         }
 
-    r = find_route(net, from_id, to_id)
-    if r is None:
+    dep_time = _parse_depart_at(depart_at)
+    routes = find_routes(net, from_id, to_id, k=3)
+    if not routes:
         return {
             "ok": False,
             "from_exists": True,
             "to_exists": True,
-            "hint": "Станции есть, но маршрут не построился. Проверь связи в графе.",
+            "hint": "Станции есть, но маршрут не построился.",
         }
-    return {"ok": True, "route": r.to_dict()}
+    enriched = [await enrich_route(r.to_dict(), dep_time) for r in routes]
+    return {
+        "ok": True,
+        "variants_count": len(enriched),
+        "variants": enriched,
+    }

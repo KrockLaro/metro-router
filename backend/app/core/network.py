@@ -5,7 +5,7 @@ core/network.py — Dijkstra-граф (fallback, если OTP недоступе
 from __future__ import annotations
 
 import heapq
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 
 
 @dataclass(frozen=True)
@@ -48,16 +48,27 @@ class Segment:
     kind: str
 
 
+_VARIANT_LABELS = {
+    "fastest":          "Быстрейший",
+    "balanced":         "Оптимальный",
+    "fewest_transfers": "Меньше пересадок",
+}
+
+
 @dataclass
 class Route:
     segments: list[Segment]
     total_minutes: float
     transfers: int
+    tags: list[str] = field(default_factory=list)
 
     def to_dict(self) -> dict:
+        label = _VARIANT_LABELS.get(self.tags[0], "Маршрут") if self.tags else "Маршрут"
         return {
             "total_minutes": round(self.total_minutes, 1),
             "transfers": self.transfers,
+            "tags": list(self.tags),
+            "label": label,
             "segments": [
                 {
                     "kind": s.kind,
@@ -98,8 +109,16 @@ class RailNetwork:
         self.edges[a].setdefault(b, []).append(e)
 
     def add_transfer(self, a: str, b: str, minutes: int) -> None:
+        """Пересадка между станциями (обычно метро между вокзалами).
+
+        Обе станции должны быть предварительно добавлены через add_station.
+        """
         if a == b:
             return
+        if a not in self.stations or b not in self.stations:
+            raise ValueError(
+                f"add_transfer: одна из станций не зарегистрирована ({a}, {b})"
+            )
         self.transfers.setdefault(a, {})[b] = minutes
         self.transfers.setdefault(b, {})[a] = minutes
 
@@ -108,10 +127,18 @@ class RailNetwork:
 # ДАННЫЕ
 # ============================================================
 
-# Все станции (id, name) — координаты не критичны, ставим 0
 _STATIONS = [
+    # ══════════ ВОКЗАЛЫ МОСКВЫ (метро-узлы) ══════════
+    ("m_yar",  "Москва Ярославская"),
+    ("m_pav",  "Москва Павелецкая"),
+    ("m_kursk","Москва Курская"),
+    ("m_kaz",  "Москва Казанская"),
+    ("m_bel",  "Москва Белорусская"),
+    ("m_kiev", "Москва Киевская"),
+    ("m_sav",  "Москва Савёловская"),
+    ("m_len",  "Москва Ленинградская"),
+
     # --- Ярославское: основной ход ---
-    ("m_yar", "Москва Ярославская"),
     ("moscow3", "Москва-3"),
     ("malenkovskaya", "Маленковская"),
     ("yauza", "Яуза"),
@@ -184,7 +211,6 @@ _STATIONS = [
     ("krasnoarmeysk", "Красноармейск"),
 
     # --- Павелецкое ---
-    ("m_pav", "Москва Павелецкая"),
     ("derbenevskaya", "Дербеневская"),
     ("tulskaya", "Тульская"),
     ("varshavskaya", "Варшавская"),
@@ -206,14 +232,14 @@ _STATIONS = [
     ("vostryakovo", "Востряково"),
     ("belye_stolby", "Белые Столбы"),
     ("barybino", "Барыбино"),
-    ('danilovo_52', 'Данилово (52 км)'),
+    ("danilovo_52", "Данилово (52 км)"),
     ("privalovo", "Привалово"),
     ("velyaminovo", "Вельяминово"),
-    ('shugarovo', 'Шугарово'),
+    ("shugarovo", "Шугарово"),
     ("mihnevo", "Михнево"),
-    ('km85', '85 км'),
+    ("km85", "85 км"),
     ("zhilyovo", "Жилёво"),
-    ('sitenka', 'Ситенка'),
+    ("sitenka", "Ситенка"),
     ("stupino", "Ступино"),
     ("akri", "Акри"),
     ("belopesotsky", "Белопесоцкий"),
@@ -233,6 +259,29 @@ _STATIONS = [
 ]
 
 
+# ============================================================
+# Пересадки между вокзалами (через метро)
+# ============================================================
+# Время — среднее с учётом перехода, ожидания и короткой поездки.
+# Замеры приблизительные, для UI сойдёт.
+
+_VOKZAL_TRANSFERS = [
+    # Кольцевая линия (короткие)
+    ("m_yar",  "m_kursk", 20),   # Ярославский → Курский (через Комсомольскую)
+    ("m_yar",  "m_kaz",   20),   # Ярославский → Казанский
+    ("m_kursk","m_kaz",   5),    # Курский ↔ Казанский — соседние
+    ("m_bel",  "m_sav",   15),   # Белорусский → Савёловский (через кольцо)
+    # Радиальные, подлиннее
+    ("m_yar",  "m_pav",   25),   # Ярославский → Павелецкий
+    ("m_kursk","m_pav",   20),   # Курский → Павелецкий
+    ("m_kursk","m_kiev",  25),   # Курский → Киевский
+    ("m_pav",  "m_kiev",  20),   # Павелецкий → Киевский
+    ("m_bel",  "m_yar",   25),   # Белорусский → Ярославский
+    ("m_len",  "m_yar",   10),   # Ленинградский → Ярославский (соседние)
+    ("m_len",  "m_kursk", 15),   # Ленинградский → Курский
+]
+
+
 def build_moscow_network() -> RailNetwork:
     net = RailNetwork()
     for sid, name in _STATIONS:
@@ -247,7 +296,7 @@ def build_moscow_network() -> RailNetwork:
     pav_aero = Line("pav_aero", "Аэроэкспресс", "#00A651", "cppk", headway=30)
     pav_aero_sub = Line("pav_aero_sub", "До Аэропорта Домодедово", "#00A651", "cppk", headway=60)
 
-    # --- Ярославское: основной ход (время в пути между соседними, минут) ---
+    # --- Ярославское: основной ход ---
     net.add_segment(yar, [
         "m_yar", "moscow3", "malenkovskaya", "yauza", "rostokino",
         "losinoostrovskaya", "los", "perlovskaya", "tayninskaya",
@@ -281,14 +330,14 @@ def build_moscow_network() -> RailNetwork:
         "fedorovskoe", "putilovo", "krasnoarmeysk",
     ], [8, 8, 8, 8, 8], kind="local")
 
-    # --- Павелецкое --- 44 станции
+    # --- Павелецкое ---
     net.add_segment(pav, [
         "m_pav", "derbenevskaya", "tulskaya", "varshavskaya",
         "verhnie_kotly", "nagatinskaya", "chertanovo",
-        "biryulyovo_tov", "biryulyovo_pass", 'bulatnikovo', "rastorguevo", "kalinina",
+        "biryulyovo_tov", "biryulyovo_pass", "bulatnikovo", "rastorguevo", "kalinina",
         "leninskaya", "km32", "domodedovo",
         "vzlyotnaya", "vostryakovo", "belye_stolby", "barybino",
-        "danilovo_52", "privalovo", "velyaminovo", "mihnevo", 'shugarovo',
+        "danilovo_52", "privalovo", "velyaminovo", "mihnevo", "shugarovo",
         "km85", "zhilyovo", "sitenka",
         "stupino", "akri", "belopesotsky", "kashira",
         "tesna", "ozherelye", "zubovo_121",
@@ -301,35 +350,36 @@ def build_moscow_network() -> RailNetwork:
         5, 5, 5, 6, 6, 6, 6, 6, 6, 5, 6, 6, 5, 6,
         6,
     ], kind="local")
-    # --- Пересадки (пока условные — на будущее) ---
-    # Между Москва Павелецкая и Москва Ярославская через метро — примерно 25 минут
-    
 
-    # Аэроэкспресс: Москва Павелецкая → Верхние Котлы → Аэропорт Домодедово
-    # Время в пути: 4 мин до Верхних Котлов, 40 мин до аэропорта
-        # Аэроэкспресс: Москва Павелецкая → Верхние Котлы → Аэропорт Домодедово
+    # Аэроэкспресс и электричка до аэропорта
     net.add_segment(pav_aero, [
         "m_pav", "verhnie_kotly", "aeroport_domodedovo",
     ], [5, 40], kind="local")
 
-    # Обычная электричка до аэропорта: Домодедово → Авиационная → Космос → Аэропорт
     net.add_segment(pav_aero_sub, [
         "domodedovo", "aviacionnaya", "kosmos", "aeroport_domodedovo",
     ], [7, 5, 5], kind="local")
 
+    # --- Пересадки между вокзалами ---
+    for a, b, m in _VOKZAL_TRANSFERS:
+        net.add_transfer(a, b, m)
+
     return net
+
 
 # ============================================================
 # МАРШРУТИЗАТОР
 # ============================================================
 
 def find_route(net: RailNetwork, start_id: str, end_id: str,
-               transfer_penalty: int = 5) -> Route | None:
+               transfer_penalty: int = 5,
+               tags: list[str] | None = None) -> Route | None:
     if start_id not in net.stations or end_id not in net.stations:
         return None
 
     if start_id == end_id:
-        return Route(segments=[], total_minutes=0.0, transfers=0)
+        return Route(segments=[], total_minutes=0.0, transfers=0,
+                     tags=list(tags or []))
 
     start_state = (start_id, None)
     dist: dict[tuple[str, str | None], float] = {start_state: 0.0}
@@ -386,4 +436,48 @@ def find_route(net: RailNetwork, start_id: str, end_id: str,
     segments.reverse()
 
     transfers = sum(1 for s in segments if s.kind == "transfer")
-    return Route(segments, dist[best], transfers)
+    return Route(segments, dist[best], transfers, tags=list(tags or []))
+
+
+# ============================================================
+# МУЛЬТИМАРШРУТЫ (top-N)
+# ============================================================
+
+def _route_signature(r: Route) -> tuple:
+    return tuple(
+        (s.from_station.id, s.to_station.id, s.line.id if s.line else None)
+        for s in r.segments
+    )
+
+
+_STRATEGIES = [
+    (5,  "fastest"),
+    (15, "balanced"),
+    (30, "fewest_transfers"),
+]
+
+
+def find_routes(net: RailNetwork, start_id: str, end_id: str,
+                k: int = 3) -> list[Route]:
+    if start_id not in net.stations or end_id not in net.stations:
+        return []
+
+    variants: list[Route] = []
+    seen: set[tuple] = set()
+
+    for penalty, tag in _STRATEGIES:
+        r = find_route(net, start_id, end_id,
+                       transfer_penalty=penalty, tags=[tag])
+        if r is None:
+            continue
+
+        sig = _route_signature(r)
+        if sig in seen:
+            continue
+        seen.add(sig)
+        variants.append(r)
+
+        if len(variants) >= k:
+            break
+
+    return variants
