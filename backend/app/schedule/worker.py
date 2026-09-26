@@ -1,4 +1,8 @@
-﻿"""arq worker: cron-задача + ручной запуск фетча расписаний."""
+﻿"""arq worker: cron-задача + ручной запуск фетча расписаний.
+
+Фетчит расписание на 3 дня (Пн + Сб + Вс) и объединяет дни недели
+в days_mask. Это покрывает всю неделю одним заходом.
+"""
 from __future__ import annotations
 
 from dotenv import load_dotenv
@@ -6,7 +10,7 @@ load_dotenv()
 
 import logging
 import os
-from datetime import date, datetime
+from datetime import date, datetime, timedelta
 
 from arq import cron
 from arq.connections import RedisSettings
@@ -23,17 +27,6 @@ logging.basicConfig(
     format="%(asctime)s | %(levelname)-7s | %(name)s | %(message)s",
 )
 
-# Гасим INFO-логи httpx, чтобы API-ключ не попадал в консоль
-logging.getLogger("httpx").setLevel(logging.WARNING)
-logging.getLogger("httpcore").setLevel(logging.WARNING)
-
-
-# ──────────────────────── Константы ─────────────────────
-# Станции, на которых реально останавливаются аэроэкспрессы.
-# Яндекс v3.0 отдаёт аэроэкспресс в расписании ВСЕХ станций по пути,
-# даже если остановки там нет — фильтруем вручную.
-AEROEXPRESS_STOPS = {"m_pav", "verhnie_kotly", "aeroport_domodedovo"}
-
 
 # ──────────────────────── Классификация ──────────────────
 def classify_train(number: str, origin: str, destination: str) -> str:
@@ -43,10 +36,7 @@ def classify_train(number: str, origin: str, destination: str) -> str:
     определяем сами по номеру:
         7xxx  → экспресс (включая аэроэкспрессы)
         6xxx  → пригород
-    Аэроэкспресс отличается от обычного экспресса тем, что маршрут
-    ведёт в/из аэропорта.
-
-    TODO: когда появится справочник номеров ЦППК/МТППК — уточнить.
+    Аэроэкспресс отличается тем, что маршрут ведёт в/из аэропорта.
     """
     n = (number or "").strip()
     route = f"{origin} {destination}".lower()
@@ -57,75 +47,134 @@ def classify_train(number: str, origin: str, destination: str) -> str:
     return "local"
 
 
+# ──────────────────────── Даты покрытия ──────────────────
+def _nearest_weekday(target: int) -> date:
+    """Ближайшая дата с указанным днём недели (0=Пн..6=Вс).
+
+    Если сегодня уже target — вернёт сегодняшнюю дату.
+    """
+    today = date.today()
+    delta = (target - today.weekday()) % 7
+    return today + timedelta(days=delta)
+
+
+def coverage_dates() -> list[date]:
+    """3 даты, покрывающие будни, субботу и воскресенье.
+
+    Берём ближайшие Пн, Сб, Вс. Если сегодня уже один из них — 
+    берём сегодняшнюю дату.
+    """
+    dates = {_nearest_weekday(0), _nearest_weekday(5), _nearest_weekday(6)}
+    return sorted(dates)
+
+
 # ──────────────────────── Парсер ─────────────────────────
+def _parse_one_item(
+    item: dict, station_id: str, line_id: str, on_date: date
+) -> dict | None:
+    """Парсит один рейс из ответа Яндекса. days_mask = бит дня on_date."""
+    thread = item.get("thread") or {}
+    dep_iso = item.get("departure")
+    if not dep_iso:
+        return None
+
+    dep_dt = datetime.fromisoformat(dep_iso.replace("Z", "+00:00"))
+    arr_iso = item.get("arrival")
+    arr_dt = (
+        datetime.fromisoformat(arr_iso.replace("Z", "+00:00"))
+        if arr_iso else None
+    )
+
+    title = thread.get("title") or ""
+    parts = title.split(" — ")
+    origin = parts[0] if parts else "—"
+    dest = parts[-1] if len(parts) > 1 else "—"
+
+    direction = "to_moscow" if "москв" in dest.lower() else "from_moscow"
+    number = thread.get("number") or ""
+    train_type = classify_train(number, origin, dest)
+
+    return {
+        "station_id": station_id,
+        "line_id": line_id,
+        "thread_uid": thread.get("uid") or dep_iso,
+        "train_number": number or "—",
+        "train_type": train_type,
+        "origin": origin or "—",
+        "destination": dest or "—",
+        "direction": direction,
+        "departure": dep_dt.time(),
+        "arrival": arr_dt.time() if arr_dt else None,
+        "days_mask": 1 << on_date.weekday(),
+        "platform": item.get("platform"),
+        "track": item.get("track"),
+    }
+
+
 def parse_payload(payload: dict, station_id: str, line_id: str) -> list[dict]:
-    """Yandex Rasp JSON -> строки для таблицы schedules."""
-    rows: list[dict] = []
-
+    """Обратная совместимость: парсит один день (сегодня)."""
+    today = date.today()
+    out: list[dict] = []
     for item in payload.get("schedule", []) or []:
-        thread = item.get("thread", {}) or {}
-        dep_iso = item.get("departure")
-        arr_iso = item.get("arrival")
-        if not dep_iso:
-            continue
-
-        dep_dt = datetime.fromisoformat(dep_iso.replace("Z", "+00:00"))
-        arr_dt = (
-            datetime.fromisoformat(arr_iso.replace("Z", "+00:00"))
-            if arr_iso else None
-        )
-
-        title = thread.get("title") or ""
-        parts = title.split(" — ")
-        origin = parts[0] if parts else "—"
-        dest = parts[-1] if len(parts) > 1 else "—"
-
-        direction = "to_moscow" if "москв" in dest.lower() else "from_moscow"
-
-        number = thread.get("number") or ""
-        train_type = classify_train(number, origin, dest)
-
-        # Аэроэкспрессы оставляем только для станций, где они реально
-        # останавливаются. У остальных — выкидываем из расписания.
-        if train_type == "aeroexpress" and station_id not in AEROEXPRESS_STOPS:
-            continue
-
-        rows.append({
-            "station_id": station_id,
-            "line_id": line_id,
-            "thread_uid": thread.get("uid") or dep_iso,
-            "train_number": number or "—",
-            "train_type": train_type,
-            "origin": origin or "—",
-            "destination": dest or "—",
-            "direction": direction,
-            "departure": dep_dt.time(),
-            "arrival": arr_dt.time() if arr_dt else None,
-            "days_mask": 1 << dep_dt.weekday(),
-            "platform": item.get("platform"),
-            "track": item.get("track"),
-        })
-    return rows
+        row = _parse_one_item(item, station_id, line_id, today)
+        if row:
+            out.append(row)
+    return out
 
 
-# ──────────────────────── Одна станция ───────────────────
-async def fetch_one_station(ctx, station_id: str, line_id: str) -> int:
-    """Скачивает расписание станции и сохраняет в БД. Возвращает count."""
+# ──────────────────────── Фетч одной станции ─────────────
+async def fetch_one_station_multi_day(
+    ctx, station_id: str, line_id: str, on_dates: list[date]
+) -> int:
+    """Фетчит расписание станции на несколько дней, объединяет days_mask.
+
+    Возвращает число сохранённых уникальных ниток.
+    """
     yandex_code = YANDEX_STATION_CODES.get(station_id)
     if not yandex_code:
         log.warning("Нет Яндекс-кода для %s — пропускаю", station_id)
         return 0
 
-    try:
-        payload = await fetch_station_schedule(yandex_code, date.today())
-    except QuotaExceeded as e:
-        log.error("Quota exceeded: %s", e)
-        raise
+    # {thread_uid: row}
+    by_uid: dict[str, dict] = {}
 
-    rows = parse_payload(payload, station_id, line_id)
+    for on_date in on_dates:
+        try:
+            payload = await fetch_station_schedule(yandex_code, on_date)
+        except QuotaExceeded:
+            raise
+        except Exception:
+            log.exception(
+                "Ошибка фетча %s на %s — пропускаю день",
+                station_id, on_date,
+            )
+            continue
+
+        for item in payload.get("schedule", []) or []:
+            row = _parse_one_item(item, station_id, line_id, on_date)
+            if not row:
+                continue
+            uid = row["thread_uid"]
+            if uid in by_uid:
+                # Тот же поезд, другой день — объединяем биты
+                by_uid[uid]["days_mask"] |= row["days_mask"]
+            else:
+                by_uid[uid] = row
+
+    rows = list(by_uid.values())
     n = await upsert_schedule_rows(rows)
-    log.info("Сохранено %d рейсов для %s", n, station_id)
+    log.info(
+        "Сохранено %d рейсов для %s (по %d дням)",
+        n, station_id, len(on_dates),
+    )
     return n
+
+
+# Обратная совместимость: одностаничный фетч на сегодня
+async def fetch_one_station(ctx, station_id: str, line_id: str) -> int:
+    return await fetch_one_station_multi_day(
+        ctx, station_id, line_id, [date.today()]
+    )
 
 
 # ──────────────────────── Направление ────────────────────
@@ -135,10 +184,18 @@ async def fetch_direction(ctx, direction_id: str) -> int:
         log.warning("Неизвестное направление %s", direction_id)
         return 0
 
+    on_dates = coverage_dates()
+    log.info(
+        "Направление %s: дни %s",
+        direction_id, [dt.isoformat() for dt in on_dates],
+    )
+
     total = 0
     for sid in d["stations"]:
         try:
-            total += await fetch_one_station(ctx, sid, d["line_id"])
+            total += await fetch_one_station_multi_day(
+                ctx, sid, d["line_id"], on_dates
+            )
         except QuotaExceeded:
             log.error("Стоп по квоте на станции %s", sid)
             raise
@@ -176,12 +233,12 @@ async def shutdown(ctx):
 
 
 REDIS_SETTINGS = RedisSettings.from_dsn(
-    os.getenv("REDIS_URL", "redis://localhost:6379/0")
+    os.getenv("REDIS_URL", "redis://127.0.0.1:6379/0")
 )
 
 
 class WorkerSettings:
-    functions = [fetch_direction, fetch_one_station]
+    functions = [fetch_direction, fetch_one_station, fetch_one_station_multi_day]
     cron_jobs = [
         cron(daily_rotation, hour=3, minute=0),
     ]

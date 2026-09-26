@@ -1,4 +1,11 @@
-"""Показать сырой JSON первых N рейсов от Яндекса."""
+"""Показать сырой JSON первых N рейсов от Яндекса.
+
+Запуск:
+    cd backend
+    python -m scripts.dump_raw sofrino 3
+    python -m scripts.dump_raw pushkino 3
+    python -m scripts.dump_raw m_yar 3
+"""
 from __future__ import annotations
 
 import asyncio
@@ -14,14 +21,16 @@ from app.schedule.yandex_client import fetch_station_schedule
 from app.schedule.yandex_codes import YANDEX_STATION_CODES
 
 
-async def main(station_id: str, n: int = 5) -> None:
+async def main(station_id: str, n: int = 3) -> None:
     code = YANDEX_STATION_CODES.get(station_id)
     if not code:
         sys.exit(f"X Нет Яндекс-кода для '{station_id}'")
 
     await init_pool(os.environ["DATABASE_URL"])
     try:
-        payload = await fetch_station_schedule(code, date.today())
+        payload = await fetch_station_schedule(
+            code, date.today(), skip_quota=True
+        )
         schedule = (payload.get("schedule") or [])[:n]
 
         print(f"Станция: {station_id}  (код {code})")
@@ -31,12 +40,17 @@ async def main(station_id: str, n: int = 5) -> None:
         for i, item in enumerate(schedule, 1):
             thread = item.get("thread") or {}
             print(f"── Рейс #{i} ────────────────────────")
-            print(f"  thread.number         = {thread.get('number')!r}")
-            print(f"  thread.title          = {thread.get('title')!r}")
-            print(f"  thread.express_type   = {thread.get('express_type')!r}")
-            print(f"  thread.transport_type = {thread.get('transport_type')!r}")
-            print(f"  thread.uid            = {thread.get('uid')!r}")
-            print(f"  departure             = {item.get('departure')!r}")
+            print(f"  number         = {thread.get('number')!r}")
+            print(f"  title          = {thread.get('title')!r}")
+            # ВСЕ поля рейса
+            print(f"  departure      = {item.get('departure')!r}")
+            print(f"  arrival        = {item.get('arrival')!r}")
+            print(f"  platform       = {item.get('platform')!r}")
+            print(f"  track          = {item.get('track')!r}")
+            print(f"  --- полный item ---")
+            for k, v in item.items():
+                if k not in ("thread",):
+                    print(f"    {k:20} = {v!r}")
             print()
     finally:
         await close_pool()
@@ -44,5 +58,5 @@ async def main(station_id: str, n: int = 5) -> None:
 
 if __name__ == "__main__":
     sid = sys.argv[1] if len(sys.argv) > 1 else "domodedovo"
-    n = int(sys.argv[2]) if len(sys.argv) > 2 else 5
+    n = int(sys.argv[2]) if len(sys.argv) > 2 else 3
     asyncio.run(main(sid, n))

@@ -10,7 +10,8 @@ import httpx
 from ..db.pool import get_pool
 
 log = logging.getLogger(__name__)
-# Гасим INFO-логи httpx, чтобы API-ключ не попадал в консоль/файлы
+
+# Гасим INFO-логи httpx/httpcore — они логируют URL с apikey
 logging.getLogger("httpx").setLevel(logging.WARNING)
 logging.getLogger("httpcore").setLevel(logging.WARNING)
 
@@ -20,7 +21,18 @@ DAILY_LIMIT = 500
 
 
 class QuotaExceeded(RuntimeError):
-    pass
+    """Наш собственный лимит 500 запросов/сутки исчерпан."""
+
+
+class YandexHTTPError(RuntimeError):
+    """Ошибка HTTP от Яндекса (без утечки URL и ключа)."""
+
+    def __init__(self, status_code: int, station: str):
+        self.status_code = status_code
+        self.station = station
+        super().__init__(
+            f"Yandex Rasp вернул HTTP {status_code} для станции {station}"
+        )
 
 
 async def _bump_usage() -> int:
@@ -75,11 +87,20 @@ async def fetch_station_schedule(
         "transport_types": transport_types,
         "format": "json",
         "lang": "ru_RU",
+        "limit": 1000,
     }
 
     async with httpx.AsyncClient(timeout=25) as client:
         r = await client.get(YANDEX_BASE, params=params)
-        r.raise_for_status()
+
+    if r.status_code != 200:
+        # ВАЖНО: не вызываем r.raise_for_status() — он вкладывает URL
+        # с apikey в exception traceback. Бросаем свою ошибку без ключа.
+        log.error(
+            "Yandex Rasp вернул HTTP %d для станции %s",
+            r.status_code, yandex_code,
+        )
+        raise YandexHTTPError(r.status_code, yandex_code)
 
     if not skip_quota:
         used = await _bump_usage()

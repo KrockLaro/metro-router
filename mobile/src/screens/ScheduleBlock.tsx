@@ -85,18 +85,24 @@ export default function ScheduleBlock({ stationId }: Props) {
     const isSoon = minutes <= 1;
     const iconColor = TYPE_COLOR[item.train_type ?? 'local'] ?? GRAY;
 
+    // «Путь 1 · Пл 3» — только то, что реально есть
+    const platformParts = [
+      item.track_number ? `Путь ${item.track_number}` : null,
+      item.platform_number ? `Пл ${item.platform_number}` : null,
+    ].filter(Boolean);
+    const platformText = platformParts.join(' · ');
+
     return (
       <View
         key={item.trip_id + item.departure_iso}
         style={[styles.row, { borderBottomColor: theme.border }]}
       >
-        {/* Иконка по типу поезда */}
         <View style={styles.badge}>
           <TrainBadgeIcon size={40} bgColor={iconColor} color="#FFFFFF" />
         </View>
 
         <View style={styles.center}>
-          {/* ── Строка 1: маршрут + время, ЖИРНЫМ, в одну строку ── */}
+          {/* Строка 1: маршрут + время */}
           <View style={styles.line1}>
             <Text
               style={[styles.route, { color: theme.text }]}
@@ -110,18 +116,28 @@ export default function ScheduleBlock({ stationId }: Props) {
             </Text>
           </View>
 
-          {/* ── Строка 2: номер + ETA, НЕжирным, меньше ── */}
-          <Text
-            style={[
-              styles.line2,
-              { color: isSoon ? RED : theme.textMuted },
-            ]}
-            numberOfLines={1}
-          >
-            {item.train_number ? `№ ${item.train_number} · ` : ''}
-            {isSoon ? 'отправляется' : `через ${formatMinutes(minutes)}`}
-            {item.track ? ` · путь ${item.track}` : ''}
-          </Text>
+          {/* Строка 2: № + ETA слева, путь/платформа справа */}
+          <View style={styles.line2}>
+            <Text
+              style={[
+                styles.metaLeft,
+                { color: isSoon ? RED : theme.textMuted },
+              ]}
+              numberOfLines={1}
+            >
+              {item.train_number ? `№ ${item.train_number} · ` : ''}
+              {isSoon ? 'отправляется' : `через ${formatMinutes(minutes)}`}
+            </Text>
+
+            {platformText ? (
+              <Text
+                style={[styles.metaRight, { color: theme.textMuted }]}
+                numberOfLines={1}
+              >
+                {platformText}
+              </Text>
+            ) : null}
+          </View>
         </View>
       </View>
     );
@@ -290,10 +306,22 @@ const styles = StyleSheet.create({
     fontWeight: '700',
   },
 
-  // Строка 2: номер + ETA
+  // Строка 2: № + ETA слева, путь/платформа справа
   line2: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'baseline',
+  },
+  metaLeft: {
     fontSize: 12,
     fontWeight: '400',
+    flexShrink: 1,
+    marginRight: 8,
+  },
+  metaRight: {
+    fontSize: 12,
+    fontWeight: '400',
+    flexShrink: 0,
   },
 
   errorBox: {

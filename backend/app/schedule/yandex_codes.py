@@ -40,7 +40,7 @@ YANDEX_STATION_CODES: dict[str, str] = {
     "kashino": "s9602122",
     "kashira": "s9600886",
     "klyazma": "s9601246",
-    "km137": "s9602187",
+    "km137": "s9634000",
     "km146": "s9601125",
     "km32": "s9633652",
     "km43": "s9601848",
