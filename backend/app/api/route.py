@@ -54,6 +54,20 @@ def _parse_depart_at(s: str | None) -> time_t:
         raise HTTPException(400, f"Неверный формат depart_at: {s!r}")
 
 
+def _same_trains(a: dict, b: dict) -> bool:
+    """Сравнивает набор поездов в двух вариантах маршрута.
+
+    Если у обоих вариантов одинаковые train_number'ы — это один и тот же
+    маршрут, показывать его дважды смысла нет.
+    """
+    def sig(v: dict) -> tuple:
+        return tuple(
+            (s["from"]["id"], s["to"]["id"], s.get("train_number"))
+            for s in v["segments"]
+        )
+    return sig(a) == sig(b)
+
+
 async def _build_response(from_id: str, to_id: str,
                           max_variants: int | None = None,
                           depart_at: str | None = None) -> dict:
@@ -67,31 +81,46 @@ async def _build_response(from_id: str, to_id: str,
 
     routes = find_routes(net, from_id, to_id, k=k)
 
+    # 1. Базовые варианты — явно на обычной электричке (local).
+    #    Иначе enrich может сам найти экспресс, и второй вариант
+    #    окажется дубликатом первого.
     variants: list[dict] = []
     for r in routes:
         d = r.to_dict()
-        d = await enrich_route(d, dep_time)
+        d = await enrich_route(d, dep_time, avoid_express=True)
         variants.append(d)
 
-    return {"variants": variants}
+    # 2. Пробуем построить вариант «с экспрессом» от первого (быстрейшего) пути.
+    if routes:
+        d_exp = routes[0].to_dict()
+        d_exp = await enrich_route(d_exp, dep_time, prefer_express=True)
+        if variants and not _same_trains(variants[0], d_exp):
+            d_exp["tags"] = ["with_express"]
+            d_exp["label"] = "С экспрессом"
+            variants.insert(1, d_exp)
+
+    return {"variants": variants[:k]}
 
 
-# ── Основные пути ─────────────────────────────────────────
+# ── Основные пути (без префикса) ──────────────────────────
 
 @router.post("/route")
 async def route_main(req: RouteRequest):
+    """Основной эндпоинт, который вызывает frontend."""
     return await _build_response(req.from_id, req.to_id,
                                  req.max_variants, req.depart_at)
 
 
 @router.post("/route/plan")
 async def route_plan(req: RouteRequest):
+    """Алиас — некоторые старые версии фронта стучатся сюда."""
     return await _build_response(req.from_id, req.to_id,
                                  req.max_variants, req.depart_at)
 
 
 @router.post("/api/route/simple")
 async def route_simple(req: RouteRequest):
+    """Старый путь. Оставлен на случай, если что-то ещё сюда стучится."""
     return await _build_response(req.from_id, req.to_id,
                                  req.max_variants, req.depart_at)
 

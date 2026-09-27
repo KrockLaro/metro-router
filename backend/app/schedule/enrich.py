@@ -89,7 +89,12 @@ def _merge_ride_segments(segments: list[dict]) -> list[dict]:
 # Основная функция
 # ──────────────────────────────────────────────────────────────
 
-async def enrich_route(route_dict: dict, depart_at: time) -> dict:
+async def enrich_route(
+    route_dict: dict,
+    depart_at: time,
+    prefer_express: bool = False,
+    avoid_express: bool = False,
+) -> dict:
     """Для каждого ride-сегмента ищет реальный поезд в БД.
 
     Добавляет/подменяет поля:
@@ -129,6 +134,8 @@ async def enrich_route(route_dict: dict, depart_at: time) -> dict:
                 to_id=seg["to"]["id"],
                 after=cursor,
                 bit=bit,
+                prefer_express=prefer_express,
+                avoid_express=avoid_express,
             )
 
             if row is None:
@@ -167,26 +174,61 @@ async def enrich_route(route_dict: dict, depart_at: time) -> dict:
 
 
 async def _find_train(conn, from_id: str, to_id: str,
-                      after: time, bit: int) -> dict | None:
-    """Ближайший поезд, идущий ОТ from_id К to_id (в правильном направлении).
+                      after: time, bit: int,
+                      prefer_express: bool = False,
+                      avoid_express: bool = False) -> dict | None:
+    """Ближайший поезд ОТ from_id К to_id.
 
-    Логика:
-      1. Ищем поезда, отправляющиеся от from_id после времени `after`.
-      2. Для каждого проверяем, есть ли тот же thread_uid на to_id.
-      3. Проверяем, что время на to_id ПОЗЖЕ времени на from_id.
-         Если раньше — поезд идёт в обратную сторону, пропускаем.
+    Режимы:
+      prefer_express=True  — сначала только экспрессы, fallback на обычные.
+      avoid_express=True   — только обычные (local), без экспрессов.
+      оба False            — любой поезд, по времени.
     """
+    if prefer_express:
+        row = await _find_train_impl(
+            conn, from_id, to_id, after, bit,
+            only_kinds=("express", "branded"),
+        )
+        if row is not None:
+            return row
+
+    if avoid_express:
+        return await _find_train_impl(
+            conn, from_id, to_id, after, bit,
+            only_kinds=("local",),
+        )
+
+    return await _find_train_impl(
+        conn, from_id, to_id, after, bit, only_kinds=None,
+    )
+
+async def _find_train_impl(conn, from_id: str, to_id: str,
+                           after: time, bit: int,
+                           only_kinds: tuple[str, ...] | None) -> dict | None:
+    """Внутренняя реализация. Если only_kinds задан — фильтрует по train_type.
+
+    Для каждого поезда-кандидата проверяем, что тот же thread_uid есть
+    на to_id и время на to_id ПОЗЖЕ (иначе — обратное направление).
+    """
+    params: list = [from_id, after, bit]
+    kind_clause = ""
+    if only_kinds:
+        placeholders = ", ".join(f"${i + 4}" for i in range(len(only_kinds)))
+        kind_clause = f" AND train_type IN ({placeholders})"
+        params.extend(only_kinds)
+
     rows = await conn.fetch(
-        """
+        f"""
         SELECT thread_uid, train_number, train_type, departure
         FROM schedules
         WHERE station_id = $1
           AND departure >= $2
           AND (days_mask & $3) <> 0
+          {kind_clause}
         ORDER BY departure
         LIMIT 200
         """,
-        from_id, after, bit,
+        *params,
     )
 
     for r in rows:
@@ -207,9 +249,6 @@ async def _find_train(conn, from_id: str, to_id: str,
         dep_from = _to_min(r["departure"])
         dep_to = _to_min(to_row["departure"])
 
-        # Поезд идёт from_id → to_id, только если dep_to > dep_from.
-        # Если разница отрицательная, но небольшая (< 6 ч) — это
-        # обратный рейс, пропускаем. Если большая — поезд через полночь.
         if dep_to <= dep_from:
             if dep_from - dep_to < 6 * 60:
                 continue

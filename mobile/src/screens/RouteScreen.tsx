@@ -93,6 +93,8 @@ interface MergedLeg {
   trainNumber?: string;
   waitMinutes?: number;
   scheduleFound?: boolean;
+  /** Реальный тип поезда из enrich: local | express | aeroexpress */
+  trainType?: 'local' | 'express' | 'aeroexpress';
 }
 
 function mergeLegs(segments: RouteSegment[]): MergedLeg[] {
@@ -116,6 +118,7 @@ function mergeLegs(segments: RouteSegment[]): MergedLeg[] {
       last.minutes += seg.minutes;
       last.isExpress = last.isExpress || seg.kind === 'express';
       last.arrivalTime = seg.arrival_time ?? last.arrivalTime;
+      last.trainType = seg.train_type ?? last.trainType;
     } else {
       result.push({
         kind: 'ride',
@@ -130,6 +133,7 @@ function mergeLegs(segments: RouteSegment[]): MergedLeg[] {
         trainNumber: seg.train_number,
         waitMinutes: seg.wait_minutes,
         scheduleFound: seg.schedule_found,
+        trainType: seg.train_type,
       });
     }
   }
@@ -174,7 +178,6 @@ export default function RouteScreen({
   const c = useMemo(() => getRouteColors(theme), [theme]);
   const styles = useMemo(() => makeStyles(c), [c]);
 
-  // Нормализуем вход
   const propVariants = useMemo<RouteResult[]>(() => {
     if (variants && variants.length > 0) return variants;
     if (route) return [route];
@@ -187,7 +190,6 @@ export default function RouteScreen({
   const [expandedIndex, setExpandedIndex] = useState<number | null>(null);
   const [isRefreshing, setIsRefreshing] = useState(false);
 
-  // Синхронизация, если родитель обновил props
   useEffect(() => {
     setActiveVariants(propVariants);
     setActiveIndex(0);
@@ -251,13 +253,10 @@ export default function RouteScreen({
     const first = rides[0];
     const last = rides[rides.length - 1];
     const isExpress = rides.some((l) => l.isExpress);
-    // Если хотя бы один сегмент — по линии «Аэроэкспресс»,
-    // считаем тариф как аэроэкспресс (фикс. 700 ₽).
     const isAeroexpress = rides.some((l) => l.line === 'Аэроэкспресс');
     return calculateFare(first.from.id, last.to.id, isExpress, isAeroexpress);
   }, [legs]);
 
-  // Статус Тройки
   const troikaStatus = useMemo(() => {
     if (!currentRoute) {
       return { ok: false, stationsOut: [] as string[] };
@@ -279,7 +278,6 @@ export default function RouteScreen({
     return { ok: stationsOut.length === 0, stationsOut };
   }, [currentRoute]);
 
-  // Обновление маршрута от текущего времени
   const handleRefresh = async () => {
     if (!currentRoute || isRefreshing) return;
     const { fromId, toId } = extractEndpoints(currentRoute);
@@ -483,12 +481,22 @@ export default function RouteScreen({
 
           const color = leg.line_color || c.accent;
           const km = estimateKm(leg.minutes);
-          const intermediates = getIntermediateStations(leg.from.id, leg.to.id);
+
+          // Тип поезда: если enrich вернул train_type — используем его,
+          // иначе смотрим на isExpress из графа.
+          const trainType = leg.trainType ?? (leg.isExpress ? 'express' : 'local');
+          const isExpressTrain = trainType === 'express';
+
+          const allIntermediates = getIntermediateStations(leg.from.id, leg.to.id);
+          // Для экспресса оставляем только станции с флагом expressStop.
+          const intermediates = isExpressTrain
+            ? allIntermediates.filter((st) => st.expressStop)
+            : allIntermediates;
+
           const isExpanded = expandedIndex === i;
           const direction = getDirectionInfo(leg.from.id, leg.to.id);
 
-          // Префикс ~ если расписание не найдено
-          const approx = leg.scheduleFound === false ? '~ ' : '';
+          const approx = leg.scheduleFound === false && !leg.trainNumber ? '~ ' : '';
           const segDep = leg.departureTime
             ? `${approx}${leg.departureTime}`
             : fmtTime(startTime);
@@ -564,12 +572,19 @@ export default function RouteScreen({
                       </Text>
                       <Text style={styles.lineMeta}>
                         {Math.round(leg.minutes)} мин
-                        {intermediates.length > 0
-                          ? ` · ${intermediates.length} ${plural(
-                              intermediates.length,
-                              ['ост.', 'ост.', 'ост.'],
-                            )}`
-                          : ' · без остановок'}
+                        {isExpressTrain
+                          ? intermediates.length > 0
+                            ? ` · ${intermediates.length} ${plural(
+                                intermediates.length,
+                                ['остановка', 'остановки', 'остановок'],
+                              )} экспресса`
+                            : ' · без остановок'
+                          : intermediates.length > 0
+                            ? ` · ${intermediates.length} ${plural(
+                                intermediates.length,
+                                ['ост.', 'ост.', 'ост.'],
+                              )}`
+                            : ' · без остановок'}
                         {' · '}
                         {km} км
                       </Text>
@@ -664,26 +679,19 @@ const makeStyles = (c: RouteColors) =>
     summaryItem: { fontSize: 15, fontWeight: '600', color: c.text },
 
     troikaRow: {
-      flexDirection: 'row',
-      alignItems: 'center',
-      borderWidth: 1,
-      borderRadius: 12,
-      paddingVertical: 12,
-      paddingHorizontal: 16,
-      marginBottom: 12,
-      gap: 10,
+      flexDirection: 'row', alignItems: 'center',
+      borderWidth: 1, borderRadius: 12,
+      paddingVertical: 12, paddingHorizontal: 16,
+      marginBottom: 12, gap: 10,
     },
     troikaDot: { width: 10, height: 10, borderRadius: 5 },
     troikaText: { fontSize: 14, fontWeight: '500', flex: 1 },
 
     refreshBtn: {
-      borderWidth: 1,
-      borderRadius: 12,
+      borderWidth: 1, borderRadius: 12,
       paddingVertical: 12,
-      alignItems: 'center',
-      justifyContent: 'center',
-      marginBottom: 20,
-      minHeight: 44,
+      alignItems: 'center', justifyContent: 'center',
+      marginBottom: 20, minHeight: 44,
     },
     refreshText: { fontSize: 14, fontWeight: '600' },
 
