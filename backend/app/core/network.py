@@ -24,8 +24,12 @@ class Line:
     id: str
     name: str
     color: str
-    kind: str
+    kind: str            # оператор: 'cppk' | 'mcd' | 'mcc' | 'metro'
     headway: int = 10
+    # Тип сервиса: 'local' | 'express' | 'aeroexpress' | 'branded'.
+    # Определяет, как UI красит поезд, и как стратегии в find_routes
+    # штрафуют/поощряют линию.
+    train_kind: str = 'local'
 
     @property
     def wait_half(self) -> float:
@@ -49,9 +53,12 @@ class Segment:
 
 
 _VARIANT_LABELS = {
-    "fastest":          "Быстрейший",
-    "balanced":         "Оптимальный",
-    "fewest_transfers": "Меньше пересадок",
+    "fastest":            "Быстрейший",
+    "balanced":           "Оптимальный",
+    "fewest_transfers":   "Меньше пересадок",
+    "without_aeroexpress":"Без Аэроэкспресса",
+    "with_express":       "С экспрессом",
+    "branded":            "Фирменный",
 }
 
 
@@ -75,6 +82,7 @@ class Route:
                     "line": s.line.name if s.line else None,
                     "line_color": s.line.color if s.line else None,
                     "line_kind": s.line.kind if s.line else None,
+                    "line_train_kind": s.line.train_kind if s.line else None,
                     "from": {"id": s.from_station.id, "name": s.from_station.name},
                     "to": {"id": s.to_station.id, "name": s.to_station.name},
                     "minutes": round(s.minutes, 1),
@@ -109,10 +117,6 @@ class RailNetwork:
         self.edges[a].setdefault(b, []).append(e)
 
     def add_transfer(self, a: str, b: str, minutes: int) -> None:
-        """Пересадка между станциями (обычно метро между вокзалами).
-
-        Обе станции должны быть предварительно добавлены через add_station.
-        """
         if a == b:
             return
         if a not in self.stations or b not in self.stations:
@@ -259,26 +263,18 @@ _STATIONS = [
 ]
 
 
-# ============================================================
-# Пересадки между вокзалами (через метро)
-# ============================================================
-# Время — среднее с учётом перехода, ожидания и короткой поездки.
-# Замеры приблизительные, для UI сойдёт.
-
 _VOKZAL_TRANSFERS = [
-    # Кольцевая линия (короткие)
-    ("m_yar",  "m_kursk", 20),   # Ярославский → Курский (через Комсомольскую)
-    ("m_yar",  "m_kaz",   20),   # Ярославский → Казанский
-    ("m_kursk","m_kaz",   5),    # Курский ↔ Казанский — соседние
-    ("m_bel",  "m_sav",   15),   # Белорусский → Савёловский (через кольцо)
-    # Радиальные, подлиннее
-    ("m_yar",  "m_pav",   25),   # Ярославский → Павелецкий
-    ("m_kursk","m_pav",   20),   # Курский → Павелецкий
-    ("m_kursk","m_kiev",  25),   # Курский → Киевский
-    ("m_pav",  "m_kiev",  20),   # Павелецкий → Киевский
-    ("m_bel",  "m_yar",   25),   # Белорусский → Ярославский
-    ("m_len",  "m_yar",   10),   # Ленинградский → Ярославский (соседние)
-    ("m_len",  "m_kursk", 15),   # Ленинградский → Курский
+    ("m_yar",  "m_kursk", 20),
+    ("m_yar",  "m_kaz",   20),
+    ("m_kursk","m_kaz",   5),
+    ("m_bel",  "m_sav",   15),
+    ("m_yar",  "m_pav",   25),
+    ("m_kursk","m_pav",   20),
+    ("m_kursk","m_kiev",  25),
+    ("m_pav",  "m_kiev",  20),
+    ("m_bel",  "m_yar",   25),
+    ("m_len",  "m_yar",   10),
+    ("m_len",  "m_kursk", 15),
 ]
 
 
@@ -287,14 +283,23 @@ def build_moscow_network() -> RailNetwork:
     for sid, name in _STATIONS:
         net.add_station(Station(sid, name))
 
-    # --- Линии ---
+    # --- Линии (train_kind по умолчанию 'local') ---
     yar = Line("yar", "Ярославское направление", "#E5231B", "cppk", headway=8)
     yar_mon = Line("yar_monino", "Монинский ход", "#E5231B", "cppk", headway=15)
     yar_frz = Line("yar_fryazino", "Фрязинский ход", "#E5231B", "cppk", headway=20)
     yar_kras = Line("yar_krasnoarmeysk", "Красноармейская ветка", "#E5231B", "cppk", headway=30)
     pav = Line("pav", "Павелецкое направление", "#00A651", "cppk", headway=10)
-    pav_aero = Line("pav_aero", "Аэроэкспресс", "#00A651", "cppk", headway=30)
-    pav_aero_sub = Line("pav_aero_sub", "До Аэропорта Домодедово", "#00A651", "cppk", headway=60)
+
+    # Аэроэкспресс — отдельная линия с train_kind='aeroexpress'
+    pav_aero = Line(
+        "pav_aero", "Аэроэкспресс", "#E5231B", "cppk",
+        headway=30, train_kind='aeroexpress',
+    )
+    # Обычная электричка до аэропорта — это local
+    pav_aero_sub = Line(
+        "pav_aero_sub", "До Аэропорта Домодедово", "#00A651", "cppk",
+        headway=60,
+    )
 
     # --- Ярославское: основной ход ---
     net.add_segment(yar, [
@@ -351,11 +356,12 @@ def build_moscow_network() -> RailNetwork:
         6,
     ], kind="local")
 
-    # Аэроэкспресс и электричка до аэропорта
+    # Аэроэкспресс: m_pav → verhnie_kotly → aeroport_domodedovo
     net.add_segment(pav_aero, [
         "m_pav", "verhnie_kotly", "aeroport_domodedovo",
     ], [5, 40], kind="local")
 
+    # Обычная электричка: domodedovo → aviacionnaya → kosmos → аэропорт
     net.add_segment(pav_aero_sub, [
         "domodedovo", "aviacionnaya", "kosmos", "aeroport_domodedovo",
     ], [7, 5, 5], kind="local")
@@ -371,11 +377,22 @@ def build_moscow_network() -> RailNetwork:
 # МАРШРУТИЗАТОР
 # ============================================================
 
+# Штраф за использование линии, которую стратегия хочет избежать.
+# Единица — «минуты». 10 000 мин ≈ 7 дней — точно перебьёт любую
+# альтернативу, если она существует.
+AVOID_LINE_PENALTY = 10_000
+
+
 def find_route(net: RailNetwork, start_id: str, end_id: str,
                transfer_penalty: int = 5,
-               tags: list[str] | None = None) -> Route | None:
+               tags: list[str] | None = None,
+               avoid_kinds: frozenset[str] | None = None) -> Route | None:
+    """Dijkstra. Если передан avoid_kinds — штрафует вход на линии
+    указанных train_kind (аэроэкспресс, экспресс и т.п.)."""
     if start_id not in net.stations or end_id not in net.stations:
         return None
+
+    avoid_kinds = avoid_kinds or frozenset()
 
     if start_id == end_id:
         return Route(segments=[], total_minutes=0.0, transfers=0,
@@ -395,10 +412,17 @@ def find_route(net: RailNetwork, start_id: str, end_id: str,
         for nid, edge_list in net.edges[sid].items():
             for edge in edge_list:
                 penalty = 0.0
+
+                # Штраф за пересадку/старт на новой линии
+                entering_line = line_id is None or line_id != edge.line.id
                 if line_id is None:
                     penalty += edge.line.wait_half
                 elif line_id != edge.line.id:
                     penalty += transfer_penalty + edge.line.wait_half
+
+                # Штраф за вход на нежелательный тип линии
+                if entering_line and edge.line.train_kind in avoid_kinds:
+                    penalty += AVOID_LINE_PENALTY
 
                 new_time = cur_time + edge.travel_time + penalty
                 new_state = (nid, edge.line.id)
@@ -450,24 +474,56 @@ def _route_signature(r: Route) -> tuple:
     )
 
 
-_STRATEGIES = [
-    (5,  "fastest"),
-    (15, "balanced"),
-    (30, "fewest_transfers"),
+def _route_tags(route: Route, strategy_tag: str) -> list[str]:
+    """Собирает финальные теги варианта.
+
+    Первый тег — всегда стратегия (используется как label в UI).
+    Дополнительные — по содержимому маршрута.
+    """
+    tags = [strategy_tag]
+    has_aero = any(s.line and s.line.train_kind == 'aeroexpress'
+                   for s in route.segments)
+    has_express = any(s.line and s.line.train_kind == 'express'
+                      for s in route.segments)
+    if has_aero:
+        tags.append("has_aeroexpress")
+    if has_express:
+        tags.append("has_express")
+    return tags
+
+
+# Стратегии: (tag, transfer_penalty, avoid_kinds)
+_STRATEGIES: list[tuple[str, int, frozenset[str]]] = [
+    ("fastest",            5,  frozenset()),
+    ("balanced",           15, frozenset()),
+    ("fewest_transfers",   30, frozenset()),
+    ("without_aeroexpress",5,  frozenset({"aeroexpress"})),
 ]
 
 
 def find_routes(net: RailNetwork, start_id: str, end_id: str,
                 k: int = 3) -> list[Route]:
+    """Возвращает до k разных вариантов маршрута.
+
+    Стратегии:
+      fastest              — минимум времени
+      balanced             — компромисс по пересадкам
+      fewest_transfers     — штраф за пересадки максимальный
+      without_aeroexpress  — штраф за поезда класса 'aeroexpress'
+
+    Дубли (одинаковая последовательность станций и линий) отсеиваются.
+    """
     if start_id not in net.stations or end_id not in net.stations:
         return []
 
     variants: list[Route] = []
     seen: set[tuple] = set()
 
-    for penalty, tag in _STRATEGIES:
+    for tag, penalty, avoid in _STRATEGIES:
         r = find_route(net, start_id, end_id,
-                       transfer_penalty=penalty, tags=[tag])
+                       transfer_penalty=penalty,
+                       tags=[tag],
+                       avoid_kinds=avoid)
         if r is None:
             continue
 
@@ -475,6 +531,7 @@ def find_routes(net: RailNetwork, start_id: str, end_id: str,
         if sig in seen:
             continue
         seen.add(sig)
+        r.tags = _route_tags(r, tag)
         variants.append(r)
 
         if len(variants) >= k:

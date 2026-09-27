@@ -80,7 +80,7 @@ export const LINES: SchemaLine[] = [
     name: 'Аэроэкспресс',
     color: '#00A651',
     kind: 'cppk',
-    path: ['m_pav', 'verhnie_kotly', 'domodedovo_junction', 'aviacionnaya', 'kosmos', 'aeroport_domodedovo'],
+    path: ['m_pav', 'verhnie_kotly', 'domodedovo_junction', 'aeroport_domodedovo'],
   },
   {
     id: 'pav_aero_sub',

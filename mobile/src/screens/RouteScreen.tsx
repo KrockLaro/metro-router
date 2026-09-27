@@ -1,14 +1,14 @@
 import React, { useEffect, useMemo, useState } from 'react';
 import {
   View, Text, StyleSheet, ScrollView,
-  TouchableOpacity, Share,
+  TouchableOpacity, Share, ActivityIndicator,
 } from 'react-native';
 import { useTheme, Theme } from '../theme/ThemeProvider';
 import {
   BackIcon, ChevronLeftIcon, ChevronRightIcon,
   ChevronDownIcon, ShareIcon,
 } from '../icons';
-import { RouteResult, RouteSegment } from '../api/client';
+import { RouteResult, RouteSegment, buildRoute } from '../api/client';
 import {
   calculateFare, getIntermediateStations,
   getDirectionInfo, Fare,
@@ -23,6 +23,13 @@ const MSK_OFFSET_MS = 3 * 60 * 60 * 1000;
 
 function fmtTime(d: Date): string {
   const msk = new Date(d.getTime() + MSK_OFFSET_MS);
+  const hh = msk.getUTCHours().toString().padStart(2, '0');
+  const mm = msk.getUTCMinutes().toString().padStart(2, '0');
+  return `${hh}:${mm}`;
+}
+
+function mskNowHHMM(): string {
+  const msk = new Date(Date.now() + MSK_OFFSET_MS);
   const hh = msk.getUTCHours().toString().padStart(2, '0');
   const mm = msk.getUTCMinutes().toString().padStart(2, '0');
   return `${hh}:${mm}`;
@@ -85,6 +92,7 @@ interface MergedLeg {
   arrivalTime?: string;
   trainNumber?: string;
   waitMinutes?: number;
+  scheduleFound?: boolean;
 }
 
 function mergeLegs(segments: RouteSegment[]): MergedLeg[] {
@@ -121,10 +129,24 @@ function mergeLegs(segments: RouteSegment[]): MergedLeg[] {
         arrivalTime: seg.arrival_time,
         trainNumber: seg.train_number,
         waitMinutes: seg.wait_minutes,
+        scheduleFound: seg.schedule_found,
       });
     }
   }
   return result;
+}
+
+// ------------------------------------------------------------
+// Извлечение начала и конца маршрута
+// ------------------------------------------------------------
+
+function extractEndpoints(
+  route: RouteResult | undefined,
+): { fromId?: string; toId?: string } {
+  if (!route || route.segments.length === 0) return {};
+  const first = route.segments[0];
+  const last = route.segments[route.segments.length - 1];
+  return { fromId: first.from.id, toId: last.to.id };
 }
 
 // ------------------------------------------------------------
@@ -145,42 +167,52 @@ export default function RouteScreen({
   variants,
   fromName,
   toName,
-  departure,
+  departure: initialDeparture,
   onBack,
 }: Props) {
   const { theme } = useTheme();
   const c = useMemo(() => getRouteColors(theme), [theme]);
   const styles = useMemo(() => makeStyles(c), [c]);
 
-  const allVariants = useMemo<RouteResult[]>(() => {
+  // Нормализуем вход
+  const propVariants = useMemo<RouteResult[]>(() => {
     if (variants && variants.length > 0) return variants;
     if (route) return [route];
     return [];
   }, [variants, route]);
 
+  const [activeVariants, setActiveVariants] = useState<RouteResult[]>(propVariants);
+  const [currentDeparture, setCurrentDeparture] = useState<Date>(initialDeparture);
   const [activeIndex, setActiveIndex] = useState(0);
   const [expandedIndex, setExpandedIndex] = useState<number | null>(null);
+  const [isRefreshing, setIsRefreshing] = useState(false);
 
-  const safeIndex = Math.min(activeIndex, Math.max(0, allVariants.length - 1));
-  const currentRoute = allVariants[safeIndex];
+  // Синхронизация, если родитель обновил props
+  useEffect(() => {
+    setActiveVariants(propVariants);
+    setActiveIndex(0);
+  }, [propVariants]);
+
+  const safeIndex = Math.min(activeIndex, Math.max(0, activeVariants.length - 1));
+  const currentRoute = activeVariants[safeIndex];
 
   useEffect(() => {
     setExpandedIndex(null);
   }, [safeIndex]);
 
   const hasPrev = safeIndex > 0;
-  const hasNext = safeIndex < allVariants.length - 1;
+  const hasNext = safeIndex < activeVariants.length - 1;
 
   const arrival = useMemo(() => {
-    if (!currentRoute) return departure;
+    if (!currentRoute) return currentDeparture;
     if (currentRoute.arrival_time) {
       const [hh, mm] = currentRoute.arrival_time.split(':').map(Number);
-      const d = new Date(departure);
+      const d = new Date(currentDeparture);
       d.setUTCHours(hh - 3, mm, 0, 0);
       return d;
     }
-    return addMinutes(departure, currentRoute.total_minutes);
-  }, [currentRoute, departure]);
+    return addMinutes(currentDeparture, currentRoute.total_minutes);
+  }, [currentRoute, currentDeparture]);
 
   const legs = useMemo(
     () => (currentRoute ? mergeLegs(currentRoute.segments) : []),
@@ -197,8 +229,8 @@ export default function RouteScreen({
       const nextLeg = i < legs.length - 1 ? legs[i + 1] : null;
       return {
         leg,
-        startTime: addMinutes(departure, startMin),
-        endTime: addMinutes(departure, endMin),
+        startTime: addMinutes(currentDeparture, startMin),
+        endTime: addMinutes(currentDeparture, endMin),
         hideFromName:
           prevLeg !== null && prevLeg.kind === 'ride' && prevLeg.to.id === leg.from.id,
         isFirst: i === 0,
@@ -206,7 +238,7 @@ export default function RouteScreen({
         nextIsTransfer: nextLeg ? nextLeg.kind === 'transfer' : false,
       };
     });
-  }, [legs, departure]);
+  }, [legs, currentDeparture]);
 
   const totalKm = useMemo(
     () => (currentRoute ? estimateKm(currentRoute.total_minutes) : 0),
@@ -219,35 +251,61 @@ export default function RouteScreen({
     const first = rides[0];
     const last = rides[rides.length - 1];
     const isExpress = rides.some((l) => l.isExpress);
-    return calculateFare(first.from.id, last.to.id, isExpress);
+    // Если хотя бы один сегмент — по линии «Аэроэкспресс»,
+    // считаем тариф как аэроэкспресс (фикс. 700 ₽).
+    const isAeroexpress = rides.some((l) => l.line === 'Аэроэкспресс');
+    return calculateFare(first.from.id, last.to.id, isExpress, isAeroexpress);
   }, [legs]);
 
-  // ── Статус Тройки на маршруте ─────────────────────────────
+  // Статус Тройки
   const troikaStatus = useMemo(() => {
     if (!currentRoute) {
       return { ok: false, stationsOut: [] as string[] };
     }
-
     const seen = new Set<string>();
     const stationsOut: string[] = [];
-
     for (const seg of currentRoute.segments) {
       for (const side of ['from', 'to'] as const) {
         const st = seg[side];
         if (seen.has(st.id)) continue;
         seen.add(st.id);
-
         const station = STATIONS[st.id];
         if (!station) continue;
-        // Если явно не указано — считаем «Тройка не действует» (безопаснее)
         if (!station.facilities?.troikaPayment) {
           stationsOut.push(station.name);
         }
       }
     }
-
     return { ok: stationsOut.length === 0, stationsOut };
   }, [currentRoute]);
+
+  // Обновление маршрута от текущего времени
+  const handleRefresh = async () => {
+    if (!currentRoute || isRefreshing) return;
+    const { fromId, toId } = extractEndpoints(currentRoute);
+    if (!fromId || !toId) return;
+
+    setIsRefreshing(true);
+    try {
+      const res = await buildRoute({
+        from_id: fromId,
+        to_id: toId,
+        depart_at: mskNowHHMM(),
+        max_variants: 3,
+      });
+      if (res.variants.length > 0) {
+        setActiveVariants(res.variants);
+        setActiveIndex(0);
+        setCurrentDeparture(new Date());
+        setExpandedIndex(null);
+      }
+    } catch (e) {
+      // eslint-disable-next-line no-console
+      console.warn('[RouteScreen] refresh failed', e);
+    } finally {
+      setIsRefreshing(false);
+    }
+  };
 
   const handleShare = async () => {
     if (!currentRoute) return;
@@ -278,7 +336,7 @@ export default function RouteScreen({
     );
   }
 
-  const displayDeparture = currentRoute.departure_time ?? fmtTime(departure);
+  const displayDeparture = currentRoute.departure_time ?? fmtTime(currentDeparture);
   const displayArrival = currentRoute.arrival_time ?? fmtTime(arrival);
 
   return (
@@ -299,7 +357,7 @@ export default function RouteScreen({
           </TouchableOpacity>
 
           <Text style={styles.headerTitle}>
-            {currentRoute.label ?? 'Маршрут'} {safeIndex + 1}/{allVariants.length}
+            {currentRoute.label ?? 'Маршрут'} {safeIndex + 1}/{activeVariants.length}
           </Text>
 
           <TouchableOpacity
@@ -376,6 +434,25 @@ export default function RouteScreen({
           </Text>
         </View>
 
+        {/* Кнопка «Обновить» */}
+        <TouchableOpacity
+          onPress={handleRefresh}
+          disabled={isRefreshing}
+          activeOpacity={0.7}
+          style={[
+            styles.refreshBtn,
+            { borderColor: c.border, opacity: isRefreshing ? 0.6 : 1 },
+          ]}
+        >
+          {isRefreshing ? (
+            <ActivityIndicator size="small" color={c.accent} />
+          ) : (
+            <Text style={[styles.refreshText, { color: c.accent }]}>
+              Обновить от текущего времени
+            </Text>
+          )}
+        </TouchableOpacity>
+
         {/* Таймлайн */}
         {items.map((item, i) => {
           const {
@@ -410,8 +487,14 @@ export default function RouteScreen({
           const isExpanded = expandedIndex === i;
           const direction = getDirectionInfo(leg.from.id, leg.to.id);
 
-          const segDep = leg.departureTime ?? fmtTime(startTime);
-          const segArr = leg.arrivalTime ?? fmtTime(endTime);
+          // Префикс ~ если расписание не найдено
+          const approx = leg.scheduleFound === false ? '~ ' : '';
+          const segDep = leg.departureTime
+            ? `${approx}${leg.departureTime}`
+            : fmtTime(startTime);
+          const segArr = leg.arrivalTime
+            ? `${approx}${leg.arrivalTime}`
+            : fmtTime(endTime);
 
           return (
             <View key={i} style={styles.rideRow}>
@@ -580,7 +663,6 @@ const makeStyles = (c: RouteColors) =>
     },
     summaryItem: { fontSize: 15, fontWeight: '600', color: c.text },
 
-    // ─── Тройка ────────────────────────────────────────────
     troikaRow: {
       flexDirection: 'row',
       alignItems: 'center',
@@ -588,15 +670,22 @@ const makeStyles = (c: RouteColors) =>
       borderRadius: 12,
       paddingVertical: 12,
       paddingHorizontal: 16,
-      marginBottom: 20,
+      marginBottom: 12,
       gap: 10,
     },
-    troikaDot: {
-      width: 10, height: 10, borderRadius: 5,
+    troikaDot: { width: 10, height: 10, borderRadius: 5 },
+    troikaText: { fontSize: 14, fontWeight: '500', flex: 1 },
+
+    refreshBtn: {
+      borderWidth: 1,
+      borderRadius: 12,
+      paddingVertical: 12,
+      alignItems: 'center',
+      justifyContent: 'center',
+      marginBottom: 20,
+      minHeight: 44,
     },
-    troikaText: {
-      fontSize: 14, fontWeight: '500', flex: 1,
-    },
+    refreshText: { fontSize: 14, fontWeight: '600' },
 
     rideRow: { flexDirection: 'row', alignItems: 'stretch' },
     transferRow: { flexDirection: 'row', alignItems: 'stretch' },

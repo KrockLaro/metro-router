@@ -103,34 +103,35 @@ export async function getStationSchedule(
 
 export type SegmentKind = 'ride' | 'transfer' | 'walk' | 'express' | 'local' | 'aeroexpress';
 
+export type LineTrainKind = 'local' | 'express' | 'aeroexpress' | 'branded';
+
 export interface RouteSegment {
   kind: SegmentKind;
   line: string | null;
   line_color: string | null;
   line_kind: 'cppk' | 'mcd' | 'mcc' | 'metro' | null;
+  /** Тип сервиса: local | express | aeroexpress | branded */
+  line_train_kind?: LineTrainKind | null;
   from: { id: string; name: string };
   to: { id: string; name: string };
   minutes: number;
-
-  // Реальное расписание (приходит с enrich)
-  departure_time?: string;   // "14:32"
-  arrival_time?: string;     // "17:48"
-  train_number?: string;     // "6712"
-  train_type?: TrainType;    // local | express | aeroexpress
-  wait_minutes?: number;     // сколько ждать до поезда
-  schedule_found?: boolean;  // нашли ли поезд в БД
+  departure_time?: string;
+  arrival_time?: string;
+  train_number?: string;
+  train_type?: TrainType;
+  wait_minutes?: number;
+  schedule_found?: boolean;
 }
 
 export interface RouteVariant {
   total_minutes: number;
   transfers: number;
   segments: RouteSegment[];
+  /** Теги: 'fastest' | 'balanced' | 'fewest_transfers' | 'without_aeroexpress' | 'has_aeroexpress' | 'has_express' */
   tags?: string[];
   label?: string;
-
-  // Enrich добавляет:
-  departure_time?: string;   // "14:32" — общее отправление маршрута
-  arrival_time?: string;     // "17:48" — прибытие
+  departure_time?: string;
+  arrival_time?: string;
 }
 
 /** Алиас для совместимости: где-то импортируется как RouteResult */
