@@ -21,14 +21,16 @@ interface Props {
 }
 
 // ── Цвета иконок по типу поезда ────────────────────────────
-const GRAY = '#8E8E93';   // пригород
-const BLUE = '#0A84FF';   // экспресс
-const RED = '#FF3B30';    // аэроэкспресс
+const GRAY = '#8E8E93';    // пригород
+const BLUE = '#0A84FF';    // экспресс
+const RED = '#FF3B30';     // аэроэкспресс
+const YELLOW = '#FFCC00';  // МЦД
 
 const TYPE_COLOR: Record<TrainType, string> = {
   local: GRAY,
   express: BLUE,
   aeroexpress: RED,
+  mcd: YELLOW,
 };
 
 export default function ScheduleBlock({ stationId }: Props) {
@@ -64,28 +66,26 @@ export default function ScheduleBlock({ stationId }: Props) {
     }
   }, [expanded, data, loading, error, fetchData]);
 
-  // локальный «тик» раз в 30 сек, чтобы обновлять «через N мин»
   useEffect(() => {
     const t = setInterval(() => setNow(Date.now()), 30000);
     return () => clearInterval(t);
   }, []);
 
-  // авто-рефетч раз в 2 минуты, пока блок раскрыт
   useEffect(() => {
     if (!expanded) return;
     const t = setInterval(() => fetchData(), 120000);
     return () => clearInterval(t);
   }, [expanded, fetchData]);
 
-  // ── Одна строка расписания ───────────────────────────────
   const renderRow = (item: ScheduleItem) => {
     const minutes = recalc(item, now);
     if (minutes < -1) return null;
 
     const isSoon = minutes <= 1;
     const iconColor = TYPE_COLOR[item.train_type ?? 'local'] ?? GRAY;
+    // Для МЦД иконка жёлтая — контрастный текст
+    const iconTextColor = item.train_type === 'mcd' ? '#1C1C1E' : '#FFFFFF';
 
-    // «Путь 1 · Пл 3» — только то, что реально есть
     const platformParts = [
       item.track_number ? `Путь ${item.track_number}` : null,
       item.platform_number ? `Пл ${item.platform_number}` : null,
@@ -98,11 +98,10 @@ export default function ScheduleBlock({ stationId }: Props) {
         style={[styles.row, { borderBottomColor: theme.border }]}
       >
         <View style={styles.badge}>
-          <TrainBadgeIcon size={40} bgColor={iconColor} color="#FFFFFF" />
+          <TrainBadgeIcon size={40} bgColor={iconColor} color={iconTextColor} />
         </View>
 
         <View style={styles.center}>
-          {/* Строка 1: маршрут + время */}
           <View style={styles.line1}>
             <Text
               style={[styles.route, { color: theme.text }]}
@@ -116,7 +115,6 @@ export default function ScheduleBlock({ stationId }: Props) {
             </Text>
           </View>
 
-          {/* Строка 2: № + ETA слева, путь/платформа справа */}
           <View style={styles.line2}>
             <Text
               style={[
@@ -205,10 +203,6 @@ export default function ScheduleBlock({ stationId }: Props) {
   );
 }
 
-// ─────────────────────────────────────────────────────────────
-// Подкомпоненты и хелперы
-// ─────────────────────────────────────────────────────────────
-
 function DirectionGroup({
   title,
   items,
@@ -288,7 +282,6 @@ const styles = StyleSheet.create({
   badge: { width: 40, height: 40, marginRight: 12 },
   center: { flex: 1 },
 
-  // Строка 1: маршрут + время
   line1: {
     flexDirection: 'row',
     justifyContent: 'space-between',
@@ -306,7 +299,6 @@ const styles = StyleSheet.create({
     fontWeight: '700',
   },
 
-  // Строка 2: № + ETA слева, путь/платформа справа
   line2: {
     flexDirection: 'row',
     justifyContent: 'space-between',

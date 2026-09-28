@@ -26,10 +26,7 @@ class Line:
     color: str
     kind: str            # оператор: 'cppk' | 'mcd' | 'mcc' | 'metro'
     headway: int = 10
-    # Тип сервиса: 'local' | 'express' | 'aeroexpress' | 'branded'.
-    # Определяет, как UI красит поезд, и как стратегии в find_routes
-    # штрафуют/поощряют линию.
-    train_kind: str = 'local'
+    train_kind: str = 'local'   # 'local' | 'express' | 'aeroexpress' | 'branded'
 
     @property
     def wait_half(self) -> float:
@@ -133,16 +130,16 @@ class RailNetwork:
 
 _STATIONS = [
     # ══════════ ВОКЗАЛЫ МОСКВЫ (метро-узлы) ══════════
-    ("m_yar",  "Москва Ярославская"),
-    ("m_pav",  "Москва Павелецкая"),
-    ("m_kursk","Москва Курская"),
-    ("m_kaz",  "Москва Казанская"),
-    ("m_bel",  "Москва Белорусская"),
-    ("m_kiev", "Москва Киевская"),
-    ("m_sav",  "Москва Савёловская"),
-    ("m_len",  "Москва Ленинградская"),
+    ("m_yar",   "Москва Ярославская"),
+    ("m_pav",   "Москва Павелецкая"),
+    ("m_kursk", "Москва Курская"),
+    ("m_kaz",   "Москва Казанская"),
+    ("m_bel",   "Москва Белорусская"),
+    ("m_kiev",  "Москва Киевская"),
+    ("m_sav",   "Москва Савёловская"),
+    ("m_len",   "Москва Ленинградская"),
 
-    # --- Ярославское: основной ход ---
+    # ─── Ярославское: основной ход ───
     ("moscow3", "Москва-3"),
     ("malenkovskaya", "Маленковская"),
     ("yauza", "Яуза"),
@@ -180,7 +177,7 @@ _STATIONS = [
     ("aleksandrov", "Александров-1"),
     ("balakirevo", "Балакирево"),
 
-    # --- Ярославское: Монинский ход ---
+    # ─── Ярославское: Монинский ход ───
     ("podlipki", "Подлипки-Дачные"),
     ("bolshevo", "Болшево"),
     ("valentinovka", "Валентиновка"),
@@ -198,7 +195,7 @@ _STATIONS = [
     ("lesnaya", "Лесная"),
     ("fryazevo", "Фрязево"),
 
-    # --- Ярославское: Фрязинский ход ---
+    # ─── Ярославское: Фрязинский ход ───
     ("fabrika1maya", "Фабрика 1 Мая"),
     ("zelyony_bor", "Зелёный Бор"),
     ("ivanteevka2", "Ивантеевка-2"),
@@ -207,14 +204,14 @@ _STATIONS = [
     ("fryazino_tov", "Фрязино-Тов."),
     ("fryazino", "Фрязино-Пасс."),
 
-    # --- Ярославское: Красноармейская ветка ---
+    # ─── Ярославское: Красноармейская ветка ───
     ("poselok_dalniy", "Посёлок Дальний"),
     ("rahmanovo", "Рахманово"),
     ("fedorovskoe", "Фёдоровское"),
     ("putilovo", "Путилово"),
     ("krasnoarmeysk", "Красноармейск"),
 
-    # --- Павелецкое ---
+    # ─── Павелецкое ───
     ("derbenevskaya", "Дербеневская"),
     ("tulskaya", "Тульская"),
     ("varshavskaya", "Варшавская"),
@@ -229,6 +226,7 @@ _STATIONS = [
     ("leninskaya", "Ленинская"),
     ("km32", "32 км"),
     ("domodedovo", "Домодедово"),
+    ("domodedovo_junction", "Junction"),
     ("aviacionnaya", "Авиационная"),
     ("kosmos", "Космос"),
     ("aeroport_domodedovo", "Аэропорт Домодедово"),
@@ -260,21 +258,246 @@ _STATIONS = [
     ("korovino", "Коровино"),
     ("novosyolki_152", "Новосёлки (152 км)"),
     ("uzunovo", "Узуново"),
+
+    # ─── Белорусское: основной ход ───
+    ("begovaya", "Беговая"),
+    ("testovskaya", "Москва-Сити"),
+    ("fili", "Фили"),
+    ("slavyansky_bulvar", "Славянский Бульвар"),
+    ("kuntsevskaya", "Кунцевская"),
+    ("rabochiy_poselok", "Рабочий Посёлок"),
+    ("setun", "Сетунь"),
+    ("nemchinovka", "Немчиновка"),
+    ("skolkovo", "Сколково"),
+    ("bakovka", "Баковка"),
+    ("odintsovo", "Одинцово"),
+    ("otradnoe", "Отрадное"),
+    ("pionerskaya", "Пионерская"),
+    ("perhushkovo", "Перхушково"),
+    ("zdravnitsa", "Здравница"),
+    ("zhavoronki", "Жаворонки"),
+    ("dachnoe", "Дачное"),
+    ("malye_vyazemy", "Малые Вязёмы"),
+    ("golitsyno", "Голицыно"),
+    ("sushkinskaya", "Сушкинская"),
+    ("petelino", "Петелино"),
+    ("chastsovskaya", "Часцовская"),
+    ("portnovskaya", "Портновская"),
+    ("kubinka1", "Кубинка-1"),
+    ("chapaevka", "Чапаевка"),
+    ("polushkino", "Полушкино"),
+    ("sanatornaya", "Санаторная"),
+    ("tuchkovo", "Тучково"),
+    ("teatralnaya", "Театральная"),
+    ("sadovaya", "Садовая"),
+    ("dorohovo", "Дорохово"),
+    ("partizanskaya", "Партизанская"),
+    ("shalikovo", "Шаликово"),
+    ("kukarinskaya", "Кукаринская"),
+    ("pl109km", "109 км (Платовская)"),
+    ("mozhaysk", "Можайск"),
+    ("borodino", "Бородино"),
+
+    # ─── Белорусское: Усовская ветка ───
+    ("kuntsevo2", "Кунцево-2"),
+    ("romashkovo", "Ромашково"),
+    ("razdory", "Раздоры"),
+    ("barviha", "Барвиха"),
+    ("ilyinskoe", "Ильинское"),
+    ("usovo", "Усово"),
+
+    # ─── Белорусское: Звенигородская ветка ───
+    ("zaharovo", "Захарово"),
+    ("hlyupino", "Хлюпино"),
+    ("skorotovo", "Скоротово"),
+    ("zvenigorod", "Звенигород"),
+
+    # ─── Белорусское/Савёловское: аэроэкспресс в Шереметьево ───
+    ("sheremetyevo_south", "Шереметьево — Юг"),
+    ("sheremetyevo_north", "Шереметьево — Север"),
+
+    # ─── Савёловское: основной ход ───
+    ("timiryazevskaya", "Тимирязевская"),
+    ("petrovsko_razumovskaya", "Петровско-Разумовская"),
+    ("okruzhnaya", "Окружная"),
+    ("degunino", "Дегунино"),
+    ("beskudnikovo", "Бескудниково"),
+    ("lianozovo", "Лианозово"),
+    ("mark", "Марк"),
+    ("novodachnaya", "Новодачная"),
+    ("dolgoprudnaya", "Долгопрудная"),
+    ("vodniki", "Водники"),
+    ("hlebnikovo", "Хлебниково"),
+    ("sheremetyevskaya", "Шереметьевская"),
+    ("lobnya", "Лобня"),
+    ("depo_sav", "Депо"),
+    ("lugovaya", "Луговая"),
+    ("nekrasovskaya", "Некрасовская"),
+    ("katuar", "Катуар"),
+    ("trudovaya", "Трудовая"),
+    ("iksha", "Икша"),
+    ("morozki", "Морозки"),
+    ("turist", "Турист"),
+    ("yahroma", "Яхрома"),
+    ("dmitrov", "Дмитров"),
+    ("kanalstroy", "Каналстрой"),
+    ("barsuchenko", "Имени Барсученко"),
+    ("orudevo", "Орудьево"),
+    ("verbilki", "Вербилки"),
+    ("nikulki", "Никулки"),
+    ("zheltikovo", "Жёлтиково"),
+    ("vlasovo", "Власово"),
+    ("taldom", "Талдом"),
+    ("lebzino", "Лебзино"),
+    ("pl124km", "124 км"),
+    ("savelovo", "Савёлово"),
+
+    # ─── Савёловское: ветка Вербилки — Дубна ───
+    ("sorevnovanie", "Соревнование"),
+    ("zaprudnya", "Запрудня"),
+    ("tempy", "Темпы"),
+    ("meldino", "Мельдино"),
+    ("zhivopisnoe", "Живописное (119 км)"),
+    ("karmanovo", "Карманово (122 км)"),
+    ("bolshaya_volga", "Большая Волга"),
+    ("dubna", "Дубна"),
+
+    # ─── Курское направление ───
+    ("moskva_tovarnaya", "Москва-Товарная"),
+    ("kalitniki", "Калитники"),
+    ("novokhokhlovskaya", "Новохохловская"),
+    ("tekstilshchiki", "Текстильщики"),
+    ("pechatniki", "Печатники"),
+    ("lyublino", "Люблино"),
+    ("depo_kursk", "Депо"),
+    ("pererva", "Перерва"),
+    ("kuryanovo", "Курьяново"),
+    ("moskvorechye", "Москворечье"),
+    ("tsaritsyno", "Царицыно"),
+    ("pokrovskoe", "Покровское"),
+    ("krasny_stroitel", "Красный Строитель"),
+    ("bittsa", "Битца"),
+    ("butovo", "Бутово"),
+    ("shcherbinka", "Щербинка"),
+    ("ostafyevo", "Остафьево"),
+    ("silikatnaya", "Силикатная"),
+    ("podolsk", "Подольск"),
+    ("kutuzovskaya_k", "Кутузовская"),
+    ("vesennyaya", "Весенняя"),
+    ("grivno", "Гривно"),
+    ("lvovskaya", "Львовская"),
+    ("molodi", "Молоди"),
+    ("stolbovaya", "Столбовая"),
+    ("ivachkovo", "Ивачково (66 км)"),
+    ("chepelyovo", "Чепелёво"),
+    ("chekhov", "Чехов"),
+    ("luch", "Луч"),
+    ("sharapova_okhota", "Шарапова Охота"),
+    ("km92_k", "92 км"),
+    ("avangard", "Авангард"),
+    ("serpukhov", "Серпухов"),
+    ("oka", "Ока"),
+    ("km107_k", "107 км"),
+    ("priokskaya", "Приокская"),
+    ("romanovskie_dachi", "Романовские дачи"),
+    ("tarusskaya", "Тарусская"),
+    ("aleksandrovka", "Александровка (132 км)"),
+    ("pakhomovo", "Пахомово"),
+    ("shulgino", "Шульгино"),
+    ("prostor", "Простор (153 км)"),
+    ("yasnogorsk", "Ясногорск"),
+    ("shemetovo", "Шеметово"),
+    ("baranovo", "Бараново"),
+    ("revyakino", "Ревякино"),
+    ("baydiki", "Байдики"),
+    ("khomyakovo", "Хомяково"),
+    ("rodnichok", "Родничок (191 км)"),
+    ("tula", "Тула"),
+
+    # ─── Рижское направление ───
+    ("ploshchad_trekh_vokzalov", "Площадь Трёх Вокзалов"),
+    ("rizhskaya", "Рижская"),
+    ("marya_roshcha", "Марьина Роща"),
+    ("dmitrovskaya", "Дмитровская"),
+    ("m_riga", "Москва Рижская"),
+    ("grazhdanskaya", "Гражданская"),
+    ("krasny_balties", "Красный Балтиец"),
+    ("streshnevo", "Стрешнево"),
+    ("shchukinskaya", "Щукинская"),
+    ("tushinskaya", "Тушинская"),
+    ("trikotazhnaya", "Трикотажная"),
+    ("volokolamskaya", "Волоколамская"),
+    ("penyagino", "Пенягино"),
+    ("pavshino", "Павшино"),
+    ("krasnogorskaya", "Красногорская"),
+    ("opalikha", "Опалиха"),
+    ("anikeevka", "Аникеевка"),
+    ("nahabino", "Нахабино"),
+    ("malinovka", "Малиновка"),
+    ("dedovsk", "Дедовск"),
+    ("miitovskaya", "Миитовская"),
+    ("snegiri", "Снегири"),
+    ("km50_riga", "50 км"),
+    ("manikhino1", "Манихино 1"),
+    ("troitskaya", "Троицкая"),
+    ("istra", "Истра"),
+    ("novoierusalimskaya", "Новоиерусалимская"),
+    ("chekhovskaya_riga", "Чеховская"),
+    ("kholshcheviki", "Холщёвики"),
+    ("km73_riga", "73 км"),
+    ("yadroshino", "Ядрошино"),
+    ("kursakovskaya", "Курсаковская"),
+    ("rumyantsevo", "Румянцево"),
+    ("novopetrovskaya", "Новопетровская"),
+    ("ustinovka", "Устиновка"),
+    ("km91_riga", "91 км"),
+    ("lesodolgorukovo", "Лесодолгоруково"),
+    ("chismena", "Чисмена"),
+    ("matryonino", "Матрёнино"),
+    ("dubosekovo", "Дубосеково"),
+    ("volokolamsk", "Волоколамск"),
+    ("km133_riga", "133 км"),
+    ("blagoveshchenskoe", "Благовещенское"),
+    ("moskvich", "Москвич (141 км)"),
+    ("bukholovo", "Бухолово"),
+    ("podmoskovnye_dachi", "Подмосковные дачи (149 км)"),
+    ("shakhovskaya", "Шаховская"),
 ]
 
 
 _VOKZAL_TRANSFERS = [
-    ("m_yar",  "m_kursk", 20),
-    ("m_yar",  "m_kaz",   20),
-    ("m_kursk","m_kaz",   5),
+    # ─── Комсомольская площадь (Ярославский + Ленинградский + Казанский) ───
+    ("m_yar",  "m_len",   5),    # пешком через площадь
+    ("m_yar",  "m_kaz",   5),    # пешком через площадь
+    ("m_len",  "m_kaz",   5),    # пешком через площадь
+    ("m_yar",  "ploshchad_trekh_vokzalov", 5),
+    ("m_len",  "ploshchad_trekh_vokzalov", 5),
+    ("m_kaz",  "ploshchad_trekh_vokzalov", 5),
+
+    # ─── Курский вокзал (отдельно, но связан с Комсомольской) ───
+    ("m_kursk", "ploshchad_trekh_vokzalov", 10),   # метро, 1 остановка
+    ("m_kursk", "m_yar",   20),
+    ("m_kursk", "m_len",   15),
+    ("m_kursk", "m_kaz",   10),
+    ("m_kursk", "m_pav",   20),
+    ("m_kursk", "m_kiev",  25),
+    ("m_kursk", "m_bel",   20),
+
+    # ─── Остальные вокзалы ───
     ("m_bel",  "m_sav",   15),
-    ("m_yar",  "m_pav",   25),
-    ("m_kursk","m_pav",   20),
-    ("m_kursk","m_kiev",  25),
-    ("m_pav",  "m_kiev",  20),
     ("m_bel",  "m_yar",   25),
-    ("m_len",  "m_yar",   10),
-    ("m_len",  "m_kursk", 15),
+    ("m_pav",  "m_yar",   25),
+    ("m_pav",  "m_kiev",  20),
+    ("m_pav",  "m_bel",   30),
+    ("m_sav",  "m_bel",   15),
+    ("m_sav",  "m_len",   10),
+
+    # ─── Новые: Рижская и Дмитровская ───
+    ("rizhskaya",    "ploshchad_trekh_vokzalov", 10),
+    ("rizhskaya",    "dmitrovskaya",              5),
+    ("rizhskaya",    "m_riga",                    5),   # ответвление на Рижский вокзал
+    ("dmitrovskaya", "m_sav",                     5),   # метро, 1 остановка
+    ("dmitrovskaya", "marya_roshcha",             5),
 ]
 
 
@@ -283,25 +506,33 @@ def build_moscow_network() -> RailNetwork:
     for sid, name in _STATIONS:
         net.add_station(Station(sid, name))
 
-    # --- Линии (train_kind по умолчанию 'local') ---
+    # ─── Линии ─────────────────────────────────────────────
+    # Ярославское
     yar = Line("yar", "Ярославское направление", "#E5231B", "cppk", headway=8)
     yar_mon = Line("yar_monino", "Монинский ход", "#E5231B", "cppk", headway=15)
     yar_frz = Line("yar_fryazino", "Фрязинский ход", "#E5231B", "cppk", headway=20)
     yar_kras = Line("yar_krasnoarmeysk", "Красноармейская ветка", "#E5231B", "cppk", headway=30)
+    # Павелецкое
     pav = Line("pav", "Павелецкое направление", "#00A651", "cppk", headway=10)
+    pav_aero = Line("pav_aero", "Аэроэкспресс", "#E5231B", "cppk",
+                    headway=30, train_kind="aeroexpress")
+    pav_aero_sub = Line("pav_aero_sub", "До Аэропорта Домодедово", "#00A651", "cppk", headway=60)
+    # Белорусское
+    bel = Line("bel", "Белорусское направление", "#e1d8bb", "cppk", headway=10)
+    bel_usovo = Line("bel_usovo", "Усовская ветка", "#e1d8bb", "cppk", headway=30)
+    bel_zven = Line("bel_zven", "Звенигородская ветка", "#e1d8bb", "cppk", headway=60)
+    # Савёловское
+    sav = Line("sav", "Савёловское направление", "#e1d8bb", "cppk", headway=10)
+    sav_dubna = Line("sav_dubna", "Ветка Вербилки — Дубна", "#e1d8bb", "cppk", headway=60)
+    sav_aero = Line("sav_aero", "Аэроэкспресс в Шереметьево", "#E5231B", "cppk",
+                    headway=30, train_kind="aeroexpress")
+    # ─── Курское ───
+    kursk = Line("kursk", "Курское направление", "#f754e1", "cppk", headway=10)
+    # ─── Рижское ───
+    riga = Line("riga", "Рижское направление", "#f754e1", "cppk", headway=15)
+    riga_m = Line("riga_m", "Ветка на Рижский вокзал", "#f754e1", "cppk", headway=30)
 
-    # Аэроэкспресс — отдельная линия с train_kind='aeroexpress'
-    pav_aero = Line(
-        "pav_aero", "Аэроэкспресс", "#E5231B", "cppk",
-        headway=30, train_kind='aeroexpress',
-    )
-    # Обычная электричка до аэропорта — это local
-    pav_aero_sub = Line(
-        "pav_aero_sub", "До Аэропорта Домодедово", "#00A651", "cppk",
-        headway=60,
-    )
-
-    # --- Ярославское: основной ход ---
+    # ─── Ярославское: основной ход ───
     net.add_segment(yar, [
         "m_yar", "moscow3", "malenkovskaya", "yauza", "rostokino",
         "losinoostrovskaya", "los", "perlovskaya", "tayninskaya",
@@ -313,7 +544,7 @@ def build_moscow_network() -> RailNetwork:
         "km90", "arsaki", "strunino", "aleksandrov", "balakirevo",
     ], [3, 3, 3, 3, 4, 4, 4, 4, 4, 4, 4, 5, 4, 4, 5, 5, 4, 5, 5, 7, 4, 4, 4, 5, 5, 5, 4, 6, 5, 5, 6, 5, 5, 6, 12, 15], kind="local")
 
-    # --- Ярославское: Монинский ход ---
+    # ─── Ярославское: Монинский ход ───
     net.add_segment(yar_mon, [
         "mytishchi", "podlipki", "bolshevo",
         "valentinovka", "zagoryanskaya", "sokolovskaya", "voronok",
@@ -322,20 +553,20 @@ def build_moscow_network() -> RailNetwork:
         "fryazevo",
     ], [8, 10, 6, 6, 6, 6, 6, 6, 6, 6, 6, 8, 6, 6, 6, 6], kind="local")
 
-    # --- Ярославское: Фрязинский ход ---
+    # ─── Ярославское: Фрязинский ход ───
     net.add_segment(yar_frz, [
         "bolshevo", "fabrika1maya", "zelyony_bor",
         "ivanteevka2", "ivanteevka", "detskaya",
         "fryazino_tov", "fryazino",
     ], [5, 4, 5, 4, 4, 4, 5], kind="local")
 
-    # --- Ярославское: Красноармейская ветка ---
+    # ─── Ярославское: Красноармейская ветка ───
     net.add_segment(yar_kras, [
         "sofrino", "poselok_dalniy", "rahmanovo",
         "fedorovskoe", "putilovo", "krasnoarmeysk",
     ], [8, 8, 8, 8, 8], kind="local")
 
-    # --- Павелецкое ---
+    # ─── Павелецкое: основной ход ───
     net.add_segment(pav, [
         "m_pav", "derbenevskaya", "tulskaya", "varshavskaya",
         "verhnie_kotly", "nagatinskaya", "chertanovo",
@@ -349,24 +580,128 @@ def build_moscow_network() -> RailNetwork:
         "purlovo", "kolmenka_131", "topkanovo", "km137",
         "bogatishchevo", "km146", "korovino",
         "novosyolki_152", "uzunovo",
-     ], [
-        4, 3, 3, 4, 4, 5, 5, 5, 5, 5, 5, 4, 5,
+    ], [
+        4, 3, 3, 4, 4, 5, 5, 5, 5, 5, 4, 5,
         4, 4, 4, 5, 5, 5, 5, 5, 6, 5, 5, 6, 5, 5,
         5, 5, 5, 6, 6, 6, 6, 6, 6, 5, 6, 6, 5, 6,
-        6,
+        6, 6,
     ], kind="local")
 
-    # Аэроэкспресс: m_pav → verhnie_kotly → aeroport_domodedovo
+    # ─── Павелецкое: аэроэкспресс и электричка до аэропорта ───
     net.add_segment(pav_aero, [
-        "m_pav", "verhnie_kotly", "aeroport_domodedovo",
-    ], [5, 40], kind="local")
+        "m_pav", "verhnie_kotly", "domodedovo_junction", "aeroport_domodedovo",
+    ], [25, 5, 40], kind="express")
 
-    # Обычная электричка: domodedovo → aviacionnaya → kosmos → аэропорт
     net.add_segment(pav_aero_sub, [
-        "domodedovo", "aviacionnaya", "kosmos", "aeroport_domodedovo",
-    ], [7, 5, 5], kind="local")
+        "domodedovo", "domodedovo_junction", "aviacionnaya", "kosmos", "aeroport_domodedovo",
+    ], [7, 3, 5, 5], kind="local")
 
-    # --- Пересадки между вокзалами ---
+    # ─── Белорусское: основной ход ───
+    net.add_segment(bel, [
+        "m_bel", "begovaya", "testovskaya", "fili", "slavyansky_bulvar",
+        "kuntsevskaya", "rabochiy_poselok", "setun", "nemchinovka", "skolkovo",
+        "bakovka", "odintsovo", "otradnoe", "pionerskaya", "perhushkovo",
+        "zdravnitsa", "zhavoronki", "dachnoe", "malye_vyazemy", "golitsyno",
+        "sushkinskaya", "petelino", "chastsovskaya", "portnovskaya",
+        "kubinka1", "chapaevka", "polushkino", "sanatornaya", "tuchkovo",
+        "teatralnaya", "sadovaya", "dorohovo", "partizanskaya", "shalikovo",
+        "kukarinskaya", "pl109km", "mozhaysk", "borodino",
+    ], [
+        4, 3, 4, 4, 4, 4, 3, 4, 4, 3, 4, 4, 4, 4, 5, 4, 5, 4, 5, 6,
+        4, 4, 4, 4, 5, 4, 4, 4, 5, 4, 4, 5, 5, 4, 5, 5, 6,
+    ], kind="local")
+
+    # ─── Белорусское: Усовская ветка ───
+    net.add_segment(bel_usovo, [
+        "rabochiy_poselok", "kuntsevo2", "romashkovo", "razdory",
+        "barviha", "ilyinskoe", "usovo",
+    ], [3, 4, 5, 4, 3, 3], kind="local")
+
+    # ─── Белорусское: Звенигородская ветка ───
+    net.add_segment(bel_zven, [
+        "golitsyno", "zaharovo", "hlyupino", "skorotovo", "zvenigorod",
+    ], [5, 5, 5, 5], kind="local")
+
+    # ─── Савёловское: основной ход ───
+    net.add_segment(sav, [
+        "m_sav", "timiryazevskaya", "petrovsko_razumovskaya", "okruzhnaya",
+        "degunino", "beskudnikovo", "lianozovo", "mark", "novodachnaya",
+        "dolgoprudnaya", "vodniki", "hlebnikovo", "sheremetyevskaya",
+        "lobnya", "depo_sav", "lugovaya", "nekrasovskaya", "katuar",
+        "trudovaya", "iksha", "morozki", "turist", "yahroma", "dmitrov",
+        "kanalstroy", "barsuchenko", "orudevo", "verbilki", "nikulki",
+        "zheltikovo", "vlasovo", "taldom", "lebzino", "pl124km", "savelovo",
+    ], [
+        4, 3, 3, 3, 3, 4, 4, 4, 5, 4, 4, 4, 4, 4, 3, 3, 4, 4, 5,
+        5, 4, 4, 6, 4, 4, 4, 5, 5, 4, 5, 5, 5, 4, 5,
+    ], kind="local")
+
+    # ─── Савёловское: ветка Вербилки — Дубна ───
+    net.add_segment(sav_dubna, [
+        "verbilki", "sorevnovanie", "zaprudnya", "tempy", "meldino",
+        "zhivopisnoe", "karmanovo", "bolshaya_volga", "dubna",
+    ], [4, 5, 5, 4, 5, 4, 6, 5], kind="local")
+
+    # ─── Аэроэкспресс в Шереметьево (от Одинцово) ───
+    net.add_segment(sav_aero, [
+        "odintsovo", "bakovka", "skolkovo", "nemchinovka", "setun",
+        "rabochiy_poselok", "kuntsevskaya", "slavyansky_bulvar", "fili",
+        "testovskaya", "begovaya", "m_bel", "m_sav", "okruzhnaya",
+        "lianozovo", "sheremetyevo_south", "sheremetyevo_north",
+    ], [
+        5, 5, 4, 5, 4, 4, 4, 4, 5, 4, 5, 6, 5, 6, 8, 6,
+    ], kind="express")
+
+        # ─── Курское: основной ход ───
+    net.add_segment(kursk, [
+        "m_kursk", "moskva_tovarnaya", "kalitniki", "novokhokhlovskaya",
+        "tekstilshchiki", "pechatniki", "lyublino", "depo_kursk",
+        "pererva", "kuryanovo", "moskvorechye", "tsaritsyno",
+        "pokrovskoe", "krasny_stroitel", "bittsa", "butovo",
+        "shcherbinka", "ostafyevo", "silikatnaya", "podolsk",
+        "kutuzovskaya_k", "vesennyaya", "grivno", "lvovskaya",
+        "molodi", "stolbovaya", "ivachkovo", "chepelyovo", "chekhov",
+        "luch", "sharapova_okhota", "km92_k", "avangard", "serpukhov",
+        "oka", "km107_k", "priokskaya", "romanovskie_dachi", "tarusskaya",
+        "aleksandrovka", "pakhomovo", "shulgino", "prostor", "yasnogorsk",
+        "shemetovo", "baranovo", "revyakino", "baydiki", "khomyakovo",
+        "rodnichok", "tula",
+    ], [
+        5, 4, 4, 4, 4, 4, 3, 4, 3, 4, 4, 4, 4, 4, 4, 3, 4, 3, 4, 5,
+        5, 4, 4, 4, 4, 4, 4, 4, 5, 4, 5, 4, 5, 5, 5, 4, 5, 5, 5, 5,
+        4, 4, 5, 5, 5, 4, 5, 5, 4, 5,
+    ], kind="local")
+
+    # ─── Рижское: основной ход ───
+    net.add_segment(riga, [
+        "m_kursk", "ploshchad_trekh_vokzalov", "rizhskaya",
+        "marya_roshcha", "dmitrovskaya",
+        "grazhdanskaya", "krasny_balties", "streshnevo", "shchukinskaya",
+        "tushinskaya", "trikotazhnaya", "volokolamskaya", "penyagino",
+        "pavshino", "krasnogorskaya", "opalikha", "anikeevka", "nahabino",
+        "malinovka", "dedovsk", "miitovskaya", "snegiri", "km50_riga",
+        "manikhino1", "troitskaya", "istra", "novoierusalimskaya",
+        "chekhovskaya_riga", "kholshcheviki", "km73_riga", "yadroshino",
+        "kursakovskaya", "rumyantsevo", "novopetrovskaya", "ustinovka",
+        "km91_riga", "lesodolgorukovo", "chismena", "matryonino",
+        "dubosekovo", "volokolamsk", "km133_riga", "blagoveshchenskoe",
+        "moskvich", "bukholovo", "podmoskovnye_dachi", "shakhovskaya",
+    ], [
+        5, 5, 4, 5,
+        4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4,
+        4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4,
+        5, 4, 5,
+    ], kind="local")
+
+    # ─── Ветка на Рижский вокзал ───
+    net.add_segment(riga_m, [
+        "dmitrovskaya", "m_riga",
+        ], [
+            5,
+    ], kind="local")
+    
+
+    # ─── Пересадки между вокзалами ───
     for a, b, m in _VOKZAL_TRANSFERS:
         net.add_transfer(a, b, m)
 
@@ -377,9 +712,6 @@ def build_moscow_network() -> RailNetwork:
 # МАРШРУТИЗАТОР
 # ============================================================
 
-# Штраф за использование линии, которую стратегия хочет избежать.
-# Единица — «минуты». 10 000 мин ≈ 7 дней — точно перебьёт любую
-# альтернативу, если она существует.
 AVOID_LINE_PENALTY = 10_000
 
 
@@ -387,8 +719,6 @@ def find_route(net: RailNetwork, start_id: str, end_id: str,
                transfer_penalty: int = 5,
                tags: list[str] | None = None,
                avoid_kinds: frozenset[str] | None = None) -> Route | None:
-    """Dijkstra. Если передан avoid_kinds — штрафует вход на линии
-    указанных train_kind (аэроэкспресс, экспресс и т.п.)."""
     if start_id not in net.stations or end_id not in net.stations:
         return None
 
@@ -412,15 +742,12 @@ def find_route(net: RailNetwork, start_id: str, end_id: str,
         for nid, edge_list in net.edges[sid].items():
             for edge in edge_list:
                 penalty = 0.0
-
-                # Штраф за пересадку/старт на новой линии
                 entering_line = line_id is None or line_id != edge.line.id
                 if line_id is None:
                     penalty += edge.line.wait_half
                 elif line_id != edge.line.id:
                     penalty += transfer_penalty + edge.line.wait_half
 
-                # Штраф за вход на нежелательный тип линии
                 if entering_line and edge.line.train_kind in avoid_kinds:
                     penalty += AVOID_LINE_PENALTY
 
@@ -463,10 +790,6 @@ def find_route(net: RailNetwork, start_id: str, end_id: str,
     return Route(segments, dist[best], transfers, tags=list(tags or []))
 
 
-# ============================================================
-# МУЛЬТИМАРШРУТЫ (top-N)
-# ============================================================
-
 def _route_signature(r: Route) -> tuple:
     return tuple(
         (s.from_station.id, s.to_station.id, s.line.id if s.line else None)
@@ -475,11 +798,6 @@ def _route_signature(r: Route) -> tuple:
 
 
 def _route_tags(route: Route, strategy_tag: str) -> list[str]:
-    """Собирает финальные теги варианта.
-
-    Первый тег — всегда стратегия (используется как label в UI).
-    Дополнительные — по содержимому маршрута.
-    """
     tags = [strategy_tag]
     has_aero = any(s.line and s.line.train_kind == 'aeroexpress'
                    for s in route.segments)
@@ -492,7 +810,6 @@ def _route_tags(route: Route, strategy_tag: str) -> list[str]:
     return tags
 
 
-# Стратегии: (tag, transfer_penalty, avoid_kinds)
 _STRATEGIES: list[tuple[str, int, frozenset[str]]] = [
     ("fastest",            5,  frozenset()),
     ("balanced",           15, frozenset()),
@@ -503,16 +820,6 @@ _STRATEGIES: list[tuple[str, int, frozenset[str]]] = [
 
 def find_routes(net: RailNetwork, start_id: str, end_id: str,
                 k: int = 3) -> list[Route]:
-    """Возвращает до k разных вариантов маршрута.
-
-    Стратегии:
-      fastest              — минимум времени
-      balanced             — компромисс по пересадкам
-      fewest_transfers     — штраф за пересадки максимальный
-      without_aeroexpress  — штраф за поезда класса 'aeroexpress'
-
-    Дубли (одинаковая последовательность станций и линий) отсеиваются.
-    """
     if start_id not in net.stations or end_id not in net.stations:
         return []
 

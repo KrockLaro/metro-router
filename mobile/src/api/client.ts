@@ -50,7 +50,7 @@ apiClient.interceptors.response.use(
 // Общие типы
 // ──────────────────────────────────────────────────────────
 
-export type TrainType = 'local' | 'express' | 'aeroexpress';
+export type TrainType = 'local' | 'express' | 'aeroexpress' | 'mcd';
 
 export interface StationBrief {
   id: string;

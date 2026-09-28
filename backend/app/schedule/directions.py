@@ -1,17 +1,104 @@
-﻿"""Ротация направлений по дням недели."""
+﻿"""Ротация направлений по дням недели.
+
+Индексы 0..6 = Пн..Вс (datetime.weekday()).
+"""
 from __future__ import annotations
 
 
 DIRECTIONS: dict[str, dict] = {
-    "savyolovskoye":  {"name": "Савёловское",  "stations": ["m_sav"],  "line_id": "sav"},
-    "belorusskoye":   {"name": "Белорусское",  "stations": ["m_bel"],  "line_id": "bel"},
-    "kurskoye":       {"name": "Курское",      "stations": ["m_kursk"],"line_id": "kursk"},
-    "rizhskoye":      {"name": "Рижское",      "stations": ["m_riga"], "line_id": "riga"},
-    "leningradskoye": {"name": "Ленинградское","stations": ["m_len"],  "line_id": "len"},
-    "kazanskoye":     {"name": "Казанское",    "stations": ["m_kaz"],  "line_id": "kaz"},
-    "gorkovskoye":    {"name": "Горьковское",  "stations": ["m_kursk"],"line_id": "gork"},
-    "kiyevskoye":     {"name": "Киевское",     "stations": ["m_kiev"], "line_id": "kiev"},
-    "yaroslavskoye":  {
+    "savyolovskoye": {
+        "name": "Савёловское",
+        "stations": [
+            "m_sav", "timiryazevskaya", "petrovsko_razumovskaya", "okruzhnaya",
+            "degunino", "beskudnikovo", "lianozovo", "mark", "novodachnaya",
+            "dolgoprudnaya", "vodniki", "hlebnikovo", "sheremetyevskaya",
+            "lobnya", "depo_sav", "lugovaya", "nekrasovskaya", "katuar",
+            "trudovaya", "iksha", "morozki", "turist", "yahroma", "dmitrov",
+            "kanalstroy", "barsuchenko", "orudevo", "verbilki", "nikulki",
+            "zheltikovo", "vlasovo", "taldom", "lebzino", "pl124km", "savelovo",
+            # ветка на Дубну
+            "sorevnovanie", "zaprudnya", "tempy", "meldino",
+            "zhivopisnoe", "karmanovo", "bolshaya_volga", "dubna",
+        ],
+        "line_id": "sav",
+    },
+    "belorusskoye": {
+        "name": "Белорусское",
+        "stations": [
+            "m_bel", "begovaya", "testovskaya", "fili", "slavyansky_bulvar",
+            "kuntsevskaya", "rabochiy_poselok", "setun", "nemchinovka", "skolkovo",
+            "bakovka", "odintsovo", "otradnoe", "pionerskaya", "perhushkovo",
+            "zdravnitsa", "zhavoronki", "dachnoe", "malye_vyazemy", "golitsyno",
+            "sushkinskaya", "petelino", "chastsovskaya", "portnovskaya",
+            "chapaevka", "polushkino", "sanatornaya", "tuchkovo", "teatralnaya",
+            "sadovaya", "dorohovo", "partizanskaya", "shalikovo", "kukarinskaya",
+            "pl109km", "mozhaysk", "borodino",
+            # Усовская ветка
+            "kuntsevo2", "romashkovo", "razdory", "barviha", "ilyinskoe", "usovo",
+            # Звенигородская ветка
+            "zaharovo", "hlyupino", "skorotovo", "zvenigorod",
+            # Аэроэкспресс в Шереметьево
+            "sheremetyevo_south", "sheremetyevo_north",
+        ],
+        "line_id": "bel",
+    },
+        "kurskoye": {
+        "name": "Курское",
+        "stations": [
+            "m_kursk", "moskva_tovarnaya", "kalitniki", "novokhokhlovskaya",
+            "tekstilshchiki", "pechatniki", "lyublino", "depo_kursk",
+            "pererva", "kuryanovo", "moskvorechye", "tsaritsyno",
+            "pokrovskoe", "krasny_stroitel", "bittsa", "butovo",
+            "shcherbinka", "ostafyevo", "silikatnaya", "podolsk",
+            "kutuzovskaya_k", "vesennyaya", "grivno", "lvovskaya",
+            "molodi", "stolbovaya", "ivachkovo", "chepelyovo", "chekhov",
+            "luch", "sharapova_okhota", "km92_k", "avangard", "serpukhov",
+            "oka", "km107_k", "priokskaya", "romanovskie_dachi", "tarusskaya",
+            "aleksandrovka", "pakhomovo", "shulgino", "prostor", "yasnogorsk",
+            "shemetovo", "baranovo", "revyakino", "baydiki", "khomyakovo",
+            "rodnichok", "tula",
+        ],
+        "line_id": "kursk",
+    },
+    "rizhskoye": {
+        "name": "Рижское",
+        "stations": [
+            "ploshchad_trekh_vokzalov", "rizhskaya", "marya_roshcha",
+            "dmitrovskaya", "m_riga",
+            "grazhdanskaya", "krasny_balties", "streshnevo", "shchukinskaya",
+            "tushinskaya", "trikotazhnaya", "volokolamskaya", "penyagino",
+            "pavshino", "krasnogorskaya", "opalikha", "anikeevka", "nahabino",
+            "malinovka", "dedovsk", "miitovskaya", "snegiri", "km50_riga",
+            "manikhino1", "troitskaya", "istra", "novoierusalimskaya",
+            "chekhovskaya_riga", "kholshcheviki", "km73_riga", "yadroshino",
+            "kursakovskaya", "rumyantsevo", "novopetrovskaya", "ustinovka",
+            "km91_riga", "lesodolgorukovo", "chismena", "matryonino",
+            "dubosekovo", "volokolamsk", "km133_riga", "blagoveshchenskoe",
+            "moskvich", "bukholovo", "podmoskovnye_dachi", "shakhovskaya",
+        ],
+        "line_id": "riga",
+    },
+    "leningradskoye": {
+        "name": "Ленинградское",
+        "stations": [],
+        "line_id": "len",
+    },
+    "kazanskoye": {
+        "name": "Казанское",
+        "stations": [],
+        "line_id": "kaz",
+    },
+    "gorkovskoye": {
+        "name": "Горьковское",
+        "stations": [],
+        "line_id": "gork",
+    },
+    "kiyevskoye": {
+        "name": "Киевское",
+        "stations": [],
+        "line_id": "kiev",
+    },
+    "yaroslavskoye": {
         "name": "Ярославское",
         "stations": [
             "m_yar", "moscow3", "malenkovskaya", "yauza", "rostokino",
@@ -51,17 +138,26 @@ DIRECTIONS: dict[str, dict] = {
         ],
         "line_id": "pav",
     },
-    "bmo": {"name": "БМО", "stations": [], "line_id": "bmo"},
-    "mcc": {"name": "МЦК", "stations": [], "line_id": "mcc"},
+    "bmo": {
+        "name": "БМО",
+        "stations": [],
+        "line_id": "bmo",
+    },
+    "mcc": {
+        "name": "МЦК",
+        "stations": [],
+        "line_id": "mcc",
+    },
 }
 
 
+# День недели → список direction_id
 WEEKLY_ROTATION: dict[int, list[str]] = {
-    0: ["savyolovskoye", "belorusskoye"],
-    1: ["kurskoye", "rizhskoye"],
-    2: ["leningradskoye", "kazanskoye"],
-    3: ["gorkovskoye", "kiyevskoye"],
-    4: ["yaroslavskoye", "paveletskoye"],
-    5: ["bmo"],
-    6: ["mcc"],
+    0: ["savyolovskoye", "belorusskoye"],         # Пн
+    1: ["kurskoye", "rizhskoye"],                 # Вт
+    2: ["leningradskoye", "kazanskoye"],          # Ср
+    3: ["gorkovskoye", "kiyevskoye"],             # Чт
+    4: ["yaroslavskoye", "paveletskoye"],         # Пт
+    5: ["bmo"],                                   # Сб
+    6: ["mcc"],                                   # Вс
 }

@@ -41,9 +41,6 @@ TARGET_MODULE = ROOT / "app" / "schedule" / "yandex_codes.py"
 THRESHOLD = 0.80
 
 
-# ──────────────────────────────────────────────────────────────
-# Загрузка stations_list
-# ──────────────────────────────────────────────────────────────
 def load_data() -> dict:
     if CACHE.exists():
         print(f"-> Читаю кэш {CACHE}")
@@ -67,7 +64,6 @@ def load_data() -> dict:
 
 
 def flatten(data: dict) -> list[dict]:
-    """Все станции-электрички (train/suburban), кроме метро/автобусов."""
     out: list[dict] = []
     for country in data.get("countries", []):
         for region in country.get("regions", []):
@@ -76,7 +72,6 @@ def flatten(data: dict) -> list[dict]:
                 st_title = settlement.get("title", "")
                 for station in settlement.get("stations", []):
                     ttype = station.get("transport_type")
-                    # Только ж/д. Отсеиваем автобусы, метро, воду и т.п.
                     if ttype not in ("train", "suburban"):
                         continue
                     code = (station.get("codes") or {}).get("yandex_code")
@@ -92,16 +87,12 @@ def flatten(data: dict) -> list[dict]:
     return out
 
 
-# ──────────────────────────────────────────────────────────────
-# Нормализация названий
-# ──────────────────────────────────────────────────────────────
 _KM_RE = re.compile(r"\b\d+\s*км\b", re.IGNORECASE)
 _PAREN_RE = re.compile(r"\([^)]*\)")
 _TOV_RE = re.compile(r"\bтов\.?$", re.IGNORECASE)
 _PASS_RE = re.compile(r"\bпасс\.?$", re.IGNORECASE)
 _DASH1_RE = re.compile(r"-1$")
 
-# "Москва (Ярославский вокзал)" -> "москва ярославская"
 _VOKZAL_RE = re.compile(r"москва\s*\((\w+?)ий\s+вокзал\)", re.IGNORECASE)
 
 
@@ -128,9 +119,6 @@ def sim(a: str, b: str) -> float:
     return SequenceMatcher(None, a, b).ratio()
 
 
-# ──────────────────────────────────────────────────────────────
-# Основная логика
-# ──────────────────────────────────────────────────────────────
 def main() -> None:
     data = load_data()
     all_st = flatten(data)
@@ -148,7 +136,6 @@ def main() -> None:
     our_stations = {sid: name for sid, name in _STATIONS}
     print(f"-> Наших станций: {len(our_stations)}")
 
-    # ── Загрузка overrides ──
     overrides: dict[str, str] = {}
     no_schedule: set[str] = set()
     allowed_duplicates: list[tuple[str, str]] = []
@@ -169,12 +156,10 @@ def main() -> None:
     low_conf: list[str] = []
 
     for sid, our_name in our_stations.items():
-        # Станции без пассажирского расписания — пропускаем
         if sid in no_schedule:
             report.append(f"[SKIP] {sid:20} -> нет пасп. расписания ({our_name})")
             continue
 
-        # Явный override имеет приоритет
         if sid in overrides:
             code = overrides[sid]
             if not code:
@@ -184,7 +169,6 @@ def main() -> None:
             report.append(f"[OVR] {sid:20} -> {code:12} ({our_name})")
             continue
 
-        # Автоподбор по похожести
         target = normalize(our_name)
         best, best_score = None, 0.0
         for c in moscow:
@@ -207,7 +191,6 @@ def main() -> None:
         else:
             low_conf.append(f"[XXX] {sid:20} -> не найдено ({our_name})")
 
-    # ── Проверка дублей (два наших id → один код Яндекса) ──
     reverse: dict[str, list[str]] = {}
     for sid, code in mapping.items():
         reverse.setdefault(code, []).append(sid)
@@ -229,7 +212,6 @@ def main() -> None:
     else:
         print("-> Дублей нет (или все разрешены)")
 
-    # ── Отчёт ──
     report_text = "\n".join([
         "=== Уверенные совпадения ===", *report,
         "",
@@ -238,7 +220,6 @@ def main() -> None:
     REPORT_TXT.write_text(report_text, encoding="utf-8")
     print(f"V Отчёт: {REPORT_TXT}")
 
-    # ── Генерация app/schedule/yandex_codes.py ──
     lines = [
         '"""АВТОГЕНЕРАЦИЯ. Правки вносить в scripts/out/yandex_codes_overrides.py."""',
         '',
