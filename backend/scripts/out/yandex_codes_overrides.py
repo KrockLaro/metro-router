@@ -11,13 +11,22 @@ ALLOWED_DUPLICATES: list[tuple[str, str]] = [
 
 
 NO_SCHEDULE: set[str] = {
-    # N-км без кода в справочнике Яндекса
     "pl109km",
     "pl124km",
-    # Наши служебные объекты
     "domodedovo_junction",
-    # Коломенское на Павелецком — нет в справочнике Яндекса
-    "kolomenskoye",
+    # Курское — нет у Яндекса
+    "km92_k",
+    "km107_k",
+    "romanovskie_dachi",
+    "aleksandrovka",
+    "prostor",
+    "rodnichok",
+    # Рижское — нет у Яндекса
+    "km50_riga",
+    "km73_riga",
+    "km91_riga",
+    "km133_riga",
+    "podmoskovnye_dachi",
 }
 
 

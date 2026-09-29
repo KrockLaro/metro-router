@@ -178,18 +178,25 @@ export default function ScheduleBlock({ stationId }: Props) {
 
           {data && (
             <>
-              <DirectionGroup
-                title="На Москву"
-                items={data.to_moscow}
-                renderRow={renderRow}
-                theme={theme}
-              />
-              <DirectionGroup
-                title="От Москвы"
-                items={data.from_moscow}
-                renderRow={renderRow}
-                theme={theme}
-              />
+                            {(() => {
+                const hasTo = data.to_moscow.length > 0;
+                const hasFrom = data.from_moscow.length > 0;
+                if (!hasTo && !hasFrom) return null;
+
+                // Если одна группа пуста — объединяем в «Ближайшие поезда»
+                if (hasTo && hasFrom) {
+                  return (
+                    <>
+                      <DirectionGroup title="На Москву" items={data.to_moscow} renderRow={renderRow} theme={theme} />
+                      <DirectionGroup title="От Москвы" items={data.from_moscow} renderRow={renderRow} theme={theme} />
+                    </>
+                  );
+                }
+                const merged = hasTo ? data.to_moscow : data.from_moscow;
+                return (
+                  <DirectionGroup title="Ближайшие поезда" items={merged} renderRow={renderRow} theme={theme} />
+                );
+              })()}
               {data.to_moscow.length === 0 && data.from_moscow.length === 0 && (
                 <Text style={[styles.empty, { color: theme.textMuted }]}>
                   Нет данных о ближайших рейсах

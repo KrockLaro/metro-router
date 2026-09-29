@@ -510,3 +510,1246 @@ app.schedule.yandex_client.YandexHTTPError: Yandex Rasp вернул HTTP 404 д
 2026-09-28 20:32:44,318 | INFO    | app.schedule.worker | Сохранено 61 рейсов для sheremetyevo_north (по 3 дням)
 2026-09-28 20:32:44,318 | INFO    | daily_refresh | Направление 'belorusskoye': всего 8030 рейсов
 2026-09-28 20:32:44,322 | INFO    | daily_refresh | Daily refresh завершён: 2026-09-28 20:32 МСК, 211.0 сек, всего 15059 рейсов, квота 273/500
+2026-09-29 19:08:16,903 | INFO    | daily_refresh | ======================================================================
+2026-09-29 19:08:16,904 | INFO    | daily_refresh | Daily refresh запущен: 2026-09-29 19:08 МСК, Вторник
+2026-09-29 19:08:16,904 | INFO    | daily_refresh | По ротации сегодня: ['kurskoye', 'rizhskoye']
+2026-09-29 19:08:17,105 | INFO    | daily_refresh | Направление 'Курское' (kurskoye): 51 станций, дни ['2026-10-03', '2026-10-04', '2026-10-05']
+2026-09-29 19:08:19,968 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=1/500
+2026-09-29 19:08:22,368 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=2/500
+2026-09-29 19:08:24,154 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=3/500
+2026-09-29 19:08:24,259 | INFO    | app.schedule.worker | Сохранено 776 рейсов для m_kursk (по 3 дням)
+2026-09-29 19:08:27,705 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=4/500
+2026-09-29 19:08:29,196 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=5/500
+2026-09-29 19:08:30,264 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=6/500
+2026-09-29 19:08:30,289 | INFO    | app.schedule.worker | Сохранено 401 рейсов для moskva_tovarnaya (по 3 дням)
+2026-09-29 19:08:31,653 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=7/500
+2026-09-29 19:08:34,046 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=8/500
+2026-09-29 19:08:35,226 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=9/500
+2026-09-29 19:08:35,251 | INFO    | app.schedule.worker | Сохранено 340 рейсов для kalitniki (по 3 дням)
+2026-09-29 19:08:36,690 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=10/500
+2026-09-29 19:08:38,819 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=11/500
+2026-09-29 19:08:40,478 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=12/500
+2026-09-29 19:08:40,500 | INFO    | app.schedule.worker | Сохранено 354 рейсов для novokhokhlovskaya (по 3 дням)
+2026-09-29 19:08:42,531 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=13/500
+2026-09-29 19:08:44,399 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=14/500
+2026-09-29 19:08:46,174 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=15/500
+2026-09-29 19:08:46,195 | INFO    | app.schedule.worker | Сохранено 354 рейсов для tekstilshchiki (по 3 дням)
+2026-09-29 19:08:47,646 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=16/500
+2026-09-29 19:08:48,931 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=17/500
+2026-09-29 19:08:51,633 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=18/500
+2026-09-29 19:08:51,654 | INFO    | app.schedule.worker | Сохранено 354 рейсов для pechatniki (по 3 дням)
+2026-09-29 19:08:53,560 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=19/500
+2026-09-29 19:08:55,603 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=20/500
+2026-09-29 19:08:56,990 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=21/500
+2026-09-29 19:08:57,011 | INFO    | app.schedule.worker | Сохранено 341 рейсов для lyublino (по 3 дням)
+2026-09-29 19:08:58,479 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=22/500
+2026-09-29 19:08:59,927 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=23/500
+2026-09-29 19:09:01,235 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=24/500
+2026-09-29 19:09:01,256 | INFO    | app.schedule.worker | Сохранено 338 рейсов для depo_kursk (по 3 дням)
+2026-09-29 19:09:01,894 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=25/500
+2026-09-29 19:09:02,713 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=26/500
+2026-09-29 19:09:03,359 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=27/500
+2026-09-29 19:09:03,370 | INFO    | app.schedule.worker | Сохранено 170 рейсов для pererva (по 3 дням)
+2026-09-29 19:09:05,054 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=28/500
+2026-09-29 19:09:08,252 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=29/500
+2026-09-29 19:09:09,627 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=30/500
+2026-09-29 19:09:09,647 | INFO    | app.schedule.worker | Сохранено 337 рейсов для kuryanovo (по 3 дням)
+2026-09-29 19:09:11,116 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=31/500
+2026-09-29 19:09:12,759 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=32/500
+2026-09-29 19:09:14,332 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=33/500
+2026-09-29 19:09:14,354 | INFO    | app.schedule.worker | Сохранено 337 рейсов для moskvorechye (по 3 дням)
+2026-09-29 19:09:15,677 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=34/500
+2026-09-29 19:09:18,581 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=35/500
+2026-09-29 19:09:19,878 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=36/500
+2026-09-29 19:09:19,906 | INFO    | app.schedule.worker | Сохранено 363 рейсов для tsaritsyno (по 3 дням)
+2026-09-29 19:09:21,247 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=37/500
+2026-09-29 19:09:22,815 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=38/500
+2026-09-29 19:09:24,106 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=39/500
+2026-09-29 19:09:24,131 | INFO    | app.schedule.worker | Сохранено 341 рейсов для pokrovskoe (по 3 дням)
+2026-09-29 19:09:25,493 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=40/500
+2026-09-29 19:09:27,226 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=41/500
+2026-09-29 19:09:28,571 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=42/500
+2026-09-29 19:09:28,592 | INFO    | app.schedule.worker | Сохранено 350 рейсов для krasny_stroitel (по 3 дням)
+2026-09-29 19:09:29,588 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=43/500
+2026-09-29 19:09:30,631 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=44/500
+2026-09-29 19:09:32,010 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=45/500
+2026-09-29 19:09:32,033 | INFO    | app.schedule.worker | Сохранено 349 рейсов для bittsa (по 3 дням)
+2026-09-29 19:09:33,458 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=46/500
+2026-09-29 19:09:35,716 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=47/500
+2026-09-29 19:09:36,999 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=48/500
+2026-09-29 19:09:37,020 | INFO    | app.schedule.worker | Сохранено 350 рейсов для butovo (по 3 дням)
+2026-09-29 19:09:37,924 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=49/500
+2026-09-29 19:09:39,492 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=50/500
+2026-09-29 19:09:41,073 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=51/500
+2026-09-29 19:09:41,096 | INFO    | app.schedule.worker | Сохранено 353 рейсов для shcherbinka (по 3 дням)
+2026-09-29 19:09:42,585 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=52/500
+2026-09-29 19:09:43,989 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=53/500
+2026-09-29 19:09:45,229 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=54/500
+2026-09-29 19:09:45,251 | INFO    | app.schedule.worker | Сохранено 372 рейсов для ostafyevo (по 3 дням)
+2026-09-29 19:09:46,117 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=55/500
+2026-09-29 19:09:47,337 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=56/500
+2026-09-29 19:09:48,352 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=57/500
+2026-09-29 19:09:48,377 | INFO    | app.schedule.worker | Сохранено 352 рейсов для silikatnaya (по 3 дням)
+2026-09-29 19:09:49,413 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=58/500
+2026-09-29 19:09:50,952 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=59/500
+2026-09-29 19:09:52,333 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=60/500
+2026-09-29 19:09:52,351 | INFO    | app.schedule.worker | Сохранено 285 рейсов для podolsk (по 3 дням)
+2026-09-29 19:09:53,188 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=61/500
+2026-09-29 19:09:53,753 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=62/500
+2026-09-29 19:09:54,492 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=63/500
+2026-09-29 19:09:54,503 | INFO    | app.schedule.worker | Сохранено 158 рейсов для kutuzovskaya_k (по 3 дням)
+2026-09-29 19:09:55,424 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=64/500
+2026-09-29 19:09:56,240 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=65/500
+2026-09-29 19:09:57,097 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=66/500
+2026-09-29 19:09:57,108 | INFO    | app.schedule.worker | Сохранено 165 рейсов для vesennyaya (по 3 дням)
+2026-09-29 19:09:59,013 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=67/500
+2026-09-29 19:09:59,964 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=68/500
+2026-09-29 19:10:00,896 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=69/500
+2026-09-29 19:10:00,910 | INFO    | app.schedule.worker | Сохранено 177 рейсов для grivno (по 3 дням)
+2026-09-29 19:10:01,580 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=70/500
+2026-09-29 19:10:02,711 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=71/500
+2026-09-29 19:10:03,401 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=72/500
+2026-09-29 19:10:03,411 | INFO    | app.schedule.worker | Сохранено 155 рейсов для lvovskaya (по 3 дням)
+2026-09-29 19:10:05,216 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=73/500
+2026-09-29 19:10:08,193 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=74/500
+2026-09-29 19:10:08,859 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=75/500
+2026-09-29 19:10:08,867 | INFO    | app.schedule.worker | Сохранено 111 рейсов для molodi (по 3 дням)
+2026-09-29 19:10:10,942 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=76/500
+2026-09-29 19:10:11,694 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=77/500
+2026-09-29 19:10:12,325 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=78/500
+2026-09-29 19:10:12,339 | INFO    | app.schedule.worker | Сохранено 162 рейсов для stolbovaya (по 3 дням)
+2026-09-29 19:10:12,843 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=79/500
+2026-09-29 19:10:13,564 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=80/500
+2026-09-29 19:10:14,339 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=81/500
+2026-09-29 19:10:14,346 | INFO    | app.schedule.worker | Сохранено 105 рейсов для ivachkovo (по 3 дням)
+2026-09-29 19:10:14,996 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=82/500
+2026-09-29 19:10:16,693 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=83/500
+2026-09-29 19:10:19,721 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=84/500
+2026-09-29 19:10:19,729 | INFO    | app.schedule.worker | Сохранено 122 рейсов для chepelyovo (по 3 дням)
+2026-09-29 19:10:20,533 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=85/500
+2026-09-29 19:10:21,263 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=86/500
+2026-09-29 19:10:21,998 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=87/500
+2026-09-29 19:10:22,006 | INFO    | app.schedule.worker | Сохранено 128 рейсов для chekhov (по 3 дням)
+2026-09-29 19:10:22,685 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=88/500
+2026-09-29 19:10:23,174 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=89/500
+2026-09-29 19:10:23,777 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=90/500
+2026-09-29 19:10:23,783 | INFO    | app.schedule.worker | Сохранено 81 рейсов для luch (по 3 дням)
+2026-09-29 19:10:24,457 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=91/500
+2026-09-29 19:10:26,073 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=92/500
+2026-09-29 19:10:26,884 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=93/500
+2026-09-29 19:10:26,890 | INFO    | app.schedule.worker | Сохранено 90 рейсов для sharapova_okhota (по 3 дням)
+2026-09-29 19:10:27,225 | ERROR   | app.schedule.yandex_client | Yandex Rasp вернул HTTP 404 для станции s0001022
+2026-09-29 19:10:27,226 | ERROR   | app.schedule.worker | Ошибка фетча km92_k на 2026-10-03 — пропускаю день
+Traceback (most recent call last):
+  File "C:\Users\user\metro-router\backend\app\schedule\worker.py", line 167, in fetch_one_station_multi_day
+    payload = await fetch_station_schedule(yandex_code, on_date)
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\user\metro-router\backend\app\schedule\yandex_client.py", line 103, in fetch_station_schedule
+    raise YandexHTTPError(r.status_code, yandex_code)
+app.schedule.yandex_client.YandexHTTPError: Yandex Rasp вернул HTTP 404 для станции s0001022
+2026-09-29 19:10:27,587 | ERROR   | app.schedule.yandex_client | Yandex Rasp вернул HTTP 404 для станции s0001022
+2026-09-29 19:10:27,587 | ERROR   | app.schedule.worker | Ошибка фетча km92_k на 2026-10-04 — пропускаю день
+Traceback (most recent call last):
+  File "C:\Users\user\metro-router\backend\app\schedule\worker.py", line 167, in fetch_one_station_multi_day
+    payload = await fetch_station_schedule(yandex_code, on_date)
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\user\metro-router\backend\app\schedule\yandex_client.py", line 103, in fetch_station_schedule
+    raise YandexHTTPError(r.status_code, yandex_code)
+app.schedule.yandex_client.YandexHTTPError: Yandex Rasp вернул HTTP 404 для станции s0001022
+2026-09-29 19:10:28,906 | ERROR   | app.schedule.yandex_client | Yandex Rasp вернул HTTP 404 для станции s0001022
+2026-09-29 19:10:28,906 | ERROR   | app.schedule.worker | Ошибка фетча km92_k на 2026-10-05 — пропускаю день
+Traceback (most recent call last):
+  File "C:\Users\user\metro-router\backend\app\schedule\worker.py", line 167, in fetch_one_station_multi_day
+    payload = await fetch_station_schedule(yandex_code, on_date)
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\user\metro-router\backend\app\schedule\yandex_client.py", line 103, in fetch_station_schedule
+    raise YandexHTTPError(r.status_code, yandex_code)
+app.schedule.yandex_client.YandexHTTPError: Yandex Rasp вернул HTTP 404 для станции s0001022
+2026-09-29 19:10:28,908 | INFO    | app.schedule.worker | Сохранено 0 рейсов для km92_k (по 3 дням)
+2026-09-29 19:10:29,376 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=94/500
+2026-09-29 19:10:29,922 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=95/500
+2026-09-29 19:10:30,563 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=96/500
+2026-09-29 19:10:30,568 | INFO    | app.schedule.worker | Сохранено 76 рейсов для avangard (по 3 дням)
+2026-09-29 19:10:31,152 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=97/500
+2026-09-29 19:10:31,820 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=98/500
+2026-09-29 19:10:32,405 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=99/500
+2026-09-29 19:10:32,410 | INFO    | app.schedule.worker | Сохранено 62 рейсов для serpukhov (по 3 дням)
+2026-09-29 19:10:32,917 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=100/500
+2026-09-29 19:10:33,309 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=101/500
+2026-09-29 19:10:33,688 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=102/500
+2026-09-29 19:10:33,691 | INFO    | app.schedule.worker | Сохранено 17 рейсов для oka (по 3 дням)
+2026-09-29 19:10:34,012 | ERROR   | app.schedule.yandex_client | Yandex Rasp вернул HTTP 404 для станции s0001026
+2026-09-29 19:10:34,012 | ERROR   | app.schedule.worker | Ошибка фетча km107_k на 2026-10-03 — пропускаю день
+Traceback (most recent call last):
+  File "C:\Users\user\metro-router\backend\app\schedule\worker.py", line 167, in fetch_one_station_multi_day
+    payload = await fetch_station_schedule(yandex_code, on_date)
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\user\metro-router\backend\app\schedule\yandex_client.py", line 103, in fetch_station_schedule
+    raise YandexHTTPError(r.status_code, yandex_code)
+app.schedule.yandex_client.YandexHTTPError: Yandex Rasp вернул HTTP 404 для станции s0001026
+2026-09-29 19:10:35,571 | ERROR   | app.schedule.yandex_client | Yandex Rasp вернул HTTP 404 для станции s0001026
+2026-09-29 19:10:35,571 | ERROR   | app.schedule.worker | Ошибка фетча km107_k на 2026-10-04 — пропускаю день
+Traceback (most recent call last):
+  File "C:\Users\user\metro-router\backend\app\schedule\worker.py", line 167, in fetch_one_station_multi_day
+    payload = await fetch_station_schedule(yandex_code, on_date)
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\user\metro-router\backend\app\schedule\yandex_client.py", line 103, in fetch_station_schedule
+    raise YandexHTTPError(r.status_code, yandex_code)
+app.schedule.yandex_client.YandexHTTPError: Yandex Rasp вернул HTTP 404 для станции s0001026
+2026-09-29 19:10:35,951 | ERROR   | app.schedule.yandex_client | Yandex Rasp вернул HTTP 404 для станции s0001026
+2026-09-29 19:10:35,951 | ERROR   | app.schedule.worker | Ошибка фетча km107_k на 2026-10-05 — пропускаю день
+Traceback (most recent call last):
+  File "C:\Users\user\metro-router\backend\app\schedule\worker.py", line 167, in fetch_one_station_multi_day
+    payload = await fetch_station_schedule(yandex_code, on_date)
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\user\metro-router\backend\app\schedule\yandex_client.py", line 103, in fetch_station_schedule
+    raise YandexHTTPError(r.status_code, yandex_code)
+app.schedule.yandex_client.YandexHTTPError: Yandex Rasp вернул HTTP 404 для станции s0001026
+2026-09-29 19:10:35,952 | INFO    | app.schedule.worker | Сохранено 0 рейсов для km107_k (по 3 дням)
+2026-09-29 19:10:36,721 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=103/500
+2026-09-29 19:10:37,494 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=104/500
+2026-09-29 19:10:37,861 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=105/500
+2026-09-29 19:10:37,864 | INFO    | app.schedule.worker | Сохранено 17 рейсов для priokskaya (по 3 дням)
+2026-09-29 19:10:38,295 | ERROR   | app.schedule.yandex_client | Yandex Rasp вернул HTTP 404 для станции s0001028
+2026-09-29 19:10:38,295 | ERROR   | app.schedule.worker | Ошибка фетча romanovskie_dachi на 2026-10-03 — пропускаю день
+Traceback (most recent call last):
+  File "C:\Users\user\metro-router\backend\app\schedule\worker.py", line 167, in fetch_one_station_multi_day
+    payload = await fetch_station_schedule(yandex_code, on_date)
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\user\metro-router\backend\app\schedule\yandex_client.py", line 103, in fetch_station_schedule
+    raise YandexHTTPError(r.status_code, yandex_code)
+app.schedule.yandex_client.YandexHTTPError: Yandex Rasp вернул HTTP 404 для станции s0001028
+2026-09-29 19:10:38,585 | ERROR   | app.schedule.yandex_client | Yandex Rasp вернул HTTP 404 для станции s0001028
+2026-09-29 19:10:38,585 | ERROR   | app.schedule.worker | Ошибка фетча romanovskie_dachi на 2026-10-04 — пропускаю день
+Traceback (most recent call last):
+  File "C:\Users\user\metro-router\backend\app\schedule\worker.py", line 167, in fetch_one_station_multi_day
+    payload = await fetch_station_schedule(yandex_code, on_date)
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\user\metro-router\backend\app\schedule\yandex_client.py", line 103, in fetch_station_schedule
+    raise YandexHTTPError(r.status_code, yandex_code)
+app.schedule.yandex_client.YandexHTTPError: Yandex Rasp вернул HTTP 404 для станции s0001028
+2026-09-29 19:10:38,869 | ERROR   | app.schedule.yandex_client | Yandex Rasp вернул HTTP 404 для станции s0001028
+2026-09-29 19:10:38,869 | ERROR   | app.schedule.worker | Ошибка фетча romanovskie_dachi на 2026-10-05 — пропускаю день
+Traceback (most recent call last):
+  File "C:\Users\user\metro-router\backend\app\schedule\worker.py", line 167, in fetch_one_station_multi_day
+    payload = await fetch_station_schedule(yandex_code, on_date)
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\user\metro-router\backend\app\schedule\yandex_client.py", line 103, in fetch_station_schedule
+    raise YandexHTTPError(r.status_code, yandex_code)
+app.schedule.yandex_client.YandexHTTPError: Yandex Rasp вернул HTTP 404 для станции s0001028
+2026-09-29 19:10:38,870 | INFO    | app.schedule.worker | Сохранено 0 рейсов для romanovskie_dachi (по 3 дням)
+2026-09-29 19:10:39,388 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=106/500
+2026-09-29 19:10:40,051 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=107/500
+2026-09-29 19:10:41,554 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=108/500
+2026-09-29 19:10:41,557 | INFO    | app.schedule.worker | Сохранено 23 рейсов для tarusskaya (по 3 дням)
+2026-09-29 19:10:42,129 | ERROR   | app.schedule.yandex_client | Yandex Rasp вернул HTTP 404 для станции s0001030
+2026-09-29 19:10:42,130 | ERROR   | app.schedule.worker | Ошибка фетча aleksandrovka на 2026-10-03 — пропускаю день
+Traceback (most recent call last):
+  File "C:\Users\user\metro-router\backend\app\schedule\worker.py", line 167, in fetch_one_station_multi_day
+    payload = await fetch_station_schedule(yandex_code, on_date)
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\user\metro-router\backend\app\schedule\yandex_client.py", line 103, in fetch_station_schedule
+    raise YandexHTTPError(r.status_code, yandex_code)
+app.schedule.yandex_client.YandexHTTPError: Yandex Rasp вернул HTTP 404 для станции s0001030
+2026-09-29 19:10:42,666 | ERROR   | app.schedule.yandex_client | Yandex Rasp вернул HTTP 404 для станции s0001030
+2026-09-29 19:10:42,666 | ERROR   | app.schedule.worker | Ошибка фетча aleksandrovka на 2026-10-04 — пропускаю день
+Traceback (most recent call last):
+  File "C:\Users\user\metro-router\backend\app\schedule\worker.py", line 167, in fetch_one_station_multi_day
+    payload = await fetch_station_schedule(yandex_code, on_date)
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\user\metro-router\backend\app\schedule\yandex_client.py", line 103, in fetch_station_schedule
+    raise YandexHTTPError(r.status_code, yandex_code)
+app.schedule.yandex_client.YandexHTTPError: Yandex Rasp вернул HTTP 404 для станции s0001030
+2026-09-29 19:10:42,993 | ERROR   | app.schedule.yandex_client | Yandex Rasp вернул HTTP 404 для станции s0001030
+2026-09-29 19:10:42,993 | ERROR   | app.schedule.worker | Ошибка фетча aleksandrovka на 2026-10-05 — пропускаю день
+Traceback (most recent call last):
+  File "C:\Users\user\metro-router\backend\app\schedule\worker.py", line 167, in fetch_one_station_multi_day
+    payload = await fetch_station_schedule(yandex_code, on_date)
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\user\metro-router\backend\app\schedule\yandex_client.py", line 103, in fetch_station_schedule
+    raise YandexHTTPError(r.status_code, yandex_code)
+app.schedule.yandex_client.YandexHTTPError: Yandex Rasp вернул HTTP 404 для станции s0001030
+2026-09-29 19:10:42,994 | INFO    | app.schedule.worker | Сохранено 0 рейсов для aleksandrovka (по 3 дням)
+2026-09-29 19:10:43,412 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=109/500
+2026-09-29 19:10:44,054 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=110/500
+2026-09-29 19:10:44,472 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=111/500
+2026-09-29 19:10:44,475 | INFO    | app.schedule.worker | Сохранено 17 рейсов для pakhomovo (по 3 дням)
+2026-09-29 19:10:44,860 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=112/500
+2026-09-29 19:10:45,258 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=113/500
+2026-09-29 19:10:45,959 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=114/500
+2026-09-29 19:10:45,962 | INFO    | app.schedule.worker | Сохранено 17 рейсов для shulgino (по 3 дням)
+2026-09-29 19:10:46,375 | ERROR   | app.schedule.yandex_client | Yandex Rasp вернул HTTP 404 для станции s0001033
+2026-09-29 19:10:46,375 | ERROR   | app.schedule.worker | Ошибка фетча prostor на 2026-10-03 — пропускаю день
+Traceback (most recent call last):
+  File "C:\Users\user\metro-router\backend\app\schedule\worker.py", line 167, in fetch_one_station_multi_day
+    payload = await fetch_station_schedule(yandex_code, on_date)
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\user\metro-router\backend\app\schedule\yandex_client.py", line 103, in fetch_station_schedule
+    raise YandexHTTPError(r.status_code, yandex_code)
+app.schedule.yandex_client.YandexHTTPError: Yandex Rasp вернул HTTP 404 для станции s0001033
+2026-09-29 19:10:47,712 | ERROR   | app.schedule.yandex_client | Yandex Rasp вернул HTTP 404 для станции s0001033
+2026-09-29 19:10:47,712 | ERROR   | app.schedule.worker | Ошибка фетча prostor на 2026-10-04 — пропускаю день
+Traceback (most recent call last):
+  File "C:\Users\user\metro-router\backend\app\schedule\worker.py", line 167, in fetch_one_station_multi_day
+    payload = await fetch_station_schedule(yandex_code, on_date)
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\user\metro-router\backend\app\schedule\yandex_client.py", line 103, in fetch_station_schedule
+    raise YandexHTTPError(r.status_code, yandex_code)
+app.schedule.yandex_client.YandexHTTPError: Yandex Rasp вернул HTTP 404 для станции s0001033
+2026-09-29 19:10:48,019 | ERROR   | app.schedule.yandex_client | Yandex Rasp вернул HTTP 404 для станции s0001033
+2026-09-29 19:10:48,020 | ERROR   | app.schedule.worker | Ошибка фетча prostor на 2026-10-05 — пропускаю день
+Traceback (most recent call last):
+  File "C:\Users\user\metro-router\backend\app\schedule\worker.py", line 167, in fetch_one_station_multi_day
+    payload = await fetch_station_schedule(yandex_code, on_date)
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\user\metro-router\backend\app\schedule\yandex_client.py", line 103, in fetch_station_schedule
+    raise YandexHTTPError(r.status_code, yandex_code)
+app.schedule.yandex_client.YandexHTTPError: Yandex Rasp вернул HTTP 404 для станции s0001033
+2026-09-29 19:10:48,021 | INFO    | app.schedule.worker | Сохранено 0 рейсов для prostor (по 3 дням)
+2026-09-29 19:10:48,451 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=115/500
+2026-09-29 19:10:50,060 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=116/500
+2026-09-29 19:10:50,476 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=117/500
+2026-09-29 19:10:50,480 | INFO    | app.schedule.worker | Сохранено 23 рейсов для yasnogorsk (по 3 дням)
+2026-09-29 19:10:51,908 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=118/500
+2026-09-29 19:10:52,452 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=119/500
+2026-09-29 19:10:52,975 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=120/500
+2026-09-29 19:10:52,979 | INFO    | app.schedule.worker | Сохранено 17 рейсов для shemetovo (по 3 дням)
+2026-09-29 19:10:53,397 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=121/500
+2026-09-29 19:10:54,904 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=122/500
+2026-09-29 19:10:55,284 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=123/500
+2026-09-29 19:10:55,287 | INFO    | app.schedule.worker | Сохранено 17 рейсов для baranovo (по 3 дням)
+2026-09-29 19:10:55,656 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=124/500
+2026-09-29 19:10:57,002 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=125/500
+2026-09-29 19:10:57,378 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=126/500
+2026-09-29 19:10:57,381 | INFO    | app.schedule.worker | Сохранено 17 рейсов для revyakino (по 3 дням)
+2026-09-29 19:10:57,757 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=127/500
+2026-09-29 19:10:58,196 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=128/500
+2026-09-29 19:10:58,589 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=129/500
+2026-09-29 19:10:58,592 | INFO    | app.schedule.worker | Сохранено 17 рейсов для baydiki (по 3 дням)
+2026-09-29 19:10:58,971 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=130/500
+2026-09-29 19:10:59,820 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=131/500
+2026-09-29 19:11:00,218 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=132/500
+2026-09-29 19:11:00,220 | INFO    | app.schedule.worker | Сохранено 17 рейсов для khomyakovo (по 3 дням)
+2026-09-29 19:11:00,505 | ERROR   | app.schedule.yandex_client | Yandex Rasp вернул HTTP 404 для станции s0001040
+2026-09-29 19:11:00,505 | ERROR   | app.schedule.worker | Ошибка фетча rodnichok на 2026-10-03 — пропускаю день
+Traceback (most recent call last):
+  File "C:\Users\user\metro-router\backend\app\schedule\worker.py", line 167, in fetch_one_station_multi_day
+    payload = await fetch_station_schedule(yandex_code, on_date)
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\user\metro-router\backend\app\schedule\yandex_client.py", line 103, in fetch_station_schedule
+    raise YandexHTTPError(r.status_code, yandex_code)
+app.schedule.yandex_client.YandexHTTPError: Yandex Rasp вернул HTTP 404 для станции s0001040
+2026-09-29 19:11:00,800 | ERROR   | app.schedule.yandex_client | Yandex Rasp вернул HTTP 404 для станции s0001040
+2026-09-29 19:11:00,800 | ERROR   | app.schedule.worker | Ошибка фетча rodnichok на 2026-10-04 — пропускаю день
+Traceback (most recent call last):
+  File "C:\Users\user\metro-router\backend\app\schedule\worker.py", line 167, in fetch_one_station_multi_day
+    payload = await fetch_station_schedule(yandex_code, on_date)
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\user\metro-router\backend\app\schedule\yandex_client.py", line 103, in fetch_station_schedule
+    raise YandexHTTPError(r.status_code, yandex_code)
+app.schedule.yandex_client.YandexHTTPError: Yandex Rasp вернул HTTP 404 для станции s0001040
+2026-09-29 19:11:01,174 | ERROR   | app.schedule.yandex_client | Yandex Rasp вернул HTTP 404 для станции s0001040
+2026-09-29 19:11:01,174 | ERROR   | app.schedule.worker | Ошибка фетча rodnichok на 2026-10-05 — пропускаю день
+Traceback (most recent call last):
+  File "C:\Users\user\metro-router\backend\app\schedule\worker.py", line 167, in fetch_one_station_multi_day
+    payload = await fetch_station_schedule(yandex_code, on_date)
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\user\metro-router\backend\app\schedule\yandex_client.py", line 103, in fetch_station_schedule
+    raise YandexHTTPError(r.status_code, yandex_code)
+app.schedule.yandex_client.YandexHTTPError: Yandex Rasp вернул HTTP 404 для станции s0001040
+2026-09-29 19:11:01,175 | INFO    | app.schedule.worker | Сохранено 0 рейсов для rodnichok (по 3 дням)
+2026-09-29 19:11:01,540 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=133/500
+2026-09-29 19:11:02,099 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=134/500
+2026-09-29 19:11:02,723 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=135/500
+2026-09-29 19:11:02,726 | INFO    | app.schedule.worker | Сохранено 20 рейсов для tula (по 3 дням)
+2026-09-29 19:11:02,727 | INFO    | daily_refresh | Направление 'kurskoye': всего 9028 рейсов
+2026-09-29 19:11:02,732 | INFO    | daily_refresh | Направление 'Рижское' (rizhskoye): 47 станций, дни ['2026-10-03', '2026-10-04', '2026-10-05']
+2026-09-29 19:11:05,650 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=136/500
+2026-09-29 19:11:08,633 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=137/500
+2026-09-29 19:11:11,761 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=138/500
+2026-09-29 19:11:11,811 | INFO    | app.schedule.worker | Сохранено 776 рейсов для ploshchad_trekh_vokzalov (по 3 дням)
+2026-09-29 19:11:13,063 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=139/500
+2026-09-29 19:11:14,626 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=140/500
+2026-09-29 19:11:15,759 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=141/500
+2026-09-29 19:11:15,783 | INFO    | app.schedule.worker | Сохранено 347 рейсов для rizhskaya (по 3 дням)
+2026-09-29 19:11:18,467 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=142/500
+2026-09-29 19:11:21,085 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=143/500
+2026-09-29 19:11:24,749 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=144/500
+2026-09-29 19:11:24,798 | INFO    | app.schedule.worker | Сохранено 720 рейсов для marya_roshcha (по 3 дням)
+2026-09-29 19:11:27,171 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=145/500
+2026-09-29 19:11:28,162 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=146/500
+2026-09-29 19:11:29,453 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=147/500
+2026-09-29 19:11:29,477 | INFO    | app.schedule.worker | Сохранено 392 рейсов для dmitrovskaya (по 3 дням)
+2026-09-29 19:11:29,949 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=148/500
+2026-09-29 19:11:30,411 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=149/500
+2026-09-29 19:11:31,086 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=150/500
+2026-09-29 19:11:31,089 | INFO    | app.schedule.worker | Сохранено 24 рейсов для m_riga (по 3 дням)
+2026-09-29 19:11:32,544 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=151/500
+2026-09-29 19:11:33,507 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=152/500
+2026-09-29 19:11:35,337 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=153/500
+2026-09-29 19:11:35,368 | INFO    | app.schedule.worker | Сохранено 388 рейсов для grazhdanskaya (по 3 дням)
+2026-09-29 19:11:36,873 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=154/500
+2026-09-29 19:11:38,229 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=155/500
+2026-09-29 19:11:39,457 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=156/500
+2026-09-29 19:11:39,480 | INFO    | app.schedule.worker | Сохранено 392 рейсов для krasny_balties (по 3 дням)
+2026-09-29 19:11:40,690 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=157/500
+2026-09-29 19:11:42,159 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=158/500
+2026-09-29 19:11:43,239 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=159/500
+2026-09-29 19:11:43,267 | INFO    | app.schedule.worker | Сохранено 392 рейсов для streshnevo (по 3 дням)
+2026-09-29 19:11:44,255 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=160/500
+2026-09-29 19:11:45,891 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=161/500
+2026-09-29 19:11:47,395 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=162/500
+2026-09-29 19:11:47,422 | INFO    | app.schedule.worker | Сохранено 392 рейсов для shchukinskaya (по 3 дням)
+2026-09-29 19:11:48,893 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=163/500
+2026-09-29 19:11:51,294 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=164/500
+2026-09-29 19:11:52,742 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=165/500
+2026-09-29 19:11:52,766 | INFO    | app.schedule.worker | Сохранено 389 рейсов для tushinskaya (по 3 дням)
+2026-09-29 19:11:53,707 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=166/500
+2026-09-29 19:11:55,218 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=167/500
+2026-09-29 19:11:56,641 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=168/500
+2026-09-29 19:11:56,665 | INFO    | app.schedule.worker | Сохранено 384 рейсов для trikotazhnaya (по 3 дням)
+2026-09-29 19:11:57,745 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=169/500
+2026-09-29 19:11:59,076 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=170/500
+2026-09-29 19:12:00,613 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=171/500
+2026-09-29 19:12:00,635 | INFO    | app.schedule.worker | Сохранено 388 рейсов для volokolamskaya (по 3 дням)
+2026-09-29 19:12:01,581 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=172/500
+2026-09-29 19:12:02,942 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=173/500
+2026-09-29 19:12:04,479 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=174/500
+2026-09-29 19:12:04,502 | INFO    | app.schedule.worker | Сохранено 388 рейсов для penyagino (по 3 дням)
+2026-09-29 19:12:05,808 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=175/500
+2026-09-29 19:12:06,873 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=176/500
+2026-09-29 19:12:07,962 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=177/500
+2026-09-29 19:12:07,986 | INFO    | app.schedule.worker | Сохранено 388 рейсов для pavshino (по 3 дням)
+2026-09-29 19:12:08,937 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=178/500
+2026-09-29 19:12:10,299 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=179/500
+2026-09-29 19:12:11,785 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=180/500
+2026-09-29 19:12:11,808 | INFO    | app.schedule.worker | Сохранено 388 рейсов для krasnogorskaya (по 3 дням)
+2026-09-29 19:12:12,809 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=181/500
+2026-09-29 19:12:14,059 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=182/500
+2026-09-29 19:12:15,803 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=183/500
+2026-09-29 19:12:15,827 | INFO    | app.schedule.worker | Сохранено 388 рейсов для opalikha (по 3 дням)
+2026-09-29 19:12:17,358 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=184/500
+2026-09-29 19:12:18,551 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=185/500
+2026-09-29 19:12:20,239 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=186/500
+2026-09-29 19:12:20,260 | INFO    | app.schedule.worker | Сохранено 384 рейсов для anikeevka (по 3 дням)
+2026-09-29 19:12:21,650 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=187/500
+2026-09-29 19:12:22,713 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=188/500
+2026-09-29 19:12:24,062 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=189/500
+2026-09-29 19:12:24,079 | INFO    | app.schedule.worker | Сохранено 278 рейсов для nahabino (по 3 дням)
+2026-09-29 19:12:24,740 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=190/500
+2026-09-29 19:12:25,587 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=191/500
+2026-09-29 19:12:26,256 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=192/500
+2026-09-29 19:12:26,268 | INFO    | app.schedule.worker | Сохранено 142 рейсов для malinovka (по 3 дням)
+2026-09-29 19:12:27,086 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=193/500
+2026-09-29 19:12:28,091 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=194/500
+2026-09-29 19:12:28,851 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=195/500
+2026-09-29 19:12:28,862 | INFO    | app.schedule.worker | Сохранено 163 рейсов для dedovsk (по 3 дням)
+2026-09-29 19:12:29,574 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=196/500
+2026-09-29 19:12:30,374 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=197/500
+2026-09-29 19:12:30,956 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=198/500
+2026-09-29 19:12:30,967 | INFO    | app.schedule.worker | Сохранено 138 рейсов для miitovskaya (по 3 дням)
+2026-09-29 19:12:31,524 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=199/500
+2026-09-29 19:12:32,316 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=200/500
+2026-09-29 19:12:32,902 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=201/500
+2026-09-29 19:12:32,912 | INFO    | app.schedule.worker | Сохранено 151 рейсов для snegiri (по 3 дням)
+2026-09-29 19:12:33,209 | ERROR   | app.schedule.yandex_client | Yandex Rasp вернул HTTP 404 для станции s0002018
+2026-09-29 19:12:33,210 | ERROR   | app.schedule.worker | Ошибка фетча km50_riga на 2026-10-03 — пропускаю день
+Traceback (most recent call last):
+  File "C:\Users\user\metro-router\backend\app\schedule\worker.py", line 167, in fetch_one_station_multi_day
+    payload = await fetch_station_schedule(yandex_code, on_date)
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\user\metro-router\backend\app\schedule\yandex_client.py", line 103, in fetch_station_schedule
+    raise YandexHTTPError(r.status_code, yandex_code)
+app.schedule.yandex_client.YandexHTTPError: Yandex Rasp вернул HTTP 404 для станции s0002018
+2026-09-29 19:12:33,494 | ERROR   | app.schedule.yandex_client | Yandex Rasp вернул HTTP 404 для станции s0002018
+2026-09-29 19:12:33,494 | ERROR   | app.schedule.worker | Ошибка фетча km50_riga на 2026-10-04 — пропускаю день
+Traceback (most recent call last):
+  File "C:\Users\user\metro-router\backend\app\schedule\worker.py", line 167, in fetch_one_station_multi_day
+    payload = await fetch_station_schedule(yandex_code, on_date)
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\user\metro-router\backend\app\schedule\yandex_client.py", line 103, in fetch_station_schedule
+    raise YandexHTTPError(r.status_code, yandex_code)
+app.schedule.yandex_client.YandexHTTPError: Yandex Rasp вернул HTTP 404 для станции s0002018
+2026-09-29 19:12:33,873 | ERROR   | app.schedule.yandex_client | Yandex Rasp вернул HTTP 404 для станции s0002018
+2026-09-29 19:12:33,873 | ERROR   | app.schedule.worker | Ошибка фетча km50_riga на 2026-10-05 — пропускаю день
+Traceback (most recent call last):
+  File "C:\Users\user\metro-router\backend\app\schedule\worker.py", line 167, in fetch_one_station_multi_day
+    payload = await fetch_station_schedule(yandex_code, on_date)
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\user\metro-router\backend\app\schedule\yandex_client.py", line 103, in fetch_station_schedule
+    raise YandexHTTPError(r.status_code, yandex_code)
+app.schedule.yandex_client.YandexHTTPError: Yandex Rasp вернул HTTP 404 для станции s0002018
+2026-09-29 19:12:33,874 | INFO    | app.schedule.worker | Сохранено 0 рейсов для km50_riga (по 3 дням)
+2026-09-29 19:12:35,234 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=202/500
+2026-09-29 19:12:36,052 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=203/500
+2026-09-29 19:12:36,839 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=204/500
+2026-09-29 19:12:36,850 | INFO    | app.schedule.worker | Сохранено 156 рейсов для manikhino1 (по 3 дням)
+2026-09-29 19:12:37,525 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=205/500
+2026-09-29 19:12:39,478 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=206/500
+2026-09-29 19:12:40,471 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=207/500
+2026-09-29 19:12:40,480 | INFO    | app.schedule.worker | Сохранено 117 рейсов для troitskaya (по 3 дням)
+2026-09-29 19:12:41,773 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=208/500
+2026-09-29 19:12:44,021 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=209/500
+2026-09-29 19:12:44,696 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=210/500
+2026-09-29 19:12:44,707 | INFO    | app.schedule.worker | Сохранено 151 рейсов для istra (по 3 дням)
+2026-09-29 19:12:45,403 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=211/500
+2026-09-29 19:12:46,777 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=212/500
+2026-09-29 19:12:47,572 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=213/500
+2026-09-29 19:12:47,586 | INFO    | app.schedule.worker | Сохранено 121 рейсов для novoierusalimskaya (по 3 дням)
+2026-09-29 19:12:48,108 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=214/500
+2026-09-29 19:12:48,818 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=215/500
+2026-09-29 19:12:49,368 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=216/500
+2026-09-29 19:12:49,374 | INFO    | app.schedule.worker | Сохранено 80 рейсов для chekhovskaya_riga (по 3 дням)
+2026-09-29 19:12:49,899 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=217/500
+2026-09-29 19:12:50,687 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=218/500
+2026-09-29 19:12:51,494 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=219/500
+2026-09-29 19:12:51,502 | INFO    | app.schedule.worker | Сохранено 94 рейсов для kholshcheviki (по 3 дням)
+2026-09-29 19:12:51,811 | ERROR   | app.schedule.yandex_client | Yandex Rasp вернул HTTP 404 для станции s0002025
+2026-09-29 19:12:51,812 | ERROR   | app.schedule.worker | Ошибка фетча km73_riga на 2026-10-03 — пропускаю день
+Traceback (most recent call last):
+  File "C:\Users\user\metro-router\backend\app\schedule\worker.py", line 167, in fetch_one_station_multi_day
+    payload = await fetch_station_schedule(yandex_code, on_date)
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\user\metro-router\backend\app\schedule\yandex_client.py", line 103, in fetch_station_schedule
+    raise YandexHTTPError(r.status_code, yandex_code)
+app.schedule.yandex_client.YandexHTTPError: Yandex Rasp вернул HTTP 404 для станции s0002025
+2026-09-29 19:12:52,145 | ERROR   | app.schedule.yandex_client | Yandex Rasp вернул HTTP 404 для станции s0002025
+2026-09-29 19:12:52,145 | ERROR   | app.schedule.worker | Ошибка фетча km73_riga на 2026-10-04 — пропускаю день
+Traceback (most recent call last):
+  File "C:\Users\user\metro-router\backend\app\schedule\worker.py", line 167, in fetch_one_station_multi_day
+    payload = await fetch_station_schedule(yandex_code, on_date)
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\user\metro-router\backend\app\schedule\yandex_client.py", line 103, in fetch_station_schedule
+    raise YandexHTTPError(r.status_code, yandex_code)
+app.schedule.yandex_client.YandexHTTPError: Yandex Rasp вернул HTTP 404 для станции s0002025
+2026-09-29 19:12:52,476 | ERROR   | app.schedule.yandex_client | Yandex Rasp вернул HTTP 404 для станции s0002025
+2026-09-29 19:12:52,476 | ERROR   | app.schedule.worker | Ошибка фетча km73_riga на 2026-10-05 — пропускаю день
+Traceback (most recent call last):
+  File "C:\Users\user\metro-router\backend\app\schedule\worker.py", line 167, in fetch_one_station_multi_day
+    payload = await fetch_station_schedule(yandex_code, on_date)
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\user\metro-router\backend\app\schedule\yandex_client.py", line 103, in fetch_station_schedule
+    raise YandexHTTPError(r.status_code, yandex_code)
+app.schedule.yandex_client.YandexHTTPError: Yandex Rasp вернул HTTP 404 для станции s0002025
+2026-09-29 19:12:52,478 | INFO    | app.schedule.worker | Сохранено 0 рейсов для km73_riga (по 3 дням)
+2026-09-29 19:12:53,247 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=220/500
+2026-09-29 19:12:53,736 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=221/500
+2026-09-29 19:12:54,304 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=222/500
+2026-09-29 19:12:54,312 | INFO    | app.schedule.worker | Сохранено 75 рейсов для yadroshino (по 3 дням)
+2026-09-29 19:12:55,000 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=223/500
+2026-09-29 19:12:55,594 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=224/500
+2026-09-29 19:12:56,195 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=225/500
+2026-09-29 19:12:56,204 | INFO    | app.schedule.worker | Сохранено 83 рейсов для kursakovskaya (по 3 дням)
+2026-09-29 19:12:56,953 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=226/500
+2026-09-29 19:12:57,509 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=227/500
+2026-09-29 19:12:58,091 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=228/500
+2026-09-29 19:12:58,097 | INFO    | app.schedule.worker | Сохранено 81 рейсов для rumyantsevo (по 3 дням)
+2026-09-29 19:12:59,053 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=229/500
+2026-09-29 19:12:59,447 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=230/500
+2026-09-29 19:12:59,952 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=231/500
+2026-09-29 19:12:59,957 | INFO    | app.schedule.worker | Сохранено 64 рейсов для novopetrovskaya (по 3 дням)
+2026-09-29 19:13:00,457 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=232/500
+2026-09-29 19:13:02,094 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=233/500
+2026-09-29 19:13:02,899 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=234/500
+2026-09-29 19:13:02,906 | INFO    | app.schedule.worker | Сохранено 58 рейсов для ustinovka (по 3 дням)
+2026-09-29 19:13:03,524 | ERROR   | app.schedule.yandex_client | Yandex Rasp вернул HTTP 404 для станции s0002031
+2026-09-29 19:13:03,524 | ERROR   | app.schedule.worker | Ошибка фетча km91_riga на 2026-10-03 — пропускаю день
+Traceback (most recent call last):
+  File "C:\Users\user\metro-router\backend\app\schedule\worker.py", line 167, in fetch_one_station_multi_day
+    payload = await fetch_station_schedule(yandex_code, on_date)
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\user\metro-router\backend\app\schedule\yandex_client.py", line 103, in fetch_station_schedule
+    raise YandexHTTPError(r.status_code, yandex_code)
+app.schedule.yandex_client.YandexHTTPError: Yandex Rasp вернул HTTP 404 для станции s0002031
+2026-09-29 19:13:04,131 | ERROR   | app.schedule.yandex_client | Yandex Rasp вернул HTTP 404 для станции s0002031
+2026-09-29 19:13:04,131 | ERROR   | app.schedule.worker | Ошибка фетча km91_riga на 2026-10-04 — пропускаю день
+Traceback (most recent call last):
+  File "C:\Users\user\metro-router\backend\app\schedule\worker.py", line 167, in fetch_one_station_multi_day
+    payload = await fetch_station_schedule(yandex_code, on_date)
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\user\metro-router\backend\app\schedule\yandex_client.py", line 103, in fetch_station_schedule
+    raise YandexHTTPError(r.status_code, yandex_code)
+app.schedule.yandex_client.YandexHTTPError: Yandex Rasp вернул HTTP 404 для станции s0002031
+2026-09-29 19:13:04,672 | ERROR   | app.schedule.yandex_client | Yandex Rasp вернул HTTP 404 для станции s0002031
+2026-09-29 19:13:04,673 | ERROR   | app.schedule.worker | Ошибка фетча km91_riga на 2026-10-05 — пропускаю день
+Traceback (most recent call last):
+  File "C:\Users\user\metro-router\backend\app\schedule\worker.py", line 167, in fetch_one_station_multi_day
+    payload = await fetch_station_schedule(yandex_code, on_date)
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\user\metro-router\backend\app\schedule\yandex_client.py", line 103, in fetch_station_schedule
+    raise YandexHTTPError(r.status_code, yandex_code)
+app.schedule.yandex_client.YandexHTTPError: Yandex Rasp вернул HTTP 404 для станции s0002031
+2026-09-29 19:13:04,674 | INFO    | app.schedule.worker | Сохранено 0 рейсов для km91_riga (по 3 дням)
+2026-09-29 19:13:05,154 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=235/500
+2026-09-29 19:13:05,565 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=236/500
+2026-09-29 19:13:06,066 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=237/500
+2026-09-29 19:13:06,071 | INFO    | app.schedule.worker | Сохранено 53 рейсов для lesodolgorukovo (по 3 дням)
+2026-09-29 19:13:07,792 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=238/500
+2026-09-29 19:13:08,356 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=239/500
+2026-09-29 19:13:09,017 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=240/500
+2026-09-29 19:13:09,023 | INFO    | app.schedule.worker | Сохранено 64 рейсов для chismena (по 3 дням)
+2026-09-29 19:13:09,532 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=241/500
+2026-09-29 19:13:11,045 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=242/500
+2026-09-29 19:13:11,501 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=243/500
+2026-09-29 19:13:11,507 | INFO    | app.schedule.worker | Сохранено 53 рейсов для matryonino (по 3 дням)
+2026-09-29 19:13:11,923 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=244/500
+2026-09-29 19:13:13,216 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=245/500
+2026-09-29 19:13:13,867 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=246/500
+2026-09-29 19:13:13,872 | INFO    | app.schedule.worker | Сохранено 53 рейсов для dubosekovo (по 3 дням)
+2026-09-29 19:13:15,109 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=247/500
+2026-09-29 19:13:15,620 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=248/500
+2026-09-29 19:13:16,163 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=249/500
+2026-09-29 19:13:16,168 | INFO    | app.schedule.worker | Сохранено 40 рейсов для volokolamsk (по 3 дням)
+2026-09-29 19:13:16,996 | ERROR   | app.schedule.yandex_client | Yandex Rasp вернул HTTP 404 для станции s0002036
+2026-09-29 19:13:16,997 | ERROR   | app.schedule.worker | Ошибка фетча km133_riga на 2026-10-03 — пропускаю день
+Traceback (most recent call last):
+  File "C:\Users\user\metro-router\backend\app\schedule\worker.py", line 167, in fetch_one_station_multi_day
+    payload = await fetch_station_schedule(yandex_code, on_date)
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\user\metro-router\backend\app\schedule\yandex_client.py", line 103, in fetch_station_schedule
+    raise YandexHTTPError(r.status_code, yandex_code)
+app.schedule.yandex_client.YandexHTTPError: Yandex Rasp вернул HTTP 404 для станции s0002036
+2026-09-29 19:13:17,302 | ERROR   | app.schedule.yandex_client | Yandex Rasp вернул HTTP 404 для станции s0002036
+2026-09-29 19:13:17,302 | ERROR   | app.schedule.worker | Ошибка фетча km133_riga на 2026-10-04 — пропускаю день
+Traceback (most recent call last):
+  File "C:\Users\user\metro-router\backend\app\schedule\worker.py", line 167, in fetch_one_station_multi_day
+    payload = await fetch_station_schedule(yandex_code, on_date)
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\user\metro-router\backend\app\schedule\yandex_client.py", line 103, in fetch_station_schedule
+    raise YandexHTTPError(r.status_code, yandex_code)
+app.schedule.yandex_client.YandexHTTPError: Yandex Rasp вернул HTTP 404 для станции s0002036
+2026-09-29 19:13:17,605 | ERROR   | app.schedule.yandex_client | Yandex Rasp вернул HTTP 404 для станции s0002036
+2026-09-29 19:13:17,606 | ERROR   | app.schedule.worker | Ошибка фетча km133_riga на 2026-10-05 — пропускаю день
+Traceback (most recent call last):
+  File "C:\Users\user\metro-router\backend\app\schedule\worker.py", line 167, in fetch_one_station_multi_day
+    payload = await fetch_station_schedule(yandex_code, on_date)
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\user\metro-router\backend\app\schedule\yandex_client.py", line 103, in fetch_station_schedule
+    raise YandexHTTPError(r.status_code, yandex_code)
+app.schedule.yandex_client.YandexHTTPError: Yandex Rasp вернул HTTP 404 для станции s0002036
+2026-09-29 19:13:17,607 | INFO    | app.schedule.worker | Сохранено 0 рейсов для km133_riga (по 3 дням)
+2026-09-29 19:13:18,012 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=250/500
+2026-09-29 19:13:18,817 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=251/500
+2026-09-29 19:13:19,306 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=252/500
+2026-09-29 19:13:19,310 | INFO    | app.schedule.worker | Сохранено 16 рейсов для blagoveshchenskoe (по 3 дням)
+2026-09-29 19:13:19,722 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=253/500
+2026-09-29 19:13:20,722 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=254/500
+2026-09-29 19:13:21,103 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=255/500
+2026-09-29 19:13:21,106 | INFO    | app.schedule.worker | Сохранено 16 рейсов для moskvich (по 3 дням)
+2026-09-29 19:13:21,427 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=256/500
+2026-09-29 19:13:21,916 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=257/500
+2026-09-29 19:13:22,776 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=258/500
+2026-09-29 19:13:22,779 | INFO    | app.schedule.worker | Сохранено 16 рейсов для bukholovo (по 3 дням)
+2026-09-29 19:13:23,078 | ERROR   | app.schedule.yandex_client | Yandex Rasp вернул HTTP 404 для станции s0002040
+2026-09-29 19:13:23,078 | ERROR   | app.schedule.worker | Ошибка фетча podmoskovnye_dachi на 2026-10-03 — пропускаю день
+Traceback (most recent call last):
+  File "C:\Users\user\metro-router\backend\app\schedule\worker.py", line 167, in fetch_one_station_multi_day
+    payload = await fetch_station_schedule(yandex_code, on_date)
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\user\metro-router\backend\app\schedule\yandex_client.py", line 103, in fetch_station_schedule
+    raise YandexHTTPError(r.status_code, yandex_code)
+app.schedule.yandex_client.YandexHTTPError: Yandex Rasp вернул HTTP 404 для станции s0002040
+2026-09-29 19:13:23,709 | ERROR   | app.schedule.yandex_client | Yandex Rasp вернул HTTP 404 для станции s0002040
+2026-09-29 19:13:23,709 | ERROR   | app.schedule.worker | Ошибка фетча podmoskovnye_dachi на 2026-10-04 — пропускаю день
+Traceback (most recent call last):
+  File "C:\Users\user\metro-router\backend\app\schedule\worker.py", line 167, in fetch_one_station_multi_day
+    payload = await fetch_station_schedule(yandex_code, on_date)
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\user\metro-router\backend\app\schedule\yandex_client.py", line 103, in fetch_station_schedule
+    raise YandexHTTPError(r.status_code, yandex_code)
+app.schedule.yandex_client.YandexHTTPError: Yandex Rasp вернул HTTP 404 для станции s0002040
+2026-09-29 19:13:24,018 | ERROR   | app.schedule.yandex_client | Yandex Rasp вернул HTTP 404 для станции s0002040
+2026-09-29 19:13:24,018 | ERROR   | app.schedule.worker | Ошибка фетча podmoskovnye_dachi на 2026-10-05 — пропускаю день
+Traceback (most recent call last):
+  File "C:\Users\user\metro-router\backend\app\schedule\worker.py", line 167, in fetch_one_station_multi_day
+    payload = await fetch_station_schedule(yandex_code, on_date)
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\user\metro-router\backend\app\schedule\yandex_client.py", line 103, in fetch_station_schedule
+    raise YandexHTTPError(r.status_code, yandex_code)
+app.schedule.yandex_client.YandexHTTPError: Yandex Rasp вернул HTTP 404 для станции s0002040
+2026-09-29 19:13:24,019 | INFO    | app.schedule.worker | Сохранено 0 рейсов для podmoskovnye_dachi (по 3 дням)
+2026-09-29 19:13:24,438 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=259/500
+2026-09-29 19:13:24,856 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=260/500
+2026-09-29 19:13:25,350 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=261/500
+2026-09-29 19:13:25,354 | INFO    | app.schedule.worker | Сохранено 12 рейсов для shakhovskaya (по 3 дням)
+2026-09-29 19:13:25,354 | INFO    | daily_refresh | Направление 'rizhskoye': всего 9195 рейсов
+2026-09-29 19:13:25,358 | INFO    | daily_refresh | Daily refresh завершён: 2026-09-29 19:13 МСК, 308.5 сек, всего 18223 рейсов, квота 261/500
+2026-09-29 19:28:53,245 | INFO    | daily_refresh | ======================================================================
+2026-09-29 19:28:53,246 | INFO    | daily_refresh | Daily refresh запущен: 2026-09-29 19:28 МСК, Вторник
+2026-09-29 19:28:53,247 | INFO    | daily_refresh | По ротации сегодня: ['kurskoye', 'rizhskoye']
+2026-09-29 19:28:53,398 | INFO    | daily_refresh | Направление 'Курское' (kurskoye): 51 станций, дни ['2026-10-03', '2026-10-04', '2026-10-05']
+2026-09-29 19:28:56,074 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=262/500
+2026-09-29 19:28:57,907 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=263/500
+2026-09-29 19:28:59,647 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=264/500
+2026-09-29 19:28:59,722 | INFO    | app.schedule.worker | Сохранено 776 рейсов для m_kursk (по 3 дням)
+2026-09-29 19:29:03,394 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=265/500
+2026-09-29 19:29:05,323 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=266/500
+2026-09-29 19:29:07,027 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=267/500
+2026-09-29 19:29:07,053 | INFO    | app.schedule.worker | Сохранено 401 рейсов для moskva_tovarnaya (по 3 дням)
+2026-09-29 19:29:08,304 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=268/500
+2026-09-29 19:29:10,261 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=269/500
+2026-09-29 19:29:11,629 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=270/500
+2026-09-29 19:29:11,650 | INFO    | app.schedule.worker | Сохранено 340 рейсов для kalitniki (по 3 дням)
+2026-09-29 19:29:13,046 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=271/500
+2026-09-29 19:29:14,145 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=272/500
+2026-09-29 19:29:16,365 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=273/500
+2026-09-29 19:29:16,388 | INFO    | app.schedule.worker | Сохранено 354 рейсов для novokhokhlovskaya (по 3 дням)
+2026-09-29 19:29:17,319 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=274/500
+2026-09-29 19:29:18,275 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=275/500
+2026-09-29 19:29:19,595 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=276/500
+2026-09-29 19:29:19,617 | INFO    | app.schedule.worker | Сохранено 354 рейсов для tekstilshchiki (по 3 дням)
+2026-09-29 19:29:21,526 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=277/500
+2026-09-29 19:29:23,924 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=278/500
+2026-09-29 19:29:25,904 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=279/500
+2026-09-29 19:29:25,928 | INFO    | app.schedule.worker | Сохранено 354 рейсов для pechatniki (по 3 дням)
+2026-09-29 19:29:27,671 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=280/500
+2026-09-29 19:29:29,928 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=281/500
+2026-09-29 19:29:33,146 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=282/500
+2026-09-29 19:29:33,167 | INFO    | app.schedule.worker | Сохранено 341 рейсов для lyublino (по 3 дням)
+2026-09-29 19:29:36,340 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=283/500
+2026-09-29 19:29:37,905 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=284/500
+2026-09-29 19:29:39,213 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=285/500
+2026-09-29 19:29:39,236 | INFO    | app.schedule.worker | Сохранено 338 рейсов для depo_kursk (по 3 дням)
+2026-09-29 19:29:40,271 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=286/500
+2026-09-29 19:29:40,939 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=287/500
+2026-09-29 19:29:42,092 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=288/500
+2026-09-29 19:29:42,104 | INFO    | app.schedule.worker | Сохранено 170 рейсов для pererva (по 3 дням)
+2026-09-29 19:29:43,024 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=289/500
+2026-09-29 19:29:44,772 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=290/500
+2026-09-29 19:29:45,907 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=291/500
+2026-09-29 19:29:45,928 | INFO    | app.schedule.worker | Сохранено 337 рейсов для kuryanovo (по 3 дням)
+2026-09-29 19:29:48,531 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=292/500
+2026-09-29 19:29:49,881 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=293/500
+2026-09-29 19:29:51,569 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=294/500
+2026-09-29 19:29:51,595 | INFO    | app.schedule.worker | Сохранено 337 рейсов для moskvorechye (по 3 дням)
+2026-09-29 19:29:52,614 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=295/500
+2026-09-29 19:29:53,850 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=296/500
+2026-09-29 19:29:55,356 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=297/500
+2026-09-29 19:29:55,378 | INFO    | app.schedule.worker | Сохранено 363 рейсов для tsaritsyno (по 3 дням)
+2026-09-29 19:29:56,659 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=298/500
+2026-09-29 19:29:58,259 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=299/500
+2026-09-29 19:29:59,768 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=300/500
+2026-09-29 19:29:59,792 | INFO    | app.schedule.worker | Сохранено 341 рейсов для pokrovskoe (по 3 дням)
+2026-09-29 19:30:01,809 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=301/500
+2026-09-29 19:30:03,735 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=302/500
+2026-09-29 19:30:05,916 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=303/500
+2026-09-29 19:30:05,937 | INFO    | app.schedule.worker | Сохранено 350 рейсов для krasny_stroitel (по 3 дням)
+2026-09-29 19:30:07,167 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=304/500
+2026-09-29 19:30:09,280 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=305/500
+2026-09-29 19:30:10,448 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=306/500
+2026-09-29 19:30:10,472 | INFO    | app.schedule.worker | Сохранено 349 рейсов для bittsa (по 3 дням)
+2026-09-29 19:30:12,189 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=307/500
+2026-09-29 19:30:13,553 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=308/500
+2026-09-29 19:30:15,705 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=309/500
+2026-09-29 19:30:15,727 | INFO    | app.schedule.worker | Сохранено 350 рейсов для butovo (по 3 дням)
+2026-09-29 19:30:17,159 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=310/500
+2026-09-29 19:30:18,725 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=311/500
+2026-09-29 19:30:20,541 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=312/500
+2026-09-29 19:30:20,565 | INFO    | app.schedule.worker | Сохранено 353 рейсов для shcherbinka (по 3 дням)
+2026-09-29 19:30:21,604 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=313/500
+2026-09-29 19:30:23,531 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=314/500
+2026-09-29 19:30:25,095 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=315/500
+2026-09-29 19:30:25,118 | INFO    | app.schedule.worker | Сохранено 372 рейсов для ostafyevo (по 3 дням)
+2026-09-29 19:30:26,091 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=316/500
+2026-09-29 19:30:27,092 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=317/500
+2026-09-29 19:30:28,654 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=318/500
+2026-09-29 19:30:28,677 | INFO    | app.schedule.worker | Сохранено 352 рейсов для silikatnaya (по 3 дням)
+2026-09-29 19:30:30,668 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=319/500
+2026-09-29 19:30:32,069 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=320/500
+2026-09-29 19:30:33,680 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=321/500
+2026-09-29 19:30:33,700 | INFO    | app.schedule.worker | Сохранено 285 рейсов для podolsk (по 3 дням)
+2026-09-29 19:30:34,295 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=322/500
+2026-09-29 19:30:35,128 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=323/500
+2026-09-29 19:30:36,238 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=324/500
+2026-09-29 19:30:36,249 | INFO    | app.schedule.worker | Сохранено 158 рейсов для kutuzovskaya_k (по 3 дням)
+2026-09-29 19:30:37,144 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=325/500
+2026-09-29 19:30:38,134 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=326/500
+2026-09-29 19:30:39,160 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=327/500
+2026-09-29 19:30:39,171 | INFO    | app.schedule.worker | Сохранено 165 рейсов для vesennyaya (по 3 дням)
+2026-09-29 19:30:40,320 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=328/500
+2026-09-29 19:30:41,526 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=329/500
+2026-09-29 19:30:42,318 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=330/500
+2026-09-29 19:30:42,329 | INFO    | app.schedule.worker | Сохранено 177 рейсов для grivno (по 3 дням)
+2026-09-29 19:30:43,051 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=331/500
+2026-09-29 19:30:43,748 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=332/500
+2026-09-29 19:30:44,817 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=333/500
+2026-09-29 19:30:44,828 | INFO    | app.schedule.worker | Сохранено 155 рейсов для lvovskaya (по 3 дням)
+2026-09-29 19:30:45,792 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=334/500
+2026-09-29 19:30:47,036 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=335/500
+2026-09-29 19:30:47,810 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=336/500
+2026-09-29 19:30:47,819 | INFO    | app.schedule.worker | Сохранено 111 рейсов для molodi (по 3 дням)
+2026-09-29 19:30:49,063 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=337/500
+2026-09-29 19:30:50,554 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=338/500
+2026-09-29 19:30:51,540 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=339/500
+2026-09-29 19:30:51,552 | INFO    | app.schedule.worker | Сохранено 162 рейсов для stolbovaya (по 3 дням)
+2026-09-29 19:30:52,037 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=340/500
+2026-09-29 19:30:52,777 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=341/500
+2026-09-29 19:30:53,380 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=342/500
+2026-09-29 19:30:53,389 | INFO    | app.schedule.worker | Сохранено 105 рейсов для ivachkovo (по 3 дням)
+2026-09-29 19:30:54,258 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=343/500
+2026-09-29 19:30:55,355 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=344/500
+2026-09-29 19:30:56,537 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=345/500
+2026-09-29 19:30:56,546 | INFO    | app.schedule.worker | Сохранено 122 рейсов для chepelyovo (по 3 дням)
+2026-09-29 19:30:57,411 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=346/500
+2026-09-29 19:30:58,012 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=347/500
+2026-09-29 19:30:58,766 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=348/500
+2026-09-29 19:30:58,777 | INFO    | app.schedule.worker | Сохранено 128 рейсов для chekhov (по 3 дням)
+2026-09-29 19:30:59,226 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=349/500
+2026-09-29 19:30:59,745 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=350/500
+2026-09-29 19:31:00,629 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=351/500
+2026-09-29 19:31:00,636 | INFO    | app.schedule.worker | Сохранено 81 рейсов для luch (по 3 дням)
+2026-09-29 19:31:01,385 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=352/500
+2026-09-29 19:31:02,669 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=353/500
+2026-09-29 19:31:03,411 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=354/500
+2026-09-29 19:31:03,419 | INFO    | app.schedule.worker | Сохранено 90 рейсов для sharapova_okhota (по 3 дням)
+2026-09-29 19:31:04,218 | ERROR   | app.schedule.yandex_client | Yandex Rasp вернул HTTP 404 для станции s0001022
+2026-09-29 19:31:04,219 | ERROR   | app.schedule.worker | Ошибка фетча km92_k на 2026-10-03 — пропускаю день
+Traceback (most recent call last):
+  File "C:\Users\user\metro-router\backend\app\schedule\worker.py", line 226, in fetch_one_station_multi_day
+    payload = await fetch_station_schedule(yandex_code, on_date)
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\user\metro-router\backend\app\schedule\yandex_client.py", line 103, in fetch_station_schedule
+    raise YandexHTTPError(r.status_code, yandex_code)
+app.schedule.yandex_client.YandexHTTPError: Yandex Rasp вернул HTTP 404 для станции s0001022
+2026-09-29 19:31:04,579 | ERROR   | app.schedule.yandex_client | Yandex Rasp вернул HTTP 404 для станции s0001022
+2026-09-29 19:31:04,580 | ERROR   | app.schedule.worker | Ошибка фетча km92_k на 2026-10-04 — пропускаю день
+Traceback (most recent call last):
+  File "C:\Users\user\metro-router\backend\app\schedule\worker.py", line 226, in fetch_one_station_multi_day
+    payload = await fetch_station_schedule(yandex_code, on_date)
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\user\metro-router\backend\app\schedule\yandex_client.py", line 103, in fetch_station_schedule
+    raise YandexHTTPError(r.status_code, yandex_code)
+app.schedule.yandex_client.YandexHTTPError: Yandex Rasp вернул HTTP 404 для станции s0001022
+2026-09-29 19:31:04,990 | ERROR   | app.schedule.yandex_client | Yandex Rasp вернул HTTP 404 для станции s0001022
+2026-09-29 19:31:04,990 | ERROR   | app.schedule.worker | Ошибка фетча km92_k на 2026-10-05 — пропускаю день
+Traceback (most recent call last):
+  File "C:\Users\user\metro-router\backend\app\schedule\worker.py", line 226, in fetch_one_station_multi_day
+    payload = await fetch_station_schedule(yandex_code, on_date)
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\user\metro-router\backend\app\schedule\yandex_client.py", line 103, in fetch_station_schedule
+    raise YandexHTTPError(r.status_code, yandex_code)
+app.schedule.yandex_client.YandexHTTPError: Yandex Rasp вернул HTTP 404 для станции s0001022
+2026-09-29 19:31:04,991 | INFO    | app.schedule.worker | Сохранено 0 рейсов для km92_k (по 3 дням)
+2026-09-29 19:31:06,159 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=355/500
+2026-09-29 19:31:06,720 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=356/500
+2026-09-29 19:31:07,585 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=357/500
+2026-09-29 19:31:07,590 | INFO    | app.schedule.worker | Сохранено 76 рейсов для avangard (по 3 дням)
+2026-09-29 19:31:08,187 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=358/500
+2026-09-29 19:31:10,776 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=359/500
+2026-09-29 19:31:11,419 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=360/500
+2026-09-29 19:31:11,424 | INFO    | app.schedule.worker | Сохранено 62 рейсов для serpukhov (по 3 дням)
+2026-09-29 19:31:11,848 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=361/500
+2026-09-29 19:31:12,289 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=362/500
+2026-09-29 19:31:12,806 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=363/500
+2026-09-29 19:31:12,808 | INFO    | app.schedule.worker | Сохранено 17 рейсов для oka (по 3 дням)
+2026-09-29 19:31:13,318 | ERROR   | app.schedule.yandex_client | Yandex Rasp вернул HTTP 404 для станции s0001026
+2026-09-29 19:31:13,318 | ERROR   | app.schedule.worker | Ошибка фетча km107_k на 2026-10-03 — пропускаю день
+Traceback (most recent call last):
+  File "C:\Users\user\metro-router\backend\app\schedule\worker.py", line 226, in fetch_one_station_multi_day
+    payload = await fetch_station_schedule(yandex_code, on_date)
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\user\metro-router\backend\app\schedule\yandex_client.py", line 103, in fetch_station_schedule
+    raise YandexHTTPError(r.status_code, yandex_code)
+app.schedule.yandex_client.YandexHTTPError: Yandex Rasp вернул HTTP 404 для станции s0001026
+2026-09-29 19:31:13,604 | ERROR   | app.schedule.yandex_client | Yandex Rasp вернул HTTP 404 для станции s0001026
+2026-09-29 19:31:13,604 | ERROR   | app.schedule.worker | Ошибка фетча km107_k на 2026-10-04 — пропускаю день
+Traceback (most recent call last):
+  File "C:\Users\user\metro-router\backend\app\schedule\worker.py", line 226, in fetch_one_station_multi_day
+    payload = await fetch_station_schedule(yandex_code, on_date)
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\user\metro-router\backend\app\schedule\yandex_client.py", line 103, in fetch_station_schedule
+    raise YandexHTTPError(r.status_code, yandex_code)
+app.schedule.yandex_client.YandexHTTPError: Yandex Rasp вернул HTTP 404 для станции s0001026
+2026-09-29 19:31:14,015 | ERROR   | app.schedule.yandex_client | Yandex Rasp вернул HTTP 404 для станции s0001026
+2026-09-29 19:31:14,015 | ERROR   | app.schedule.worker | Ошибка фетча km107_k на 2026-10-05 — пропускаю день
+Traceback (most recent call last):
+  File "C:\Users\user\metro-router\backend\app\schedule\worker.py", line 226, in fetch_one_station_multi_day
+    payload = await fetch_station_schedule(yandex_code, on_date)
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\user\metro-router\backend\app\schedule\yandex_client.py", line 103, in fetch_station_schedule
+    raise YandexHTTPError(r.status_code, yandex_code)
+app.schedule.yandex_client.YandexHTTPError: Yandex Rasp вернул HTTP 404 для станции s0001026
+2026-09-29 19:31:14,017 | INFO    | app.schedule.worker | Сохранено 0 рейсов для km107_k (по 3 дням)
+2026-09-29 19:31:14,494 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=364/500
+2026-09-29 19:31:15,123 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=365/500
+2026-09-29 19:31:15,915 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=366/500
+2026-09-29 19:31:15,918 | INFO    | app.schedule.worker | Сохранено 17 рейсов для priokskaya (по 3 дням)
+2026-09-29 19:31:16,279 | ERROR   | app.schedule.yandex_client | Yandex Rasp вернул HTTP 404 для станции s0001028
+2026-09-29 19:31:16,280 | ERROR   | app.schedule.worker | Ошибка фетча romanovskie_dachi на 2026-10-03 — пропускаю день
+Traceback (most recent call last):
+  File "C:\Users\user\metro-router\backend\app\schedule\worker.py", line 226, in fetch_one_station_multi_day
+    payload = await fetch_station_schedule(yandex_code, on_date)
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\user\metro-router\backend\app\schedule\yandex_client.py", line 103, in fetch_station_schedule
+    raise YandexHTTPError(r.status_code, yandex_code)
+app.schedule.yandex_client.YandexHTTPError: Yandex Rasp вернул HTTP 404 для станции s0001028
+2026-09-29 19:31:16,898 | ERROR   | app.schedule.yandex_client | Yandex Rasp вернул HTTP 404 для станции s0001028
+2026-09-29 19:31:16,898 | ERROR   | app.schedule.worker | Ошибка фетча romanovskie_dachi на 2026-10-04 — пропускаю день
+Traceback (most recent call last):
+  File "C:\Users\user\metro-router\backend\app\schedule\worker.py", line 226, in fetch_one_station_multi_day
+    payload = await fetch_station_schedule(yandex_code, on_date)
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\user\metro-router\backend\app\schedule\yandex_client.py", line 103, in fetch_station_schedule
+    raise YandexHTTPError(r.status_code, yandex_code)
+app.schedule.yandex_client.YandexHTTPError: Yandex Rasp вернул HTTP 404 для станции s0001028
+2026-09-29 19:31:17,205 | ERROR   | app.schedule.yandex_client | Yandex Rasp вернул HTTP 404 для станции s0001028
+2026-09-29 19:31:17,205 | ERROR   | app.schedule.worker | Ошибка фетча romanovskie_dachi на 2026-10-05 — пропускаю день
+Traceback (most recent call last):
+  File "C:\Users\user\metro-router\backend\app\schedule\worker.py", line 226, in fetch_one_station_multi_day
+    payload = await fetch_station_schedule(yandex_code, on_date)
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\user\metro-router\backend\app\schedule\yandex_client.py", line 103, in fetch_station_schedule
+    raise YandexHTTPError(r.status_code, yandex_code)
+app.schedule.yandex_client.YandexHTTPError: Yandex Rasp вернул HTTP 404 для станции s0001028
+2026-09-29 19:31:17,207 | INFO    | app.schedule.worker | Сохранено 0 рейсов для romanovskie_dachi (по 3 дням)
+2026-09-29 19:31:17,640 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=367/500
+2026-09-29 19:31:18,830 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=368/500
+2026-09-29 19:31:19,285 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=369/500
+2026-09-29 19:31:19,288 | INFO    | app.schedule.worker | Сохранено 23 рейсов для tarusskaya (по 3 дням)
+2026-09-29 19:31:21,179 | ERROR   | app.schedule.yandex_client | Yandex Rasp вернул HTTP 404 для станции s0001030
+2026-09-29 19:31:21,180 | ERROR   | app.schedule.worker | Ошибка фетча aleksandrovka на 2026-10-03 — пропускаю день
+Traceback (most recent call last):
+  File "C:\Users\user\metro-router\backend\app\schedule\worker.py", line 226, in fetch_one_station_multi_day
+    payload = await fetch_station_schedule(yandex_code, on_date)
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\user\metro-router\backend\app\schedule\yandex_client.py", line 103, in fetch_station_schedule
+    raise YandexHTTPError(r.status_code, yandex_code)
+app.schedule.yandex_client.YandexHTTPError: Yandex Rasp вернул HTTP 404 для станции s0001030
+2026-09-29 19:31:21,531 | ERROR   | app.schedule.yandex_client | Yandex Rasp вернул HTTP 404 для станции s0001030
+2026-09-29 19:31:21,532 | ERROR   | app.schedule.worker | Ошибка фетча aleksandrovka на 2026-10-04 — пропускаю день
+Traceback (most recent call last):
+  File "C:\Users\user\metro-router\backend\app\schedule\worker.py", line 226, in fetch_one_station_multi_day
+    payload = await fetch_station_schedule(yandex_code, on_date)
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\user\metro-router\backend\app\schedule\yandex_client.py", line 103, in fetch_station_schedule
+    raise YandexHTTPError(r.status_code, yandex_code)
+app.schedule.yandex_client.YandexHTTPError: Yandex Rasp вернул HTTP 404 для станции s0001030
+2026-09-29 19:31:21,855 | ERROR   | app.schedule.yandex_client | Yandex Rasp вернул HTTP 404 для станции s0001030
+2026-09-29 19:31:21,855 | ERROR   | app.schedule.worker | Ошибка фетча aleksandrovka на 2026-10-05 — пропускаю день
+Traceback (most recent call last):
+  File "C:\Users\user\metro-router\backend\app\schedule\worker.py", line 226, in fetch_one_station_multi_day
+    payload = await fetch_station_schedule(yandex_code, on_date)
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\user\metro-router\backend\app\schedule\yandex_client.py", line 103, in fetch_station_schedule
+    raise YandexHTTPError(r.status_code, yandex_code)
+app.schedule.yandex_client.YandexHTTPError: Yandex Rasp вернул HTTP 404 для станции s0001030
+2026-09-29 19:31:21,856 | INFO    | app.schedule.worker | Сохранено 0 рейсов для aleksandrovka (по 3 дням)
+2026-09-29 19:31:22,815 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=370/500
+2026-09-29 19:31:23,430 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=371/500
+2026-09-29 19:31:23,966 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=372/500
+2026-09-29 19:31:23,968 | INFO    | app.schedule.worker | Сохранено 17 рейсов для pakhomovo (по 3 дням)
+2026-09-29 19:31:24,530 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=373/500
+2026-09-29 19:31:25,085 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=374/500
+2026-09-29 19:31:25,949 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=375/500
+2026-09-29 19:31:25,951 | INFO    | app.schedule.worker | Сохранено 17 рейсов для shulgino (по 3 дням)
+2026-09-29 19:31:26,262 | ERROR   | app.schedule.yandex_client | Yandex Rasp вернул HTTP 404 для станции s0001033
+2026-09-29 19:31:26,262 | ERROR   | app.schedule.worker | Ошибка фетча prostor на 2026-10-03 — пропускаю день
+Traceback (most recent call last):
+  File "C:\Users\user\metro-router\backend\app\schedule\worker.py", line 226, in fetch_one_station_multi_day
+    payload = await fetch_station_schedule(yandex_code, on_date)
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\user\metro-router\backend\app\schedule\yandex_client.py", line 103, in fetch_station_schedule
+    raise YandexHTTPError(r.status_code, yandex_code)
+app.schedule.yandex_client.YandexHTTPError: Yandex Rasp вернул HTTP 404 для станции s0001033
+2026-09-29 19:31:26,952 | ERROR   | app.schedule.yandex_client | Yandex Rasp вернул HTTP 404 для станции s0001033
+2026-09-29 19:31:26,952 | ERROR   | app.schedule.worker | Ошибка фетча prostor на 2026-10-04 — пропускаю день
+Traceback (most recent call last):
+  File "C:\Users\user\metro-router\backend\app\schedule\worker.py", line 226, in fetch_one_station_multi_day
+    payload = await fetch_station_schedule(yandex_code, on_date)
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\user\metro-router\backend\app\schedule\yandex_client.py", line 103, in fetch_station_schedule
+    raise YandexHTTPError(r.status_code, yandex_code)
+app.schedule.yandex_client.YandexHTTPError: Yandex Rasp вернул HTTP 404 для станции s0001033
+2026-09-29 19:31:27,935 | ERROR   | app.schedule.yandex_client | Yandex Rasp вернул HTTP 404 для станции s0001033
+2026-09-29 19:31:27,935 | ERROR   | app.schedule.worker | Ошибка фетча prostor на 2026-10-05 — пропускаю день
+Traceback (most recent call last):
+  File "C:\Users\user\metro-router\backend\app\schedule\worker.py", line 226, in fetch_one_station_multi_day
+    payload = await fetch_station_schedule(yandex_code, on_date)
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\user\metro-router\backend\app\schedule\yandex_client.py", line 103, in fetch_station_schedule
+    raise YandexHTTPError(r.status_code, yandex_code)
+app.schedule.yandex_client.YandexHTTPError: Yandex Rasp вернул HTTP 404 для станции s0001033
+2026-09-29 19:31:27,936 | INFO    | app.schedule.worker | Сохранено 0 рейсов для prostor (по 3 дням)
+2026-09-29 19:31:28,336 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=376/500
+2026-09-29 19:31:29,049 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=377/500
+2026-09-29 19:31:30,034 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=378/500
+2026-09-29 19:31:30,037 | INFO    | app.schedule.worker | Сохранено 23 рейсов для yasnogorsk (по 3 дням)
+2026-09-29 19:31:30,414 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=379/500
+2026-09-29 19:31:31,039 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=380/500
+2026-09-29 19:31:31,400 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=381/500
+2026-09-29 19:31:31,402 | INFO    | app.schedule.worker | Сохранено 17 рейсов для shemetovo (по 3 дням)
+2026-09-29 19:31:31,858 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=382/500
+2026-09-29 19:31:32,237 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=383/500
+2026-09-29 19:31:32,947 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=384/500
+2026-09-29 19:31:32,950 | INFO    | app.schedule.worker | Сохранено 17 рейсов для baranovo (по 3 дням)
+2026-09-29 19:31:33,385 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=385/500
+2026-09-29 19:31:34,013 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=386/500
+2026-09-29 19:31:35,652 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=387/500
+2026-09-29 19:31:35,654 | INFO    | app.schedule.worker | Сохранено 17 рейсов для revyakino (по 3 дням)
+2026-09-29 19:31:36,073 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=388/500
+2026-09-29 19:31:36,554 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=389/500
+2026-09-29 19:31:37,051 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=390/500
+2026-09-29 19:31:37,053 | INFO    | app.schedule.worker | Сохранено 17 рейсов для baydiki (по 3 дням)
+2026-09-29 19:31:37,438 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=391/500
+2026-09-29 19:31:37,921 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=392/500
+2026-09-29 19:31:38,397 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=393/500
+2026-09-29 19:31:38,399 | INFO    | app.schedule.worker | Сохранено 17 рейсов для khomyakovo (по 3 дням)
+2026-09-29 19:31:38,705 | ERROR   | app.schedule.yandex_client | Yandex Rasp вернул HTTP 404 для станции s0001040
+2026-09-29 19:31:38,705 | ERROR   | app.schedule.worker | Ошибка фетча rodnichok на 2026-10-03 — пропускаю день
+Traceback (most recent call last):
+  File "C:\Users\user\metro-router\backend\app\schedule\worker.py", line 226, in fetch_one_station_multi_day
+    payload = await fetch_station_schedule(yandex_code, on_date)
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\user\metro-router\backend\app\schedule\yandex_client.py", line 103, in fetch_station_schedule
+    raise YandexHTTPError(r.status_code, yandex_code)
+app.schedule.yandex_client.YandexHTTPError: Yandex Rasp вернул HTTP 404 для станции s0001040
+2026-09-29 19:31:39,073 | ERROR   | app.schedule.yandex_client | Yandex Rasp вернул HTTP 404 для станции s0001040
+2026-09-29 19:31:39,073 | ERROR   | app.schedule.worker | Ошибка фетча rodnichok на 2026-10-04 — пропускаю день
+Traceback (most recent call last):
+  File "C:\Users\user\metro-router\backend\app\schedule\worker.py", line 226, in fetch_one_station_multi_day
+    payload = await fetch_station_schedule(yandex_code, on_date)
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\user\metro-router\backend\app\schedule\yandex_client.py", line 103, in fetch_station_schedule
+    raise YandexHTTPError(r.status_code, yandex_code)
+app.schedule.yandex_client.YandexHTTPError: Yandex Rasp вернул HTTP 404 для станции s0001040
+2026-09-29 19:31:39,414 | ERROR   | app.schedule.yandex_client | Yandex Rasp вернул HTTP 404 для станции s0001040
+2026-09-29 19:31:39,414 | ERROR   | app.schedule.worker | Ошибка фетча rodnichok на 2026-10-05 — пропускаю день
+Traceback (most recent call last):
+  File "C:\Users\user\metro-router\backend\app\schedule\worker.py", line 226, in fetch_one_station_multi_day
+    payload = await fetch_station_schedule(yandex_code, on_date)
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\user\metro-router\backend\app\schedule\yandex_client.py", line 103, in fetch_station_schedule
+    raise YandexHTTPError(r.status_code, yandex_code)
+app.schedule.yandex_client.YandexHTTPError: Yandex Rasp вернул HTTP 404 для станции s0001040
+2026-09-29 19:31:39,416 | INFO    | app.schedule.worker | Сохранено 0 рейсов для rodnichok (по 3 дням)
+2026-09-29 19:31:39,864 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=394/500
+2026-09-29 19:31:41,992 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=395/500
+2026-09-29 19:31:42,856 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=396/500
+2026-09-29 19:31:42,859 | INFO    | app.schedule.worker | Сохранено 20 рейсов для tula (по 3 дням)
+2026-09-29 19:31:42,860 | INFO    | daily_refresh | Направление 'kurskoye': всего 9028 рейсов
+2026-09-29 19:31:42,862 | INFO    | daily_refresh | Направление 'Рижское' (rizhskoye): 47 станций, дни ['2026-10-03', '2026-10-04', '2026-10-05']
+2026-09-29 19:31:45,368 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=397/500
+2026-09-29 19:31:48,608 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=398/500
+2026-09-29 19:31:50,481 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=399/500
+2026-09-29 19:31:50,531 | INFO    | app.schedule.worker | Сохранено 776 рейсов для ploshchad_trekh_vokzalov (по 3 дням)
+2026-09-29 19:31:51,896 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=400/500
+2026-09-29 19:31:52,904 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=401/500
+2026-09-29 19:31:54,767 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=402/500
+2026-09-29 19:31:54,793 | INFO    | app.schedule.worker | Сохранено 347 рейсов для rizhskaya (по 3 дням)
+2026-09-29 19:31:57,380 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=403/500
+2026-09-29 19:32:00,263 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=404/500
+2026-09-29 19:32:02,184 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=405/500
+2026-09-29 19:32:02,230 | INFO    | app.schedule.worker | Сохранено 720 рейсов для marya_roshcha (по 3 дням)
+2026-09-29 19:32:04,223 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=406/500
+2026-09-29 19:32:06,558 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=407/500
+2026-09-29 19:32:08,204 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=408/500
+2026-09-29 19:32:08,227 | INFO    | app.schedule.worker | Сохранено 392 рейсов для dmitrovskaya (по 3 дням)
+2026-09-29 19:32:09,043 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=409/500
+2026-09-29 19:32:09,590 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=410/500
+2026-09-29 19:32:10,280 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=411/500
+2026-09-29 19:32:10,283 | INFO    | app.schedule.worker | Сохранено 24 рейсов для m_riga (по 3 дням)
+2026-09-29 19:32:11,625 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=412/500
+2026-09-29 19:32:12,993 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=413/500
+2026-09-29 19:32:14,536 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=414/500
+2026-09-29 19:32:14,564 | INFO    | app.schedule.worker | Сохранено 388 рейсов для grazhdanskaya (по 3 дням)
+2026-09-29 19:32:16,819 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=415/500
+2026-09-29 19:32:17,793 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=416/500
+2026-09-29 19:32:19,468 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=417/500
+2026-09-29 19:32:19,493 | INFO    | app.schedule.worker | Сохранено 392 рейсов для krasny_balties (по 3 дням)
+2026-09-29 19:32:21,366 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=418/500
+2026-09-29 19:32:23,152 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=419/500
+2026-09-29 19:32:25,190 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=420/500
+2026-09-29 19:32:25,215 | INFO    | app.schedule.worker | Сохранено 392 рейсов для streshnevo (по 3 дням)
+2026-09-29 19:32:26,893 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=421/500
+2026-09-29 19:32:28,403 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=422/500
+2026-09-29 19:32:29,750 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=423/500
+2026-09-29 19:32:29,774 | INFO    | app.schedule.worker | Сохранено 392 рейсов для shchukinskaya (по 3 дням)
+2026-09-29 19:32:31,390 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=424/500
+2026-09-29 19:32:32,852 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=425/500
+2026-09-29 19:32:34,080 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=426/500
+2026-09-29 19:32:34,104 | INFO    | app.schedule.worker | Сохранено 389 рейсов для tushinskaya (по 3 дням)
+2026-09-29 19:32:35,922 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=427/500
+2026-09-29 19:32:37,734 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=428/500
+2026-09-29 19:32:38,833 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=429/500
+2026-09-29 19:32:38,857 | INFO    | app.schedule.worker | Сохранено 384 рейсов для trikotazhnaya (по 3 дням)
+2026-09-29 19:32:40,707 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=430/500
+2026-09-29 19:32:42,643 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=431/500
+2026-09-29 19:32:45,219 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=432/500
+2026-09-29 19:32:45,243 | INFO    | app.schedule.worker | Сохранено 388 рейсов для volokolamskaya (по 3 дням)
+2026-09-29 19:32:46,881 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=433/500
+2026-09-29 19:32:48,261 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=434/500
+2026-09-29 19:32:50,773 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=435/500
+2026-09-29 19:32:50,799 | INFO    | app.schedule.worker | Сохранено 388 рейсов для penyagino (по 3 дням)
+2026-09-29 19:32:52,260 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=436/500
+2026-09-29 19:32:53,260 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=437/500
+2026-09-29 19:32:55,653 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=438/500
+2026-09-29 19:32:55,677 | INFO    | app.schedule.worker | Сохранено 388 рейсов для pavshino (по 3 дням)
+2026-09-29 19:32:57,745 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=439/500
+2026-09-29 19:32:58,983 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=440/500
+2026-09-29 19:33:00,355 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=441/500
+2026-09-29 19:33:00,379 | INFO    | app.schedule.worker | Сохранено 388 рейсов для krasnogorskaya (по 3 дням)
+2026-09-29 19:33:02,252 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=442/500
+2026-09-29 19:33:03,889 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=443/500
+2026-09-29 19:33:05,742 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=444/500
+2026-09-29 19:33:05,767 | INFO    | app.schedule.worker | Сохранено 388 рейсов для opalikha (по 3 дням)
+2026-09-29 19:33:06,961 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=445/500
+2026-09-29 19:33:07,877 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=446/500
+2026-09-29 19:33:09,584 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=447/500
+2026-09-29 19:33:09,607 | INFO    | app.schedule.worker | Сохранено 384 рейсов для anikeevka (по 3 дням)
+2026-09-29 19:33:11,449 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=448/500
+2026-09-29 19:33:12,885 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=449/500
+2026-09-29 19:33:15,447 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=450/500
+2026-09-29 19:33:15,465 | INFO    | app.schedule.worker | Сохранено 278 рейсов для nahabino (по 3 дням)
+2026-09-29 19:33:16,120 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=451/500
+2026-09-29 19:33:17,143 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=452/500
+2026-09-29 19:33:17,755 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=453/500
+2026-09-29 19:33:17,766 | INFO    | app.schedule.worker | Сохранено 142 рейсов для malinovka (по 3 дням)
+2026-09-29 19:33:18,856 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=454/500
+2026-09-29 19:33:19,799 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=455/500
+2026-09-29 19:33:20,638 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=456/500
+2026-09-29 19:33:20,650 | INFO    | app.schedule.worker | Сохранено 163 рейсов для dedovsk (по 3 дням)
+2026-09-29 19:33:21,333 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=457/500
+2026-09-29 19:33:22,673 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=458/500
+2026-09-29 19:33:23,398 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=459/500
+2026-09-29 19:33:23,409 | INFO    | app.schedule.worker | Сохранено 138 рейсов для miitovskaya (по 3 дням)
+2026-09-29 19:33:24,253 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=460/500
+2026-09-29 19:33:24,934 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=461/500
+2026-09-29 19:33:26,209 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=462/500
+2026-09-29 19:33:26,220 | INFO    | app.schedule.worker | Сохранено 151 рейсов для snegiri (по 3 дням)
+2026-09-29 19:33:26,762 | ERROR   | app.schedule.yandex_client | Yandex Rasp вернул HTTP 404 для станции s0002018
+2026-09-29 19:33:26,762 | ERROR   | app.schedule.worker | Ошибка фетча km50_riga на 2026-10-03 — пропускаю день
+Traceback (most recent call last):
+  File "C:\Users\user\metro-router\backend\app\schedule\worker.py", line 226, in fetch_one_station_multi_day
+    payload = await fetch_station_schedule(yandex_code, on_date)
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\user\metro-router\backend\app\schedule\yandex_client.py", line 103, in fetch_station_schedule
+    raise YandexHTTPError(r.status_code, yandex_code)
+app.schedule.yandex_client.YandexHTTPError: Yandex Rasp вернул HTTP 404 для станции s0002018
+2026-09-29 19:33:27,110 | ERROR   | app.schedule.yandex_client | Yandex Rasp вернул HTTP 404 для станции s0002018
+2026-09-29 19:33:27,110 | ERROR   | app.schedule.worker | Ошибка фетча km50_riga на 2026-10-04 — пропускаю день
+Traceback (most recent call last):
+  File "C:\Users\user\metro-router\backend\app\schedule\worker.py", line 226, in fetch_one_station_multi_day
+    payload = await fetch_station_schedule(yandex_code, on_date)
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\user\metro-router\backend\app\schedule\yandex_client.py", line 103, in fetch_station_schedule
+    raise YandexHTTPError(r.status_code, yandex_code)
+app.schedule.yandex_client.YandexHTTPError: Yandex Rasp вернул HTTP 404 для станции s0002018
+2026-09-29 19:33:27,909 | ERROR   | app.schedule.yandex_client | Yandex Rasp вернул HTTP 404 для станции s0002018
+2026-09-29 19:33:27,910 | ERROR   | app.schedule.worker | Ошибка фетча km50_riga на 2026-10-05 — пропускаю день
+Traceback (most recent call last):
+  File "C:\Users\user\metro-router\backend\app\schedule\worker.py", line 226, in fetch_one_station_multi_day
+    payload = await fetch_station_schedule(yandex_code, on_date)
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\user\metro-router\backend\app\schedule\yandex_client.py", line 103, in fetch_station_schedule
+    raise YandexHTTPError(r.status_code, yandex_code)
+app.schedule.yandex_client.YandexHTTPError: Yandex Rasp вернул HTTP 404 для станции s0002018
+2026-09-29 19:33:27,912 | INFO    | app.schedule.worker | Сохранено 0 рейсов для km50_riga (по 3 дням)
+2026-09-29 19:33:30,388 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=463/500
+2026-09-29 19:33:31,260 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=464/500
+2026-09-29 19:33:32,558 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=465/500
+2026-09-29 19:33:32,569 | INFO    | app.schedule.worker | Сохранено 156 рейсов для manikhino1 (по 3 дням)
+2026-09-29 19:33:33,271 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=466/500
+2026-09-29 19:33:34,287 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=467/500
+2026-09-29 19:33:35,812 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=468/500
+2026-09-29 19:33:35,820 | INFO    | app.schedule.worker | Сохранено 117 рейсов для troitskaya (по 3 дням)
+2026-09-29 19:33:36,731 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=469/500
+2026-09-29 19:33:37,378 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=470/500
+2026-09-29 19:33:38,158 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=471/500
+2026-09-29 19:33:38,169 | INFO    | app.schedule.worker | Сохранено 151 рейсов для istra (по 3 дням)
+2026-09-29 19:33:39,175 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=472/500
+2026-09-29 19:33:39,834 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=473/500
+2026-09-29 19:33:40,464 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=474/500
+2026-09-29 19:33:40,472 | INFO    | app.schedule.worker | Сохранено 121 рейсов для novoierusalimskaya (по 3 дням)
+2026-09-29 19:33:41,188 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=475/500
+2026-09-29 19:33:41,764 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=476/500
+2026-09-29 19:33:42,403 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=477/500
+2026-09-29 19:33:42,409 | INFO    | app.schedule.worker | Сохранено 80 рейсов для chekhovskaya_riga (по 3 дням)
+2026-09-29 19:33:43,246 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=478/500
+2026-09-29 19:33:43,859 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=479/500
+2026-09-29 19:33:44,572 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=480/500
+2026-09-29 19:33:44,579 | INFO    | app.schedule.worker | Сохранено 94 рейсов для kholshcheviki (по 3 дням)
+2026-09-29 19:33:44,902 | ERROR   | app.schedule.yandex_client | Yandex Rasp вернул HTTP 404 для станции s0002025
+2026-09-29 19:33:44,902 | ERROR   | app.schedule.worker | Ошибка фетча km73_riga на 2026-10-03 — пропускаю день
+Traceback (most recent call last):
+  File "C:\Users\user\metro-router\backend\app\schedule\worker.py", line 226, in fetch_one_station_multi_day
+    payload = await fetch_station_schedule(yandex_code, on_date)
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\user\metro-router\backend\app\schedule\yandex_client.py", line 103, in fetch_station_schedule
+    raise YandexHTTPError(r.status_code, yandex_code)
+app.schedule.yandex_client.YandexHTTPError: Yandex Rasp вернул HTTP 404 для станции s0002025
+2026-09-29 19:33:45,244 | ERROR   | app.schedule.yandex_client | Yandex Rasp вернул HTTP 404 для станции s0002025
+2026-09-29 19:33:45,244 | ERROR   | app.schedule.worker | Ошибка фетча km73_riga на 2026-10-04 — пропускаю день
+Traceback (most recent call last):
+  File "C:\Users\user\metro-router\backend\app\schedule\worker.py", line 226, in fetch_one_station_multi_day
+    payload = await fetch_station_schedule(yandex_code, on_date)
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\user\metro-router\backend\app\schedule\yandex_client.py", line 103, in fetch_station_schedule
+    raise YandexHTTPError(r.status_code, yandex_code)
+app.schedule.yandex_client.YandexHTTPError: Yandex Rasp вернул HTTP 404 для станции s0002025
+2026-09-29 19:33:45,696 | ERROR   | app.schedule.yandex_client | Yandex Rasp вернул HTTP 404 для станции s0002025
+2026-09-29 19:33:45,696 | ERROR   | app.schedule.worker | Ошибка фетча km73_riga на 2026-10-05 — пропускаю день
+Traceback (most recent call last):
+  File "C:\Users\user\metro-router\backend\app\schedule\worker.py", line 226, in fetch_one_station_multi_day
+    payload = await fetch_station_schedule(yandex_code, on_date)
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\user\metro-router\backend\app\schedule\yandex_client.py", line 103, in fetch_station_schedule
+    raise YandexHTTPError(r.status_code, yandex_code)
+app.schedule.yandex_client.YandexHTTPError: Yandex Rasp вернул HTTP 404 для станции s0002025
+2026-09-29 19:33:45,698 | INFO    | app.schedule.worker | Сохранено 0 рейсов для km73_riga (по 3 дням)
+2026-09-29 19:33:46,613 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=481/500
+2026-09-29 19:33:47,084 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=482/500
+2026-09-29 19:33:47,979 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=483/500
+2026-09-29 19:33:47,985 | INFO    | app.schedule.worker | Сохранено 75 рейсов для yadroshino (по 3 дням)
+2026-09-29 19:33:48,560 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=484/500
+2026-09-29 19:33:49,351 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=485/500
+2026-09-29 19:33:50,162 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=486/500
+2026-09-29 19:33:50,168 | INFO    | app.schedule.worker | Сохранено 83 рейсов для kursakovskaya (по 3 дням)
+2026-09-29 19:33:50,850 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=487/500
+2026-09-29 19:33:51,328 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=488/500
+2026-09-29 19:33:54,120 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=489/500
+2026-09-29 19:33:54,127 | INFO    | app.schedule.worker | Сохранено 81 рейсов для rumyantsevo (по 3 дням)
+2026-09-29 19:33:54,835 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=490/500
+2026-09-29 19:33:55,357 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=491/500
+2026-09-29 19:33:55,915 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=492/500
+2026-09-29 19:33:55,920 | INFO    | app.schedule.worker | Сохранено 64 рейсов для novopetrovskaya (по 3 дням)
+2026-09-29 19:33:56,456 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=493/500
+2026-09-29 19:33:57,962 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=494/500
+2026-09-29 19:33:58,894 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=495/500
+2026-09-29 19:33:58,899 | INFO    | app.schedule.worker | Сохранено 58 рейсов для ustinovka (по 3 дням)
+2026-09-29 19:33:59,270 | ERROR   | app.schedule.yandex_client | Yandex Rasp вернул HTTP 404 для станции s0002031
+2026-09-29 19:33:59,270 | ERROR   | app.schedule.worker | Ошибка фетча km91_riga на 2026-10-03 — пропускаю день
+Traceback (most recent call last):
+  File "C:\Users\user\metro-router\backend\app\schedule\worker.py", line 226, in fetch_one_station_multi_day
+    payload = await fetch_station_schedule(yandex_code, on_date)
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\user\metro-router\backend\app\schedule\yandex_client.py", line 103, in fetch_station_schedule
+    raise YandexHTTPError(r.status_code, yandex_code)
+app.schedule.yandex_client.YandexHTTPError: Yandex Rasp вернул HTTP 404 для станции s0002031
+2026-09-29 19:33:59,628 | ERROR   | app.schedule.yandex_client | Yandex Rasp вернул HTTP 404 для станции s0002031
+2026-09-29 19:33:59,629 | ERROR   | app.schedule.worker | Ошибка фетча km91_riga на 2026-10-04 — пропускаю день
+Traceback (most recent call last):
+  File "C:\Users\user\metro-router\backend\app\schedule\worker.py", line 226, in fetch_one_station_multi_day
+    payload = await fetch_station_schedule(yandex_code, on_date)
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\user\metro-router\backend\app\schedule\yandex_client.py", line 103, in fetch_station_schedule
+    raise YandexHTTPError(r.status_code, yandex_code)
+app.schedule.yandex_client.YandexHTTPError: Yandex Rasp вернул HTTP 404 для станции s0002031
+2026-09-29 19:33:59,949 | ERROR   | app.schedule.yandex_client | Yandex Rasp вернул HTTP 404 для станции s0002031
+2026-09-29 19:33:59,950 | ERROR   | app.schedule.worker | Ошибка фетча km91_riga на 2026-10-05 — пропускаю день
+Traceback (most recent call last):
+  File "C:\Users\user\metro-router\backend\app\schedule\worker.py", line 226, in fetch_one_station_multi_day
+    payload = await fetch_station_schedule(yandex_code, on_date)
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\user\metro-router\backend\app\schedule\yandex_client.py", line 103, in fetch_station_schedule
+    raise YandexHTTPError(r.status_code, yandex_code)
+app.schedule.yandex_client.YandexHTTPError: Yandex Rasp вернул HTTP 404 для станции s0002031
+2026-09-29 19:33:59,951 | INFO    | app.schedule.worker | Сохранено 0 рейсов для km91_riga (по 3 дням)
+2026-09-29 19:34:01,463 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=496/500
+2026-09-29 19:34:01,909 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=497/500
+2026-09-29 19:34:02,357 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=498/500
+2026-09-29 19:34:02,363 | INFO    | app.schedule.worker | Сохранено 53 рейсов для lesodolgorukovo (по 3 дням)
+2026-09-29 19:34:02,830 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=499/500
+2026-09-29 19:34:03,484 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=500/500
+2026-09-29 19:34:03,486 | ERROR   | daily_refresh | Квота исчерпана — прерываю оставшиеся направления
+2026-09-29 19:34:03,491 | INFO    | daily_refresh | Daily refresh завершён: 2026-09-29 19:34 МСК, 310.2 сек, всего 9028 рейсов, квота 500/500
+2026-09-29 19:34:03,492 | WARNING | daily_refresh | С ошибками: rizhskoye
