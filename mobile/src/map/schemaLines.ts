@@ -16,7 +16,7 @@ export const LINES: SchemaLine[] = [
     color: '#E5231B',
     kind: 'cppk',
     path: [
-      'm_yar', 'moscow3', 'malenkovskaya', 'yauza', 'rostokino',
+      'ploshchad_trekh_vokzalov', 'moscow3', 'malenkovskaya', 'yauza', 'rostokino',
       'losinoostrovskaya', 'los', 'perlovskaya', 'tayninskaya',
       'mytishchi', 'stroitel', 'chelyuskinskaya', 'tarasovskaya',
       'klyazma', 'mamontovskaya', 'pushkino', 'zavety_ilyicha',
@@ -169,7 +169,7 @@ export const LINES: SchemaLine[] = [
       'odintsovo', 'bakovka', 'skolkovo', 'nemchinovka', 'setun',
       'rabochiy_poselok', 'kuntsevskaya', 'slavyansky_bulvar', 'fili',
       'testovskaya', 'begovaya', 'm_bel', 'm_sav', 'okruzhnaya',
-      'lianozovo', 'sheremetyevo_south', 'sheremetyevo_north',
+      'lianozovo', 'sheremetyevo_junction', 'sheremetyevo_south', 'sheremetyevo_north',
     ],
   },
     // ══════════════════════════════════════════════════════════════
@@ -226,5 +226,82 @@ export const LINES: SchemaLine[] = [
     color: '#f754e1',
     kind: 'cppk',
     path: ['dmitrovskaya', 'm_riga'],
+  },
+    // ══════════════════════════════════════════════════════════════
+  // МЦД-1 (Лобня — Одинцово) — overlay поверх Савёловского и Белорусского
+  // ══════════════════════════════════════════════════════════════
+  {
+    id: 'mcd1',
+    name: 'МЦД-1',
+    color: '#F5A623',   // оранжевый
+    kind: 'mcd',
+    path: [
+      'lobnya', 'sheremetyevskaya', 'hlebnikovo', 'vodniki',
+      'dolgoprudnaya', 'novodachnaya', 'mark', 'lianozovo',
+      'beskudnikovo', 'degunino', 'okruzhnaya', 'timiryazevskaya',
+      'm_sav', 'm_bel', 'begovaya', 'testovskaya', 'fili',
+      'kuntsevskaya', 'rabochiy_poselok', 'setun', 'nemchinovka',
+      'skolkovo', 'bakovka', 'odintsovo',
+    ],
+  },
+  // ══════════════════════════════════════════════════════════════
+  // МЦД-2 (Нахабино — Подольск) — overlay поверх Рижского и Курского
+  // ══════════════════════════════════════════════════════════════
+  {
+    id: 'mcd2',
+    name: 'МЦД-2',
+    color: '#E91E63',   // насыщенный розовый
+    kind: 'mcd',
+    path: [
+      'nahabino', 'anikeevka', 'opalikha', 'krasnogorskaya',
+      'pavshino', 'penyagino', 'volokolamskaya', 'trikotazhnaya',
+      'tushinskaya', 'shchukinskaya', 'streshnevo', 'krasny_balties',
+      'grazhdanskaya', 'dmitrovskaya', 'marya_roshcha', 'rizhskaya',
+      'ploshchad_trekh_vokzalov', 'm_kursk', 'moskva_tovarnaya',
+      'kalitniki', 'novokhokhlovskaya', 'tekstilshchiki', 'pechatniki',
+      'lyublino', 'depo_kursk', 'pererva', 'kuryanovo', 'moskvorechye',
+      'tsaritsyno', 'pokrovskoe', 'krasny_stroitel', 'bittsa', 'butovo',
+      'shcherbinka', 'ostafyevo', 'silikatnaya', 'podolsk',
+    ],
+  },
+    // ══════════════════════════════════════════════════════════════
+  // ЛЕНИНГРАДСКОЕ НАПРАВЛЕНИЕ
+  // ══════════════════════════════════════════════════════════════
+  {
+    id: 'len',
+    name: 'Ленинградское направление',
+    color: '#8B7355',
+    kind: 'cppk',
+    path: [
+      'ploshchad_trekh_vokzalov', 'ostankino', 'petrovsko_razumovskaya', 'likhobory',
+      'mosselsmash', 'grachyovskaya', 'hovrino', 'levoberezhnaya',
+      'himki', 'molzhaninovo', 'novopodrezkovo', 'podrezkovo', 'shodnya',
+      'firsanovskaya', 'malino', 'zelenograd_krukovo', 'alabushevo',
+      'radishchevo', 'povarovka', 'povarovo1', 'beryozki_dachnye',
+      'podsolnechnaya', 'senezh', 'golovkovo', 'pokrovka', 'frolovskoe',
+      'streglovo', 'klin', 'yamuga', 'reshetnikovo', 'chernichnaya',
+      'zavidovo', 'moskovskoe_more', 'redkino', 'mezhevo', 'kuzminka',
+      'chupriyanovka', 'lazurnaya', 'tver',
+    ],
+  },
+  {
+    id: 'len_konakovo',
+    name: 'Ветка в Конаково',
+    color: '#8B7355',
+    kind: 'cppk',
+    path: [
+      'reshetnikovo', 'puteprovodnaya', 'konakovskiy_moh',
+      'donhovka', 'konakovo_gres',
+    ],
+  },
+  // ══════════════════════════════════════════════════════════════
+  // МЦД-3 (Митьково, между Ленинградским и Казанским)
+  // ══════════════════════════════════════════════════════════════
+  {
+    id: 'mcd3',
+    name: 'МЦД-3',
+    color: '#E5231B',
+    kind: 'mcd',
+    path: ['m_len', 'mitkovo', 'm_kaz'],
   },
 ];

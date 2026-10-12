@@ -14,6 +14,7 @@ NO_SCHEDULE: set[str] = {
     "pl109km",
     "pl124km",
     "domodedovo_junction",
+    "sheremetyevo_junction"
     # Курское — нет у Яндекса
     "km92_k",
     "km107_k",
@@ -175,4 +176,56 @@ OVERRIDES: dict[str, str] = {
 
     # ─── Депо на Савёловском ───
     "depo_sav": "s9602464",
+
+    # ═════════════════════════════════════════════════════════
+    # ЛЕНИНГРАДСКОЕ НАПРАВЛЕНИЕ
+    # ═════════════════════════════════════════════════════════
+    # Москва и ближнее Подмосковье
+    "ostankino":          "s9603505",
+    "likhobory":          "s9603256",   # Лихоборы (бывш. НАТИ)
+    "mosselsmash":        "s9603478",
+    "grachyovskaya":      "s9603877",   # Грачёвская (бывш. Ховрино)
+    "hovrino":            "s9878110",   # Ховрино (МЦД-3)
+    "levoberezhnaya":     "s9603663",
+    "himki":              "s9603401",
+    "molzhaninovo":       "s9603638",   # Молжаниново (бывш. Планерная)
+    "novopodrezkovo":     "s9603404",
+    "podrezkovo":         "s9603406",
+    "shodnya":            "s9603486",
+    "firsanovskaya":      "s9603604",
+    "malino":             "s9601115",
+    "zelenograd_krukovo": "s9600212",
+    "alabushevo":         "s9603668",
+    "radishchevo":        "s9603761",
+    "povarovo1":          "s9602925",
+    # TODO: Поваровка — у Яндекса отдельно нет. Похоже, это Поварово-3.
+    # Проверить фетчем: если расписание пустое — перенаправить на NO_SCHEDULE.
+    "povarovka":          "s9601292",   # Поварово-3
+    "beryozki_dachnye":   "s9603765",
+    "podsolnechnaya":     "s9603468",
+    "senezh":             "s9603714",
+    "golovkovo":          "s9603732",
+    "pokrovka":           "s9603708",
+    "frolovskoe":         "s9603744",
+    "streglovo":          "s9603436",
+    "klin":               "s9602944",
+    "yamuga":             "s9603464",
+    "reshetnikovo":       "s9602945",
+    # Тверская область
+    "chernichnaya":       "s9603509",
+    "zavidovo":           "s9602593",
+    "moskovskoe_more":    "s9603507",
+    "redkino":            "s9602946",
+    "mezhevo":            "s9603423",
+    "kuzminka":           "s9603871",
+    "chupriyanovka":      "s9603829",
+    "lazurnaya":          "s9603790",
+    "tver":               "s9603093",
+    # Ветка в Конаково
+    "puteprovodnaya":     "s9603753",
+    "konakovskiy_moh":    "s9603888",
+    "donhovka":           "s9603676",
+    "konakovo_gres":      "s9603735",
+    # МЦД-3
+    "mitkovo":            "s9601312",
 }

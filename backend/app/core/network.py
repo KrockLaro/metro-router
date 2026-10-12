@@ -313,6 +313,7 @@ _STATIONS = [
     ("zvenigorod", "Звенигород"),
 
     # ─── Белорусское/Савёловское: аэроэкспресс в Шереметьево ───
+    ("sheremetyevo_junction", "Junction"),
     ("sheremetyevo_south", "Шереметьево — Юг"),
     ("sheremetyevo_north", "Шереметьево — Север"),
 
@@ -361,6 +362,52 @@ _STATIONS = [
     ("karmanovo", "Карманово (122 км)"),
     ("bolshaya_volga", "Большая Волга"),
     ("dubna", "Дубна"),
+
+        # ─── Ленинградское направление ───
+    ("ostankino", "Останкино"),
+    ("likhobory", "Лихоборы"),
+    ("mosselsmash", "Моссельмаш"),
+    ("grachyovskaya", "Грачёвская"),
+    ("hovrino", "Ховрино"),
+    ("levoberezhnaya", "Левобережная"),
+    ("himki", "Химки"),
+    ("molzhaninovo", "Молжаниново"),
+    ("novopodrezkovo", "Новоподрезково"),
+    ("podrezkovo", "Подрезково"),
+    ("shodnya", "Сходня"),
+    ("firsanovskaya", "Фирсановская"),
+    ("malino", "Малино"),
+    ("zelenograd_krukovo", "Зеленоград-Крюково"),
+    ("alabushevo", "Алабушево"),
+    ("radishchevo", "Радищево"),
+    ("povarovka", "Поваровка"),
+    ("povarovo1", "Поварово-1"),
+    ("beryozki_dachnye", "Берёзки-Дачные"),
+    ("podsolnechnaya", "Подсолнечная"),
+    ("senezh", "Сенеж"),
+    ("golovkovo", "Головково"),
+    ("pokrovka", "Покровка"),
+    ("frolovskoe", "Фроловское"),
+    ("streglovo", "Стреглово"),
+    ("klin", "Клин"),
+    ("yamuga", "Ямуга"),
+    ("reshetnikovo", "Решетниково"),
+    ("chernichnaya", "Черничная"),
+    ("zavidovo", "Завидово"),
+    ("moskovskoe_more", "Московское Море"),
+    ("redkino", "Редкино"),
+    ("mezhevo", "Межево"),
+    ("kuzminka", "Кузьминка"),
+    ("chupriyanovka", "Чуприяновка"),
+    ("lazurnaya", "Лазурная"),
+    ("tver", "Тверь"),
+    # Ветка в Конаково
+    ("puteprovodnaya", "Путепроводная"),
+    ("konakovskiy_moh", "Конаковский Мох"),
+    ("donhovka", "Донховка"),
+    ("konakovo_gres", "Конаково ГРЭС"),
+    # МЦД-3
+    ("mitkovo", "Митьково"),
 
     # ─── Курское направление ───
     ("moskva_tovarnaya", "Москва-Товарная"),
@@ -467,6 +514,9 @@ _STATIONS = [
 
 _VOKZAL_TRANSFERS = [
     # ─── Комсомольская площадь (Ярославский + Ленинградский + Казанский) ───
+    ("m_len", "m_sav", 10),      # через метро Комсомольская — Савёловская
+    ("m_len", "m_bel", 25),
+    ("m_len", "m_kursk", 15),
     ("m_yar",  "m_len",   5),    # пешком через площадь
     ("m_yar",  "m_kaz",   5),    # пешком через площадь
     ("m_len",  "m_kaz",   5),    # пешком через площадь
@@ -526,6 +576,8 @@ def build_moscow_network() -> RailNetwork:
     sav_dubna = Line("sav_dubna", "Ветка Вербилки — Дубна", "#e1d8bb", "cppk", headway=60)
     sav_aero = Line("sav_aero", "Аэроэкспресс в Шереметьево", "#E5231B", "cppk",
                     headway=30, train_kind="aeroexpress")
+    len_line = Line("len", "Ленинградское направление", "#8B7355", "cppk", headway=10)
+    len_konakovo = Line("len_konakovo", "Ветка в Конаково", "#8B7355", "cppk", headway=60)
     # ─── Курское ───
     kursk = Line("kursk", "Курское направление", "#f754e1", "cppk", headway=10)
     # ─── Рижское ───
@@ -699,6 +751,28 @@ def build_moscow_network() -> RailNetwork:
         ], [
             5,
     ], kind="local")
+
+        # ─── Ленинградское: основной ход ───
+    net.add_segment(len_line, [
+        "m_len", "ostankino", "petrovsko_razumovskaya", "likhobory",
+        "mosselsmash", "grachyovskaya", "hovrino", "levoberezhnaya",
+        "himki", "molzhaninovo", "novopodrezkovo", "podrezkovo", "shodnya",
+        "firsanovskaya", "malino", "zelenograd_krukovo", "alabushevo",
+        "radishchevo", "povarovka", "povarovo1", "beryozki_dachnye",
+        "podsolnechnaya", "senezh", "golovkovo", "pokrovka", "frolovskoe",
+        "streglovo", "klin", "yamuga", "reshetnikovo", "chernichnaya",
+        "zavidovo", "moskovskoe_more", "redkino", "mezhevo", "kuzminka",
+        "chupriyanovka", "lazurnaya", "tver",
+    ], [
+        4, 5, 4, 4, 5, 4, 4, 4, 5, 4, 4, 5, 5, 4, 4, 5, 5, 5, 5, 5,
+        4, 5, 4, 4, 5, 4, 4, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 10,
+    ], kind="local")
+
+    # ─── Ветка в Конаково ───
+    net.add_segment(len_konakovo, [
+        "reshetnikovo", "puteprovodnaya", "konakovskiy_moh",
+        "donhovka", "konakovo_gres",
+    ], [7, 7, 7, 7], kind="local")
     
 
     # ─── Пересадки между вокзалами ───

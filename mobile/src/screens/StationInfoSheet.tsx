@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import {
   View, Text, StyleSheet, ScrollView,
   TouchableOpacity, TouchableWithoutFeedback, Dimensions,
@@ -7,7 +7,11 @@ import Animated, {
   useSharedValue, useAnimatedStyle, withTiming,
 } from 'react-native-reanimated';
 
-import { SchemaStation } from '../map/schemaStations';
+import {
+  SchemaStation,
+  StationFacilities,
+  SubStationInfo,
+} from '../map/schemaStations';
 import { useTheme } from '../theme/ThemeProvider';
 import ScheduleBlock from './ScheduleBlock';
 import {
@@ -33,16 +37,22 @@ export default function StationInfoSheet({ station, onClose, onFrom, onTo }: Pro
   const translateY = useSharedValue(SHEET_HEIGHT);
   const backdropOpacity = useSharedValue(0);
   const [renderStation, setRenderStation] = useState<SchemaStation | null>(station);
+  // Для хаба: id раскрытой подстанции. null = показываем список подстанций.
+  const [expandedSubId, setExpandedSubId] = useState<string | null>(null);
 
   useEffect(() => {
     if (station) {
       setRenderStation(station);
+      setExpandedSubId(null); // при открытии новой станции всегда показываем верхний уровень
       translateY.value = withTiming(0, { duration: 250 });
       backdropOpacity.value = withTiming(1, { duration: 250 });
     } else {
       translateY.value = withTiming(SHEET_HEIGHT, { duration: 200 });
       backdropOpacity.value = withTiming(0, { duration: 200 });
-      const t = setTimeout(() => setRenderStation(null), 220);
+      const t = setTimeout(() => {
+        setRenderStation(null);
+        setExpandedSubId(null);
+      }, 220);
       return () => clearTimeout(t);
     }
   }, [station, translateY, backdropOpacity]);
@@ -55,8 +65,19 @@ export default function StationInfoSheet({ station, onClose, onFrom, onTo }: Pro
     opacity: backdropOpacity.value,
   }));
 
+  const expandedSub = useMemo<SubStationInfo | null>(() => {
+    if (!renderStation?.isHubNode || !renderStation.subStations || !expandedSubId) return null;
+    return renderStation.subStations.find((s) => s.id === expandedSubId) ?? null;
+  }, [renderStation, expandedSubId]);
+
   if (!renderStation) return null;
-  const f = renderStation.facilities;
+
+  const isHub = !!renderStation.isHubNode && !!renderStation.subStations?.length;
+  const showSubDetails = isHub && expandedSub !== null;
+
+  const title = showSubDetails
+    ? `${renderStation.name} · ${expandedSub!.shortName}`
+    : renderStation.name;
 
   return (
     <>
@@ -89,81 +110,188 @@ export default function StationInfoSheet({ station, onClose, onFrom, onTo }: Pro
           showsVerticalScrollIndicator={false}
         >
           <Text testID="station-title" style={[styles.title, { color: theme.text }]}>
-            {renderStation.name}
-          </Text>
-          <Text style={[styles.subtitle, { color: theme.textMuted }]}>
-            Линии: {renderStation.lines.join(', ')}
-            {renderStation.zone !== undefined ? ` · Зона ${renderStation.zone}` : ''}
+            {title}
           </Text>
 
+          {showSubDetails ? (
+            <>
+              <View style={styles.subMetaRow}>
+                <View style={[styles.kindBadge, { borderColor: theme.border }]}>
+                  <Text style={[styles.kindBadgeText, { color: theme.textMuted }]}>
+                    {kindLabel(expandedSub!.kind)}
+                  </Text>
+                </View>
+                {!!expandedSub!.description && (
+                  <Text style={[styles.subDesc, { color: theme.textMuted }]} numberOfLines={2}>
+                    {expandedSub!.description}
+                  </Text>
+                )}
+              </View>
+
+              <TouchableOpacity
+                style={[styles.backBtn, { borderColor: theme.border }]}
+                onPress={() => setExpandedSubId(null)}
+              >
+                <Text style={[styles.backBtnText, { color: theme.accent }]}>← К списку станций</Text>
+              </TouchableOpacity>
+            </>
+          ) : (
+            <Text style={[styles.subtitle, { color: theme.textMuted }]}>
+              {isHub
+                ? `ТПУ · ${renderStation.subStations!.length} ${pluralSubstations(renderStation.subStations!.length)}`
+                : `Линии: ${renderStation.lines.join(', ')}${renderStation.zone !== undefined ? ` · Зона ${renderStation.zone}` : ''}`}
+            </Text>
+          )}
+
+          {/* Кнопки "Отсюда / Сюда" — работают на уровне хаба (или обычной станции) */}
           <View style={styles.routeBtns}>
             <TouchableOpacity
               style={[styles.routeBtn, { borderColor: theme.border }]}
               onPress={onFrom}
             >
               <View style={[styles.routeDot, { backgroundColor: '#34C759' }]} />
-              <Text style={[styles.routeBtnText, { color: theme.text }]}>Отсюда</Text>
+              <Text style={[styles.routeBtnText, { color: theme.text }]}>
+                {showSubDetails ? `Отсюда (${expandedSub!.shortName})` : 'Отсюда'}
+              </Text>
             </TouchableOpacity>
             <TouchableOpacity
               style={[styles.routeBtn, { borderColor: theme.border }]}
               onPress={onTo}
             >
               <View style={[styles.routeDot, { backgroundColor: '#FF3B30' }]} />
-              <Text style={[styles.routeBtnText, { color: theme.text }]}>Сюда</Text>
+              <Text style={[styles.routeBtnText, { color: theme.text }]}>
+                {showSubDetails ? `Сюда (${expandedSub!.shortName})` : 'Сюда'}
+              </Text>
             </TouchableOpacity>
           </View>
 
-          <ScheduleBlock stationId={renderStation.id} />
+          {/* Расписание — только для обычной станции или раскрытой подстанции с GTFS-ID */}
+          {!isHub && <ScheduleBlock stationId={renderStation.id} />}
+          {showSubDetails && !!expandedSub!.scheduleStationId && (
+            <ScheduleBlock stationId={expandedSub!.scheduleStationId} />
+          )}
 
-          <Section title="Доступность" theme={theme}>
-            <Facility
-              Icon={
-                f.wheelchair === 'full' ? WheelchairIcon
-                  : f.wheelchair === 'partial' ? WheelchairPartialIcon
-                  : WheelchairNoneIcon
-              }
-              label="Маломобильные пассажиры"
-              value={
-                f.wheelchair === 'full' ? 'Полностью доступна'
-                  : f.wheelchair === 'partial' ? 'Частично доступна'
-                  : 'Недоступна'
-              }
-              highlight={f.wheelchair === 'full'}
-              warn={f.wheelchair === 'none'}
+          {/* Контент: либо список подстанций, либо удобства */}
+          {isHub && !showSubDetails && (
+            <Section title="Станции в составе ТПУ" theme={theme}>
+              {renderStation.subStations!.map((sub) => (
+                <SubStationRow
+                  key={sub.id}
+                  sub={sub}
+                  onPress={() => setExpandedSubId(sub.id)}
+                />
+              ))}
+            </Section>
+          )}
+
+          {(!isHub || showSubDetails) && (
+            <FacilitiesContent
+              facilities={showSubDetails ? expandedSub!.facilities : renderStation.facilities}
             />
-            {f.lifts > 0 && <Facility Icon={LiftIcon} label="Лифты" value={`${f.lifts} шт.`} />}
-            {f.escalators > 0 && (
-              <Facility Icon={EscalatorIcon} label="Эскалаторы" value={`${f.escalators} шт.`} />
-            )}
-          </Section>
-
-          <Section title="Билеты и сервис" theme={theme}>
-            <Facility Icon={TicketOfficeIcon} label="Кассы" value={f.ticketOffice ? 'Есть' : 'Нет'} warn={!f.ticketOffice} />
-            <Facility Icon={TicketMachineIcon} label="Автоматы" value={f.ticketMachines ? 'Есть' : 'Нет'} />
-            <Facility Icon={TurnstileIcon} label="Турникеты" value={f.turnstiles ? 'Есть' : 'Нет'} />
-            <Facility Icon={LuggageIcon} label="Камеры хранения" value={f.luggageStorage ? 'Есть' : 'Нет'} />
-            <Facility Icon={HelpDeskIcon} label="Стойка помощи" value={f.helpDesk ? 'Есть' : 'Нет'} />
-          </Section>
-
-          <Section title="Оплата" theme={theme}>
-            <Facility
-              Icon={TurnstileIcon}
-              label="Карта «Тройка» (Кошелёк)"
-              value={f.troikaPayment ? 'Работает' : 'Не работает'}
-              highlight={f.troikaPayment}
-              warn={!f.troikaPayment}
-            />
-          </Section>
-
-          <Section title="Комфорт" theme={theme}>
-            <Facility Icon={WcIcon} label="Туалет" value={f.wc ? 'Есть' : 'Нет'} />
-            <Facility Icon={WaitingRoomIcon} label="Зал ожидания" value={f.waitingRoom ? 'Есть' : 'Нет'} />
-            <Facility Icon={WifiIcon} label="Wi-Fi" value={f.wifi ? 'Есть' : 'Нет'} />
-            <Facility Icon={ParkingIcon} label="Парковка" value={f.parking ? 'Есть' : 'Нет'} />
-            <Facility Icon={BikeRackIcon} label="Велопарковка" value={f.bikeRacks ? 'Есть' : 'Нет'} />
-          </Section>
+          )}
         </ScrollView>
       </Animated.View>
+    </>
+  );
+}
+
+// ------------------------------------------------------------------
+// Вспомогательные компоненты
+// ------------------------------------------------------------------
+
+function SubStationRow({ sub, onPress }: { sub: SubStationInfo; onPress: () => void }) {
+  const { theme } = useTheme();
+  const wc = sub.facilities.wheelchair;
+
+  return (
+    <TouchableOpacity
+      style={[styles.subRow, { borderBottomColor: theme.border }]}
+      onPress={onPress}
+      activeOpacity={0.6}
+    >
+      <View style={styles.subRowLeft}>
+        <Text style={[styles.subRowName, { color: theme.text }]}>{sub.name}</Text>
+        {!!sub.description && (
+          <Text
+            style={[styles.subRowDesc, { color: theme.textMuted }]}
+            numberOfLines={1}
+          >
+            {sub.description}
+          </Text>
+        )}
+      </View>
+
+      <View style={styles.subRowRight}>
+        <View
+          style={[
+            styles.accessDot,
+            {
+              backgroundColor:
+                wc === 'full' ? theme.accent
+                  : wc === 'partial' ? '#E5A11B'
+                  : theme.danger,
+            },
+          ]}
+        />
+        <Text style={[styles.chevron, { color: theme.textMuted }]}>›</Text>
+      </View>
+    </TouchableOpacity>
+  );
+}
+
+function FacilitiesContent({ facilities }: { facilities: StationFacilities }) {
+  const { theme } = useTheme();
+  const f = facilities;
+
+  return (
+    <>
+      <Section title="Доступность" theme={theme}>
+        <Facility
+          Icon={
+            f.wheelchair === 'full' ? WheelchairIcon
+              : f.wheelchair === 'partial' ? WheelchairPartialIcon
+              : WheelchairNoneIcon
+          }
+          label="Маломобильные пассажиры"
+          value={
+            f.wheelchair === 'full' ? 'Полностью доступна'
+              : f.wheelchair === 'partial' ? 'Частично доступна'
+              : 'Недоступна'
+          }
+          highlight={f.wheelchair === 'full'}
+          warn={f.wheelchair === 'none'}
+        />
+        {f.lifts > 0 && <Facility Icon={LiftIcon} label="Лифты" value={`${f.lifts} шт.`} />}
+        {f.escalators > 0 && (
+          <Facility Icon={EscalatorIcon} label="Эскалаторы" value={`${f.escalators} шт.`} />
+        )}
+      </Section>
+
+      <Section title="Билеты и сервис" theme={theme}>
+        <Facility Icon={TicketOfficeIcon} label="Кассы" value={f.ticketOffice ? 'Есть' : 'Нет'} warn={!f.ticketOffice} />
+        <Facility Icon={TicketMachineIcon} label="Автоматы" value={f.ticketMachines ? 'Есть' : 'Нет'} />
+        <Facility Icon={TurnstileIcon} label="Турникеты" value={f.turnstiles ? 'Есть' : 'Нет'} />
+        <Facility Icon={LuggageIcon} label="Камеры хранения" value={f.luggageStorage ? 'Есть' : 'Нет'} />
+        <Facility Icon={HelpDeskIcon} label="Стойка помощи" value={f.helpDesk ? 'Есть' : 'Нет'} />
+      </Section>
+
+      <Section title="Оплата" theme={theme}>
+        <Facility
+          Icon={TurnstileIcon}
+          label="Карта «Тройка» (Кошелёк)"
+          value={f.troikaPayment ? 'Работает' : 'Не работает'}
+          highlight={f.troikaPayment}
+          warn={!f.troikaPayment}
+        />
+      </Section>
+
+      <Section title="Комфорт" theme={theme}>
+        <Facility Icon={WcIcon} label="Туалет" value={f.wc ? 'Есть' : 'Нет'} />
+        <Facility Icon={WaitingRoomIcon} label="Зал ожидания" value={f.waitingRoom ? 'Есть' : 'Нет'} />
+        <Facility Icon={WifiIcon} label="Wi-Fi" value={f.wifi ? 'Есть' : 'Нет'} />
+        <Facility Icon={ParkingIcon} label="Парковка" value={f.parking ? 'Есть' : 'Нет'} />
+        <Facility Icon={BikeRackIcon} label="Велопарковка" value={f.bikeRacks ? 'Есть' : 'Нет'} />
+      </Section>
     </>
   );
 }
@@ -201,6 +329,27 @@ function Facility({
   );
 }
 
+function kindLabel(kind: SubStationInfo['kind']): string {
+  switch (kind) {
+    case 'railway': return 'Ж/д вокзал';
+    case 'mcd': return 'МЦД';
+    case 'metro': return 'Метро';
+    case 'platform': return 'Платформа';
+  }
+}
+
+function pluralSubstations(n: number): string {
+  const mod10 = n % 10;
+  const mod100 = n % 100;
+  if (mod10 === 1 && mod100 !== 11) return 'станция';
+  if (mod10 >= 2 && mod10 <= 4 && (mod100 < 10 || mod100 >= 20)) return 'станции';
+  return 'станций';
+}
+
+// ------------------------------------------------------------------
+// Стили
+// ------------------------------------------------------------------
+
 const styles = StyleSheet.create({
   backdrop: {
     backgroundColor: 'rgba(0,0,0,0.45)',
@@ -235,13 +384,30 @@ const styles = StyleSheet.create({
   scrollContent: { paddingHorizontal: 20, paddingBottom: 40 },
   title: { fontSize: 22, fontWeight: '700' },
   subtitle: { marginBottom: 12 },
+
+  subMetaRow: { flexDirection: 'row', alignItems: 'center', gap: 8, marginBottom: 10 },
+  kindBadge: {
+    paddingHorizontal: 8, paddingVertical: 3,
+    borderRadius: 6, borderWidth: 1,
+  },
+  kindBadgeText: { fontSize: 12, fontWeight: '600' },
+  subDesc: { flex: 1, fontSize: 13 },
+  backBtn: {
+    alignSelf: 'flex-start',
+    paddingHorizontal: 12, paddingVertical: 8,
+    borderRadius: 10, borderWidth: 1,
+    marginBottom: 16,
+  },
+  backBtnText: { fontSize: 14, fontWeight: '600' },
+
   routeBtns: { flexDirection: 'row', gap: 10, marginBottom: 16 },
   routeBtn: {
     flex: 1, flexDirection: 'row', alignItems: 'center', justifyContent: 'center',
     paddingVertical: 12, borderRadius: 12, borderWidth: 1, gap: 8,
   },
   routeDot: { width: 12, height: 12, borderRadius: 6 },
-  routeBtnText: { fontSize: 15, fontWeight: '600' },
+  routeBtnText: { fontSize: 14, fontWeight: '600' },
+
   section: { marginBottom: 20 },
   sectionTitle: {
     fontSize: 13, fontWeight: '700',
@@ -254,4 +420,16 @@ const styles = StyleSheet.create({
   iconWrap: { width: 36 },
   label: { flex: 1, fontSize: 15 },
   value: { fontSize: 15, fontWeight: '600' },
+
+  // Строка подстанции в списке
+  subRow: {
+    flexDirection: 'row', alignItems: 'center',
+    paddingVertical: 12, borderBottomWidth: 1,
+  },
+  subRowLeft: { flex: 1, paddingRight: 12 },
+  subRowName: { fontSize: 16, fontWeight: '600', marginBottom: 2 },
+  subRowDesc: { fontSize: 13 },
+  subRowRight: { flexDirection: 'row', alignItems: 'center', gap: 8 },
+  accessDot: { width: 10, height: 10, borderRadius: 5 },
+  chevron: { fontSize: 22, fontWeight: '300' },
 });

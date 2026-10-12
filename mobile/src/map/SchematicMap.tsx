@@ -1,12 +1,12 @@
-import React, { useEffect, useMemo, useCallback } from 'react';
+import React, { useEffect, useMemo, useCallback, useState } from 'react';
 import { StyleSheet, View, Dimensions } from 'react-native';
 import {
   Canvas, Group, Path, Circle, RoundedRect,
-  Text as SkiaText, Skia, type SkFont,
+  Text as SkiaText, Skia, type SkFont, type SkPath,
 } from '@shopify/react-native-skia';
 import { Gesture, GestureDetector } from 'react-native-gesture-handler';
 import {
-  useSharedValue, useDerivedValue,
+  useSharedValue, useDerivedValue, useAnimatedReaction,
   withTiming, withDecay, runOnJS,
 } from 'react-native-reanimated';
 
@@ -35,21 +35,49 @@ const _bounds = (() => {
   };
 })();
 
-const BOUNDS_ASPECT = _bounds.w / _bounds.h;
+const BX = _bounds.x;
+const BY = _bounds.y;
+const BW = _bounds.w;
+const BH = _bounds.h;
+
+const BOUNDS_ASPECT = BW / BH;
 
 let initVbW: number;
 let initVbH: number;
 if (BOUNDS_ASPECT > ASPECT) {
-  initVbW = _bounds.w;
-  initVbH = _bounds.w / ASPECT;
+  initVbW = BW;
+  initVbH = BW / ASPECT;
 } else {
-  initVbH = _bounds.h;
-  initVbW = _bounds.h * ASPECT;
+  initVbH = BH;
+  initVbW = BH * ASPECT;
 }
-const initVbX = _bounds.x + _bounds.w / 2 - initVbW / 2;
-const initVbY = _bounds.y + _bounds.h / 2 - initVbH / 2;
+const initVbX = BX + BW / 2 - initVbW / 2;
+const initVbY = BY + BH / 2 - initVbH / 2;
 
 const TAP_RADIUS = 30;
+const MIN_VB_W = BW / 5;
+const MAX_VB_W = BW * 1.5;
+const PAN_OVERSCROLL = 0.25;
+
+// ------------------------------------------------------------------
+// Размеры элементов схемы (уменьшены — станции больше не сливаются)
+// ------------------------------------------------------------------
+const STATION_R_HUB = 10;
+const STATION_R_REG = 6;
+const STATION_STROKE = 2;
+const ACTIVE_GLOW_R = 20;
+
+const BADGE_W = 16;
+const BADGE_H = 13;
+const BADGE_GAP = 5;
+
+const FONT_SIZE_REG = 13;
+const FONT_SIZE_HUB = 16;
+const FONT_SIZE_BADGE = 10;
+
+// Пороги LOD относительно initVbW (см. getStationPriority)
+const LOD_FAR = 0.7;
+const LOD_MID = 0.35;
 
 export interface SchematicMapHandle {
   focusStation: (id: string, targetScale?: number) => void;
@@ -63,6 +91,20 @@ interface Props {
   activeStationId?: string | null;
 }
 
+/**
+ * Приоритет станции для LOD:
+ *   3 — всегда показываем подпись (вокзалы, экспрессы, хабы)
+ *   2 — показываем от среднего зума (зона 1)
+ *   1 — показываем только при близком зуме
+ */
+function getStationPriority(s: SchemaStation): 1 | 2 | 3 {
+  if (s.id.startsWith('m_')) return 3;
+  if (s.expressStop) return 3;
+  if (s.lines.length > 1) return 3;
+  if ((s.zone ?? 99) <= 1) return 2;
+  return 1;
+}
+
 const estimateWidth = (text: string, size: number) => text.length * size * 0.55;
 
 interface LabelLayout {
@@ -72,48 +114,45 @@ interface LabelLayout {
   badgeY: number;
 }
 
-// ------------------------------------------------------------
-// ИЗМЕНЕНИЕ: отступ зависит от наличия значка "Э" и радиуса кружка
-// ------------------------------------------------------------
-function computeLabelLayout(s: SchemaStation, size: number, textW: number): LabelLayout {
+function computeLabelLayout(
+  s: SchemaStation,
+  size: number,
+  textW: number,
+  r: number,
+): LabelLayout {
   const hasBadge = !!s.expressStop;
-  const badgeW = 20;
-  const badgeH = 16;
-  const gap = hasBadge ? 8 : 0;
-  // Радиус кружка: 18 для хабов (несколько линий), 11 для обычных
-  const r = s.lines.length > 1 ? 18 : 11;
-  // Отступ от центра до края значка/текста
-  const off = r + 5;
+  const gap = hasBadge ? BADGE_GAP : 0;
+  const off = r + 4;
 
   switch (s.orientation) {
     case 'left':
       return {
-        tx: s.x - off - (hasBadge ? badgeW + gap : 0) - textW,
+        tx: s.x - off - (hasBadge ? BADGE_W + gap : 0) - textW,
         ty: s.y + size / 3,
-        badgeX: s.x - off - badgeW,
-        badgeY: s.y - badgeH / 2,
+        badgeX: s.x - off - BADGE_W,
+        badgeY: s.y - BADGE_H / 2,
       };
     case 'top':
       return {
         tx: s.x - textW / 2,
-        ty: s.y - off - (hasBadge ? badgeH + gap : 0),
-        badgeX: s.x - badgeW / 2,
-        badgeY: s.y - off - badgeH,
+        ty: s.y - off - (hasBadge ? BADGE_H + gap : 0),
+        badgeX: s.x - BADGE_W / 2,
+        badgeY: s.y - off - BADGE_H,
       };
     case 'bottom':
       return {
         tx: s.x - textW / 2,
-        ty: s.y + off + (hasBadge ? badgeH + gap : 0) + size,
-        badgeX: s.x - badgeW / 2,
+        ty: s.y + off + (hasBadge ? BADGE_H + gap : 0) + size,
+        badgeX: s.x - BADGE_W / 2,
         badgeY: s.y + off,
       };
     case 'right':
     default:
       return {
-        tx: s.x + off + (hasBadge ? badgeW + gap : 0),
+        tx: s.x + off + (hasBadge ? BADGE_W + gap : 0),
         ty: s.y + size / 3,
         badgeX: s.x + off,
-        badgeY: s.y - badgeH / 2,
+        badgeY: s.y - BADGE_H / 2,
       };
   }
 }
@@ -136,6 +175,13 @@ const SchematicMap: React.FC<Props> = ({
   const savedVbW = useSharedValue(initVbW);
   const savedVbH = useSharedValue(initVbH);
 
+  const pinchAnchorX = useSharedValue(initVbX);
+  const pinchAnchorY = useSharedValue(initVbY);
+
+  // LOD-уровень: 0 — далеко, 1 — средне, 2 — близко
+  type LodLevel = 0 | 1 | 2;
+  const [lodLevel, setLodLevel] = useState<LodLevel>(2);
+  const lodShared = useSharedValue<LodLevel>(2);
   const transform = useDerivedValue(() => {
     const scale = SCREEN_W / vbW.value;
     return [
@@ -145,51 +191,101 @@ const SchematicMap: React.FC<Props> = ({
     ];
   });
 
+  // Отслеживаем зум → меняем LOD только при пересечении порога
+  useAnimatedReaction(
+    () => vbW.value,
+    (w) => {
+      let next: 0 | 1 | 2;
+      if (w > initVbW * LOD_FAR) next = 0;
+      else if (w > initVbW * LOD_MID) next = 1;
+      else next = 2;
+      if (next !== lodShared.value) {
+        lodShared.value = next;
+        runOnJS(setLodLevel)(next);
+      }
+    },
+  );
+
   const labelFont = useMemo<SkFont | null>(() => {
     try {
       const tf = Skia.FontMgr.System().matchFamilyStyle('sans-serif', { weight: 400, width: 5, slant: 0 });
-      return tf ? Skia.Font(tf, 15) : null;
+      return tf ? Skia.Font(tf, FONT_SIZE_REG) : null;
     } catch { return null; }
   }, []);
 
   const labelFontBold = useMemo<SkFont | null>(() => {
     try {
       const tf = Skia.FontMgr.System().matchFamilyStyle('sans-serif', { weight: 700, width: 5, slant: 0 });
-      return tf ? Skia.Font(tf, 18) : null;
+      return tf ? Skia.Font(tf, FONT_SIZE_HUB) : null;
     } catch { return null; }
   }, []);
 
   const expressFont = useMemo<SkFont | null>(() => {
     try {
       const tf = Skia.FontMgr.System().matchFamilyStyle('sans-serif', { weight: 700, width: 5, slant: 0 });
-      return tf ? Skia.Font(tf, 11) : null;
+      return tf ? Skia.Font(tf, FONT_SIZE_BADGE) : null;
     } catch { return null; }
   }, []);
 
   const linePaths = useMemo(() => {
-    return LINES.map((line) => {
-      const p = Skia.Path.Make();
+    const sorted = [...LINES].sort((a, b) => {
+      const aMcd = a.kind === 'mcd' ? 1 : 0;
+      const bMcd = b.kind === 'mcd' ? 1 : 0;
+      return aMcd - bMcd;
+    });
+
+    return sorted.map((line) => {
       const stations = line.path.map((id) => STATIONS[id]).filter(Boolean);
+
+      let path: SkPath | null = null;
       if (stations.length > 0) {
-        p.moveTo(stations[0].x, stations[0].y);
+        const builder = Skia.PathBuilder.Make();
+        builder.moveTo(stations[0].x, stations[0].y);
         for (let i = 1; i < stations.length; i++) {
-          p.lineTo(stations[i].x, stations[i].y);
+          builder.lineTo(stations[i].x, stations[i].y);
         }
+        path = builder.build();
       }
-      return { id: line.id, path: p, color: line.color };
+
+      return {
+        id: line.id,
+        path,
+        color: line.color,
+        strokeWidth: line.kind === 'mcd' ? 3 : 6,
+      };
     });
   }, []);
+
+  // -----------------------------------------------------------------
+  // Программное управление камерой
+  // -----------------------------------------------------------------
 
   const focusStation = useCallback(
     (stationId: string, targetScale = 1.4) => {
       const s = STATIONS[stationId];
       if (!s) return;
-      const targetW = _bounds.w / targetScale;
-      const targetH = _bounds.h / targetScale;
+
+      const targetW = initVbW / targetScale;
+      const targetH = initVbH / targetScale;
+      const cx = s.x;
+      const cy = s.y;
+
+      const padX = targetW * 0.5;
+      const padY = targetH * 0.5;
+      const minX = BX - padX;
+      const maxX = BX + BW - targetW + padX;
+      const minY = BY - padY;
+      const maxY = BY + BH - targetH + padY;
+
+      const nx = cx - targetW / 2;
+      const ny = cy - targetH / 2;
+      const clampedX = Math.max(minX, Math.min(maxX, nx));
+      const clampedY = Math.max(minY, Math.min(maxY, ny));
+
       vbW.value = withTiming(targetW, { duration: 400 });
       vbH.value = withTiming(targetH, { duration: 400 });
-      vbX.value = withTiming(s.x - targetW / 2, { duration: 400 });
-      vbY.value = withTiming(s.y - targetH / 2, { duration: 400 });
+      vbX.value = withTiming(clampedX, { duration: 400 });
+      vbY.value = withTiming(clampedY, { duration: 400 });
     },
     [vbX, vbY, vbW, vbH],
   );
@@ -205,7 +301,12 @@ const SchematicMap: React.FC<Props> = ({
     if (onMapReady) onMapReady({ focusStation, resetView });
   }, [onMapReady, focusStation, resetView]);
 
+  // -----------------------------------------------------------------
+  // Жесты
+  // -----------------------------------------------------------------
+
   const pan = Gesture.Pan()
+    .maxPointers(1)
     .averageTouches(true)
     .minDistance(4)
     .onStart(() => {
@@ -215,46 +316,116 @@ const SchematicMap: React.FC<Props> = ({
       savedVbH.value = vbH.value;
     })
     .onUpdate((e) => {
-      const dx = (e.translationX / SCREEN_W) * savedVbW.value;
-      const dy = (e.translationY / SCREEN_H) * savedVbH.value;
-      vbX.value = savedVbX.value - dx;
-      vbY.value = savedVbY.value - dy;
+      const w = savedVbW.value;
+      const h = savedVbH.value;
+      const dx = (e.translationX / SCREEN_W) * w;
+      const dy = (e.translationY / SCREEN_H) * h;
+
+      const padX = w * PAN_OVERSCROLL;
+      const padY = h * PAN_OVERSCROLL;
+      const minX = BX - padX;
+      const maxX = BX + BW - w + padX;
+      const minY = BY - padY;
+      const maxY = BY + BH - h + padY;
+
+      const nx = savedVbX.value - dx;
+      const ny = savedVbY.value - dy;
+
+      vbX.value = Math.max(minX, Math.min(maxX, nx));
+      vbY.value = Math.max(minY, Math.min(maxY, ny));
     })
     .onEnd((e) => {
-      const vx = (e.velocityX / SCREEN_W) * savedVbW.value;
-      const vy = (e.velocityY / SCREEN_H) * savedVbH.value;
-      vbX.value = withDecay({ velocity: -vx, deceleration: 0.997 });
-      vbY.value = withDecay({ velocity: -vy, deceleration: 0.997 });
+      const w = savedVbW.value;
+      const h = savedVbH.value;
+      const vx = (e.velocityX / SCREEN_W) * w;
+      const vy = (e.velocityY / SCREEN_H) * h;
+
+      const padX = w * PAN_OVERSCROLL;
+      const padY = h * PAN_OVERSCROLL;
+      const minX = BX - padX;
+      const maxX = BX + BW - w + padX;
+      const minY = BY - padY;
+      const maxY = BY + BH - h + padY;
+
+      vbX.value = withDecay({
+        velocity: -vx,
+        deceleration: 0.997,
+        clamp: [minX, maxX],
+      });
+      vbY.value = withDecay({
+        velocity: -vy,
+        deceleration: 0.997,
+        clamp: [minY, maxY],
+      });
     });
 
   const pinch = Gesture.Pinch()
-    .onStart(() => {
+    .onStart((e) => {
       savedVbW.value = vbW.value;
       savedVbH.value = vbH.value;
       savedVbX.value = vbX.value;
       savedVbY.value = vbY.value;
+      pinchAnchorX.value = vbX.value + (e.focalX / SCREEN_W) * vbW.value;
+      pinchAnchorY.value = vbY.value + (e.focalY / SCREEN_H) * vbH.value;
     })
     .onUpdate((e) => {
       const factor = Math.max(0.3, Math.min(5, e.scale));
       const newW = savedVbW.value / factor;
       const newH = savedVbH.value / factor;
-      const focalX = savedVbX.value + (e.focalX / SCREEN_W) * savedVbW.value;
-      const focalY = savedVbY.value + (e.focalY / SCREEN_H) * savedVbH.value;
+
+      const padX = newW * PAN_OVERSCROLL;
+      const padY = newH * PAN_OVERSCROLL;
+      const minX = BX - padX;
+      const maxX = BX + BW - newW + padX;
+      const minY = BY - padY;
+      const maxY = BY + BH - newH + padY;
+
+      const nx = pinchAnchorX.value - (e.focalX / SCREEN_W) * newW;
+      const ny = pinchAnchorY.value - (e.focalY / SCREEN_H) * newH;
+
       vbW.value = newW;
       vbH.value = newH;
-      vbX.value = focalX - (e.focalX / SCREEN_W) * newW;
-      vbY.value = focalY - (e.focalY / SCREEN_H) * newH;
+      vbX.value = Math.max(minX, Math.min(maxX, nx));
+      vbY.value = Math.max(minY, Math.min(maxY, ny));
     })
     .onEnd(() => {
       const currentW = vbW.value;
-      if (currentW > _bounds.w * 1.5) {
-        vbW.value = withTiming(_bounds.w * 1.5, { duration: 250 });
-        vbH.value = withTiming(_bounds.h * 1.5, { duration: 250 });
-      } else if (currentW < _bounds.w / 5) {
-        const f = _bounds.w / 5 / currentW;
-        vbW.value = withTiming(_bounds.w / 5, { duration: 250 });
-        vbH.value = withTiming(vbH.value / f, { duration: 250 });
+      const currentH = vbH.value;
+
+      let targetW = currentW;
+      let targetH = currentH;
+
+      if (currentW > MAX_VB_W) {
+        const f = MAX_VB_W / currentW;
+        targetW = MAX_VB_W;
+        targetH = currentH * f;
+      } else if (currentW < MIN_VB_W) {
+        const f = MIN_VB_W / currentW;
+        targetW = MIN_VB_W;
+        targetH = currentH * f;
       }
+
+      if (targetW === currentW && targetH === currentH) return;
+
+      const cx = vbX.value + currentW / 2;
+      const cy = vbY.value + currentH / 2;
+
+      const padX = targetW * PAN_OVERSCROLL;
+      const padY = targetH * PAN_OVERSCROLL;
+      const minX = BX - padX;
+      const maxX = BX + BW - targetW + padX;
+      const minY = BY - padY;
+      const maxY = BY + BH - targetH + padY;
+
+      const nx = cx - targetW / 2;
+      const ny = cy - targetH / 2;
+      const clampedX = Math.max(minX, Math.min(maxX, nx));
+      const clampedY = Math.max(minY, Math.min(maxY, ny));
+
+      vbW.value = withTiming(targetW, { duration: 250 });
+      vbH.value = withTiming(targetH, { duration: 250 });
+      vbX.value = withTiming(clampedX, { duration: 250 });
+      vbY.value = withTiming(clampedY, { duration: 250 });
     });
 
   const doubleTap = Gesture.Tap()
@@ -262,16 +433,31 @@ const SchematicMap: React.FC<Props> = ({
     .maxDelay(300)
     .onEnd((e, success) => {
       if (!success) return;
-      const isZoomedIn = vbW.value < _bounds.w * 0.5;
-      const factor = isZoomedIn ? 0.5 : 1.8;
-      const newW = isZoomedIn ? _bounds.w : _bounds.w / factor;
-      const newH = isZoomedIn ? _bounds.h : _bounds.h / factor;
+
+      const isZoomedIn = vbW.value < initVbW * 0.6;
+      const factor = isZoomedIn ? 1.0 : 1.8;
+      const targetW = isZoomedIn ? initVbW : initVbW / factor;
+      const targetH = isZoomedIn ? initVbH : initVbH / factor;
+
       const tapX = vbX.value + (e.x / SCREEN_W) * vbW.value;
       const tapY = vbY.value + (e.y / SCREEN_H) * vbH.value;
-      vbW.value = withTiming(newW, { duration: 280 });
-      vbH.value = withTiming(newH, { duration: 280 });
-      vbX.value = withTiming(tapX - newW / 2, { duration: 280 });
-      vbY.value = withTiming(tapY - newH / 2, { duration: 280 });
+
+      const padX = targetW * PAN_OVERSCROLL;
+      const padY = targetH * PAN_OVERSCROLL;
+      const minX = BX - padX;
+      const maxX = BX + BW - targetW + padX;
+      const minY = BY - padY;
+      const maxY = BY + BH - targetH + padY;
+
+      const nx = tapX - targetW / 2;
+      const ny = tapY - targetH / 2;
+      const clampedX = Math.max(minX, Math.min(maxX, nx));
+      const clampedY = Math.max(minY, Math.min(maxY, ny));
+
+      vbW.value = withTiming(targetW, { duration: 280 });
+      vbH.value = withTiming(targetH, { duration: 280 });
+      vbX.value = withTiming(clampedX, { duration: 280 });
+      vbY.value = withTiming(clampedY, { duration: 280 });
     });
 
   const singleTap = Gesture.Tap()
@@ -288,7 +474,9 @@ const SchematicMap: React.FC<Props> = ({
         const dx = s.x - canvasX;
         const dy = s.y - canvasY;
         const d = dx * dx + dy * dy;
-        if (d < minDist) { minDist = d; closest = s; }
+        const bonus = s.lines.length > 1 ? 0.6 : 1;
+        const weighted = d * bonus;
+        if (weighted < minDist) { minDist = weighted; closest = s; }
       }
       if (closest && Math.sqrt(minDist) < TAP_RADIUS) {
         runOnJS(onStationPress)(closest);
@@ -303,36 +491,45 @@ const SchematicMap: React.FC<Props> = ({
     [highlightedStationIds],
   );
 
+  // -----------------------------------------------------------------
+  // Разбиваем станции по уровню один раз при монтировании
+  // -----------------------------------------------------------------
+  const stationEntries = useMemo(
+    () => Object.values(STATIONS).filter((s) => !s.isJunction),
+    [],
+  );
+
   return (
     <View style={[styles.container, { backgroundColor: theme.mapBg }]}>
       <GestureDetector gesture={gesture}>
         <Canvas style={StyleSheet.absoluteFill}>
           <Group transform={transform}>
             {/* Линии */}
-            {linePaths.map((item) => (
-              <Path
-                key={item.id}
-                path={item.path}
-                color={item.color}
-                style="stroke"
-                strokeWidth={8}
-                strokeCap="round"
-                strokeJoin="round"
-              />
-            ))}
+            {linePaths.map((item) =>
+              item.path ? (
+                <Path
+                  key={item.id}
+                  path={item.path}
+                  color={item.color}
+                  style="stroke"
+                  strokeWidth={item.strokeWidth}
+                  strokeCap="round"
+                  strokeJoin="round"
+                />
+              ) : null,
+            )}
 
-            {/* Станции */}
-            {Object.values(STATIONS).map((s) => {
-              if (s.isJunction) return null;
+            {/* Станции — кружки. Всегда видны, независимо от LOD. */}
+            {stationEntries.map((s) => {
               const isHub = s.lines.length > 1;
               const isHighlighted = highlightSet.has(s.id);
               const isActive = s.id === activeStationId;
-              const r = isHub ? 18 : 11;
+              const r = isHub ? STATION_R_HUB : STATION_R_REG;
 
               return (
                 <React.Fragment key={s.id}>
                   {isActive && (
-                    <Circle cx={s.x} cy={s.y} r={30} color={theme.accent} opacity={0.2} />
+                    <Circle cx={s.x} cy={s.y} r={ACTIVE_GLOW_R} color={theme.accent} opacity={0.2} />
                   )}
                   <Circle
                     cx={s.x}
@@ -346,57 +543,63 @@ const SchematicMap: React.FC<Props> = ({
                     r={r}
                     color={theme.stationStroke}
                     style="stroke"
-                    strokeWidth={3}
+                    strokeWidth={STATION_STROKE}
                   />
                 </React.Fragment>
               );
             })}
 
-            {/* Значки доступности */}
-            {Object.values(STATIONS).map((s) => {
-              if (s.isJunction) return null;
+            {/* Значки доступности — только для priority 3 (хабы, экспрессы, вокзалы) */}
+            {stationEntries.map((s) => {
               if (s.facilities.wheelchair !== 'full') return null;
+              const priority = getStationPriority(s);
+              if (lodLevel < 2 && priority < 3) return null;
               return (
                 <React.Fragment key={`acc-${s.id}`}>
-                  <Circle cx={s.x + 16} cy={s.y - 16} r={9} color="#0A84FF" />
-                  <Circle cx={s.x + 16} cy={s.y - 16} r={3} color="#FFFFFF" />
+                  <Circle cx={s.x + 10} cy={s.y - 10} r={6} color="#0A84FF" />
+                  <Circle cx={s.x + 10} cy={s.y - 10} r={2} color="#FFFFFF" />
                 </React.Fragment>
               );
             })}
 
-            {/* Значки экспресса */}
-            {Object.values(STATIONS).map((s) => {
-              if (s.isJunction) return null;
+            {/* Значки экспресса — тоже под LOD */}
+            {stationEntries.map((s) => {
               if (!s.expressStop) return null;
-              const size = s.lines.length > 1 ? 18 : 15;
+              const priority = getStationPriority(s);
+              if (lodLevel === 0 && priority < 3) return null;
+              const isHub = s.lines.length > 1;
+              const r = isHub ? STATION_R_HUB : STATION_R_REG;
+              const size = isHub ? FONT_SIZE_HUB : FONT_SIZE_REG;
               const w = estimateWidth(s.name, size);
-              const { badgeX, badgeY } = computeLabelLayout(s, size, w);
+              const { badgeX, badgeY } = computeLabelLayout(s, size, w, r);
               return (
                 <RoundedRect
                   key={`ex-${s.id}`}
                   x={badgeX}
                   y={badgeY}
-                  width={20}
-                  height={16}
-                  r={4}
+                  width={BADGE_W}
+                  height={BADGE_H}
+                  r={3}
                   color="#E5231B"
                 />
               );
             })}
 
-            {/* Буквы Э */}
             {expressFont &&
-              Object.values(STATIONS).map((s) => {
-                if (s.isJunction) return null;
+              stationEntries.map((s) => {
                 if (!s.expressStop) return null;
-                const size = s.lines.length > 1 ? 18 : 15;
+                const priority = getStationPriority(s);
+                if (lodLevel === 0 && priority < 3) return null;
+                const isHub = s.lines.length > 1;
+                const r = isHub ? STATION_R_HUB : STATION_R_REG;
+                const size = isHub ? FONT_SIZE_HUB : FONT_SIZE_REG;
                 const w = estimateWidth(s.name, size);
-                const { badgeX, badgeY } = computeLabelLayout(s, size, w);
+                const { badgeX, badgeY } = computeLabelLayout(s, size, w, r);
                 return (
                   <SkiaText
                     key={`ext-${s.id}`}
-                    x={badgeX + 6}
-                    y={badgeY + 12}
+                    x={badgeX + 5}
+                    y={badgeY + 10}
                     text="Э"
                     font={expressFont}
                     color="#FFFFFF"
@@ -404,16 +607,20 @@ const SchematicMap: React.FC<Props> = ({
                 );
               })}
 
-            {/* Подписи станций */}
+            {/* Подписи — зависят от LOD */}
             {labelFont &&
-              Object.values(STATIONS).map((s) => {
-                if (s.isJunction) return null;
+              stationEntries.map((s) => {
+                const priority = getStationPriority(s);
+                if (lodLevel === 0 && priority < 3) return null;
+                if (lodLevel === 1 && priority < 2) return null;
+
                 const isHub = s.lines.length > 1;
                 const font = isHub && labelFontBold ? labelFontBold : labelFont;
                 if (!font) return null;
-                const size = isHub ? 18 : 15;
+                const size = isHub ? FONT_SIZE_HUB : FONT_SIZE_REG;
+                const r = isHub ? STATION_R_HUB : STATION_R_REG;
                 const w = estimateWidth(s.name, size);
-                const { tx, ty } = computeLabelLayout(s, size, w);
+                const { tx, ty } = computeLabelLayout(s, size, w, r);
 
                 return (
                   <SkiaText

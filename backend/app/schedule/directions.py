@@ -78,9 +78,21 @@ DIRECTIONS: dict[str, dict] = {
         ],
         "line_id": "riga",
     },
-    "leningradskoye": {
+        "leningradskoye": {
         "name": "Ленинградское",
-        "stations": [],
+        "stations": [
+            "m_len", "ostankino", "petrovsko_razumovskaya", "likhobory",
+            "mosselsmash", "grachyovskaya", "hovrino", "levoberezhnaya",
+            "himki", "molzhaninovo", "novopodrezkovo", "podrezkovo", "shodnya",
+            "firsanovskaya", "malino", "zelenograd_krukovo", "alabushevo",
+            "radishchevo", "povarovka", "povarovo1", "beryozki_dachnye",
+            "podsolnechnaya", "senezh", "golovkovo", "pokrovka", "frolovskoe",
+            "streglovo", "klin", "yamuga", "reshetnikovo", "chernichnaya",
+            "zavidovo", "moskovskoe_more", "redkino", "mezhevo", "kuzminka",
+            "chupriyanovka", "lazurnaya", "tver",
+            # ветка Конаково
+            "puteprovodnaya", "konakovskiy_moh", "donhovka", "konakovo_gres",
+        ],
         "line_id": "len",
     },
     "kazanskoye": {
