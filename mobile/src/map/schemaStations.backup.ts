@@ -402,12 +402,23 @@ export const STATIONS: Record<string, SchemaStation> = {
   // ─── Митьково (МЦД-3, между Ленинградским и Казанским) ───
   mitkovo: S('mitkovo', 'Митьково', 250, 160, 'mcd3', 0, { expressStop: true, orientation: 'bottom' }),
 
+    // ══════════════════════════════════════════════════════════════
+  // КАЗАНСКОЕ НАПРАВЛЕНИЕ
+  // Идёт от Комсомольской площади на ЮВ, МЦД-3
   // ══════════════════════════════════════════════════════════════
-  // КАЗАНСКОЕ НАПРАВЛЕНИЕ (вертикаль на юг)
-  // x=450 — между Павелецким (100) и Савёловским (100).
-  // Отдельно от Ярославского. Длинное — до Тулы.
-  // ══════════════════════════════════════════════════════════════
-  m_kaz: S('m_kaz', 'Москва Казанская', 300, 100, 'kaz', 0, { expressStop: true, orientation: 'right' }),
+  elektrozavodskaya: S('elektrozavodskaya', 'Электрозаводская', 75, -20, 'kaz', 1, { expressStop: true, orientation: 'top' }),
+  sortirovochnaya: S('sortirovochnaya', 'Сортировочная', 95, 0, 'kaz', 1, { orientation: 'bottom' }),
+  aviamotornaya: S('aviamotornaya', 'Авиамоторная', 115, 20, 'kaz', 2, { expressStop: true, orientation: 'top' }),
+  andronovka: S('andronovka', 'Андроновка', 135, 40, 'kaz', 2, { orientation: 'bottom' }),
+  perovo: S('perovo', 'Перово', 155, 60, 'kaz', 2, { orientation: 'top' }),
+  plyushchevo: S('plyushchevo', 'Плющево', 175, 80, 'kaz', 2, { orientation: 'bottom' }),
+  veshnyaki: S('veshnyaki', 'Вешняки', 195, 100, 'kaz', 2, { orientation: 'top' }),
+  vykhino: S('vykhino', 'Выхино', 215, 120, 'kaz', 2, { expressStop: true, orientation: 'bottom' }),
+  kosino: S('kosino', 'Косино', 235, 140, 'kaz', 2, { orientation: 'top' }),
+  ukhtomskaya: S('ukhtomskaya', 'Ухтомская', 255, 160, 'kaz', 3, { orientation: 'bottom' }),
+  lyubertsy1: S('lyubertsy1', 'Люберцы-1', 275, 180, 'kaz', 3, { expressStop: true, orientation: 'top' }),
+
+ 
 
   // ══════════════════════════════════════════════════════════════
   // КУРСКОЕ НАПРАВЛЕНИЕ (вертикаль на юг)

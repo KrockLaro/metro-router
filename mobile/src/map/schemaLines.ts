@@ -239,7 +239,7 @@ export const LINES: SchemaLine[] = [
       'lobnya', 'sheremetyevskaya', 'hlebnikovo', 'vodniki',
       'dolgoprudnaya', 'novodachnaya', 'mark', 'lianozovo',
       'beskudnikovo', 'degunino', 'okruzhnaya', 'timiryazevskaya',
-      'm_sav', 'm_bel', 'begovaya', 'testovskaya', 'fili',
+      'm_sav', 'm_bel', 'begovaya', 'testovskaya', 'fili', 'slavyansky_bulvar',
       'kuntsevskaya', 'rabochiy_poselok', 'setun', 'nemchinovka',
       'skolkovo', 'bakovka', 'odintsovo',
     ],
@@ -302,6 +302,132 @@ export const LINES: SchemaLine[] = [
     name: 'МЦД-3',
     color: '#E5231B',
     kind: 'mcd',
-    path: ['m_len', 'mitkovo', 'm_kaz'],
+    path: [
+      'petrovsko_razumovskaya', 'ostankino', 'mitkovo',
+      'elektrozavodskaya', 'sortirovochnaya', 'aviamotornaya',
+      'andronovka', 'perovo', 'plyushchevo', 'veshnyaki',
+      'vykhino', 'kosino', 'ukhtomskaya', 'lyubertsy1',
+      'panki', 'tomilino', 'kraskovo', 'malakhovka', 'udelnaya',
+      'bykovo', 'ilyinskaya', 'otdykh', 'kratovo', 'eseninskaya',
+      'fabrichnaya', 'ramenskoye', 'ippodrom',
+    ],
+  },
+
+  // ══════════════════════════════════════════════════════════════
+  // КАЗАНСКОЕ НАПРАВЛЕНИЕ
+  // От Комсомольской площади на ЮВ. Пока только до Люберец-1.
+  // ══════════════════════════════════════════════════════════════
+  {
+    id: 'kaz',
+    name: 'Казанское направление',
+    color: '#00A651',
+    kind: 'cppk',
+    path: [
+      'ploshchad_trekh_vokzalov',
+      'elektrozavodskaya', 'sortirovochnaya', 'aviamotornaya',
+      'andronovka', 'perovo', 'plyushchevo', 'veshnyaki',
+      'vykhino', 'kosino', 'ukhtomskaya', 'lyubertsy1',
+      'panki', 'tomilino', 'kraskovo', 'malakhovka', 'udelnaya',
+      'bykovo', 'ilyinskaya', 'otdykh', 'kratovo', 'eseninskaya',
+      'fabrichnaya', 'ramenskoye', 'ippodrom',
+      'sovkhoz', 'zagornovo', 'bronnitsy', 'raduga', 'tsibino_63',
+      'beloozerskaya', 'faustovo', 'zolotovo', 'vinogradovo',
+      'konobeevo', 'trofimovo_84', 'km88', 'voskresensk',
+      'lopatino', 'shifernaya', 'ilyinsky_pogost', 'tsemgigant',
+      'peski', 'konev_bor', 'khoroshevo', 'amerevo_113', 'kolomna',
+      'golutvin', 'shchurovo', 'chyornaya',
+      'lukhovitsy', 'km142', 'podlipki_kaz', 'fruktovaya', 'alpatyevo',
+      'slyomy', 'divovo', 'istodniki', 'km179', 'rybnoye',
+      'khodynino', 'depo_ryazan', 'ryazan_sort', 'km187', 'km189',
+      'nedostoevo', 'dyagilevo', 'lagerny', 'ryazan_1',
+    ],
+  },
+  // ══════════════════════════════════════════════════════════════
+  // ВЕТКА В РЯЗАНЬ-2
+  // Ответвление от Лагерного на СВ, на Мичуринец, Ростов-на-Дону и т.д.
+  // ══════════════════════════════════════════════════════════════
+  {
+    id: 'kaz_ryazan2',
+    name: 'Ветка в Рязань-2',
+    color: '#00A651',
+    kind: 'cppk',
+    path: ['lagerny', 'ryazan_2'],
+  },
+
+  // ══════════════════════════════════════════════════════════════
+  // КАЗАНСКИЙ ХОД
+  // Ответвление от Люберец-1 через Люберцы-2, идёт параллельно
+  // основному Рязанскому ходу. Пока только до Куровской.
+  // ══════════════════════════════════════════════════════════════
+  {
+    id: 'kaz_khod',
+    name: 'Казанский ход',
+    color: '#00A651',
+    kind: 'cppk',
+      path: [
+      'lyubertsy1', 'lyubertsy2',
+      'korenyovo', 'ovrazhki', 'rodniki', 'vyalki',
+      'khripan', 'km41_kaz', 'donino',
+      'igumnovo_49', 'km52', 'grigorovo', 'gzhel_istochniki_55',
+      'gzhel', 'ignatyevo', 'kuzyayevo',
+      'shevlyagino', 'smolevo',
+      'antsiferovo', 'podosinki',
+      'kurovskaya',
+      'lokomotivnoe_depo_90', 'belivo', 'avsyunino',
+      'zapolitsy', 'zaputnaya', 'shaturtorf', 'shatura',
+      'botino', 'krivandino',
+      'tugolesye', 'voymezhny', 'cherusti',
+      'struya', 'tasin', 'ilichyov', 'torfoprodukt',
+      'miltsevo', 'nechaevskaya', 'vekovka',
+    ],
+  },
+
+  // ══════════════════════════════════════════════════════════════
+  // ВЕТКА В РЯЗАНОВКУ
+  // Ответвление от Кривандина на СВ. Тройка не работает.
+  // ══════════════════════════════════════════════════════════════
+  {
+    id: 'kaz_ryazanovka',
+    name: 'Ветка в Рязановку',
+    color: '#00A651',
+    kind: 'cppk',
+    path: [
+      'krivandino',
+      'osanovo', 'km15_kaz', 'pozhoga', 'km29_kaz',
+      'barmino', 'sazonovo', 'km47_kaz', 'ryazanovka',
+    ],
+  },
+  // ══════════════════════════════════════════════════════════════
+  // ВЕТКА В ОЗЁРЫ
+  // Ответвление от Голутвина на ЮЗ. Тройка не работает.
+  // ══════════════════════════════════════════════════════════════
+  {
+    id: 'kaz_ozery',
+    name: 'Ветка в Озёры',
+    color: '#00A651',
+    kind: 'cppk',
+    path: [
+      'golutvin',
+      'bachmanovo', 'proezd_stankostroiteley_6', 'sychyovo', 'lystsevskaya',
+      'semyonovsky',
+      'posyolok_lesnoy_18', 'karasyovo', 'kudryavtsevo', 'danilovskaya',
+      'kholmy_30', 'km38_kaz', 'ozyory',
+    ],
+  },
+
+    {
+    id: 'mcd4',
+    name: 'МЦД-4',
+    color: '#7DC242',
+    kind: 'mcd',
+    path: [
+      'moskva_tovarnaya',         // Серп и Молот
+      'm_kursk',                  // Курский вокзал
+      'ploshchad_trekh_vokzalov', // Комсомольская площадь
+      'marya_roshcha',            // Марьина Роща
+      'm_sav',                    // Савёловский вокзал
+      'm_bel',                    // Белорусский вокзал
+      'testovskaya',              // Москва-Сити
+    ],
   },
 ];
