@@ -14,7 +14,7 @@ NO_SCHEDULE: set[str] = {
     "pl109km",
     "pl124km",
     "domodedovo_junction",
-    "sheremetyevo_junction"
+    "sheremetyevo_junction",
     # Курское — нет у Яндекса
     "km92_k",
     "km107_k",
@@ -28,6 +28,11 @@ NO_SCHEDULE: set[str] = {
     "km91_riga",
     "km133_riga",
     "podmoskovnye_dachi",
+    # Казанское — депо и километровые без пасп. расписания
+    "depo_kursk",
+    "depo_ryazan",
+    "km179",
+    "km189",
 }
 
 
@@ -56,6 +61,7 @@ OVERRIDES: dict[str, str] = {
     "zaharovo":  "s9601659",    # Захарово [МО], а не Ногинск
     "testovskaya":"s9601349",   # Тестовская МЦД-1, а не МЦК
     "savelovo":  "s9603083",    # Савёлово [Тверская], а не Савёловская МЦД-4
+    "khoroshevo": "s9602286",   # Хорошево (МО, пос. Хорошово), не МЦК-Хорошёво
 
     # ─── Шереметьево ───
     "sheremetyevo_south": "s9881841",

@@ -95,9 +95,54 @@ DIRECTIONS: dict[str, dict] = {
         ],
         "line_id": "len",
     },
-    "kazanskoye": {
+        "kazanskoye": {
         "name": "Казанское",
-        "stations": [],
+        "stations": [
+            # Стартовая точка — Казанский вокзал
+            "m_kaz",
+            # МЦД-3 участок (Митьково между Останкино и Электрозаводской)
+            "mitkovo",
+            # Основной Рязанский ход: Москва → Рязань-1
+            "elektrozavodskaya", "sortirovochnaya", "aviamotornaya",
+            "andronovka", "perovo", "plyushchevo", "veshnyaki",
+            "vykhino", "kosino", "ukhtomskaya", "lyubertsy1",
+            "panki", "tomilino", "kraskovo", "malakhovka", "udelnaya",
+            "bykovo", "ilyinskaya", "otdykh", "kratovo", "eseninskaya",
+            "fabrichnaya", "ramenskoye", "ippodrom",
+            "sovkhoz", "zagornovo", "bronnitsy", "raduga", "tsibino_63",
+            "beloozerskaya", "faustovo", "zolotovo", "vinogradovo",
+            "konobeevo", "trofimovo_84", "km88", "voskresensk",
+            "lopatino", "shifernaya", "ilyinsky_pogost", "tsemgigant",
+            "peski", "konev_bor", "khoroshevo", "amerevo_113", "kolomna",
+            "golutvin", "shchurovo", "chyornaya",
+            "lukhovitsy", "km142", "podlipki_kaz", "fruktovaya", "alpatyevo",
+            "slyomy", "divovo", "istodniki", "km179", "rybnoye",
+            "khodynino", "depo_ryazan", "ryazan_sort", "km187", "km189",
+            "nedostoevo", "dyagilevo", "lagerny", "ryazan_1",
+            # Тупиковая ветка на Рязань-2 (от Лагерного)
+            "ryazan_2",
+            # Казанский ход (ответвление от Люберец-1)
+            "lyubertsy2", "korenyovo", "ovrazhki", "rodniki", "vyalki",
+            "khripan", "km41_kaz", "donino",
+            "igumnovo_49", "km52", "grigorovo", "gzhel_istochniki_55",
+            "gzhel", "ignatyevo", "kuzyayevo",
+            "shevlyagino", "smolevo",
+            "antsiferovo", "podosinki", "kurovskaya",
+            "lokomotivnoe_depo_90", "belivo", "avsyunino",
+            "zapolitsy", "zaputnaya", "shaturtorf", "shatura",
+            "botino", "krivandino",
+            "tugolesye", "voymezhny", "cherusti",
+            "struya", "tasin", "ilichyov", "torfoprodukt",
+            "miltsevo", "nechaevskaya", "vekovka",
+            # Ветка в Рязановку (от Кривандина)
+            "osanovo", "km15_kaz", "pozhoga", "km29_kaz",
+            "barmino", "sazonovo", "km47_kaz", "ryazanovka",
+            # Ветка в Озёры (от Голутвина)
+            "bachmanovo", "proezd_stankostroiteley_6", "sychyovo", "lystsevskaya",
+            "semyonovsky",
+            "posyolok_lesnoy_18", "karasyovo", "kudryavtsevo", "danilovskaya",
+            "kholmy_30", "km38_kaz", "ozyory",
+        ],
         "line_id": "kaz",
     },
     "gorkovskoye": {

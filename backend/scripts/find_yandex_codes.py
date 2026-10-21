@@ -87,7 +87,6 @@ def flatten(data: dict) -> list[dict]:
     return out
 
 
-_KM_RE = re.compile(r"\b\d+\s*км\b", re.IGNORECASE)
 _PAREN_RE = re.compile(r"\([^)]*\)")
 _TOV_RE = re.compile(r"\bтов\.?$", re.IGNORECASE)
 _PASS_RE = re.compile(r"\bпасс\.?$", re.IGNORECASE)
@@ -105,7 +104,8 @@ def normalize(name: str) -> str:
         return f"москва {base}ая"
 
     s = _PAREN_RE.sub("", s)
-    s = _KM_RE.sub("км", s)
+    # НЕ сжимаем "N км" — иначе все километровые станции схлопнутся в одну.
+    # Оставляем цифру, чтобы SequenceMatcher различал их.
     s = _TOV_RE.sub("", s)
     s = _PASS_RE.sub("", s)
     s = _DASH1_RE.sub("", s)
@@ -129,8 +129,18 @@ def main() -> None:
         print(json.dumps(data, ensure_ascii=False)[:500])
         sys.exit(1)
 
-    moscow = [s for s in all_st if "москв" in s["region_title"].lower()]
-    print(f"-> В московском регионе: {len(moscow)}")
+        # Охватываем все регионы, куда доходят наши направления:
+    # Москва/МО, Рязанская (Казанское), Владимирская (Вековка),
+    # Тверская (Ленинградское), Тульская (Курское), Калужская (Белорусское).
+    TARGET_REGIONS = (
+        "москв", "рязанск", "владимирск",
+        "тверск", "тульск", "калужск",
+    )
+    moscow = [
+        s for s in all_st
+        if any(r in s["region_title"].lower() for r in TARGET_REGIONS)
+    ]
+    print(f"-> В целевом регионе: {len(moscow)}")
 
     from app.core.network import _STATIONS
     our_stations = {sid: name for sid, name in _STATIONS}

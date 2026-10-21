@@ -509,6 +509,143 @@ _STATIONS = [
     ("bukholovo", "Бухолово"),
     ("podmoskovnye_dachi", "Подмосковные дачи (149 км)"),
     ("shakhovskaya", "Шаховская"),
+
+    # ══════════ КАЗАНСКОЕ НАПРАВЛЕНИЕ ══════════
+    # МЦД-3 (Митьково-Люберцы) и основной Рязанский ход
+    ("elektrozavodskaya", "Электрозаводская"),
+    ("sortirovochnaya", "Сортировочная"),
+    ("aviamotornaya", "Авиамоторная"),
+    ("andronovka", "Андроновка"),
+    ("perovo", "Перово"),
+    ("plyushchevo", "Плющево"),
+    ("veshnyaki", "Вешняки"),
+    ("vykhino", "Выхино"),
+    ("kosino", "Косино"),
+    ("ukhtomskaya", "Ухтомская"),
+    ("lyubertsy1", "Люберцы-1"),
+    ("panki", "Панки"),
+    ("tomilino", "Томилино"),
+    ("kraskovo", "Красково"),
+    ("malakhovka", "Малаховка"),
+    ("udelnaya", "Удельная"),
+    ("bykovo", "Быково"),
+    ("ilyinskaya", "Ильинская"),
+    ("otdykh", "Отдых"),
+    ("kratovo", "Кратово"),
+    ("eseninskaya", "Есенинская"),
+    ("fabrichnaya", "Фабричная"),
+    ("ramenskoye", "Раменское"),
+    ("ippodrom", "Ипподром"),
+    ("sovkhoz", "Совхоз"),
+    ("zagornovo", "Загорново"),
+    ("bronnitsy", "Бронницы"),
+    ("raduga", "Радуга"),
+    ("tsibino_63", "Цибино (63 км)"),
+    ("beloozerskaya", "Белоозёрская"),
+    ("faustovo", "Фаустово"),
+    ("zolotovo", "Золотово"),
+    ("vinogradovo", "Виноградово"),
+    ("konobeevo", "Конобеево"),
+    ("trofimovo_84", "Трофимово (84 км)"),
+    ("km88", "88 км"),
+    ("voskresensk", "Воскресенск"),
+    ("lopatino", "Лопатино"),
+    ("shifernaya", "Шиферная"),
+    ("ilyinsky_pogost", "Ильинский Погост"),
+    ("tsemgigant", "Цемгигант"),
+    ("peski", "Пески"),
+    ("konev_bor", "Конев Бор"),
+    ("khoroshevo", "Хорошево"),
+    ("amerevo_113", "Амерево (113 км)"),
+    ("kolomna", "Коломна"),
+    ("golutvin", "Голутвин"),
+    ("shchurovo", "Щурово"),
+    ("chyornaya", "Чёрная"),
+    ("lukhovitsy", "Луховицы"),
+    ("km142", "142 км"),
+    ("podlipki_kaz", "Подлипки (Казанские)"),
+    ("fruktovaya", "Фруктовая"),
+    ("alpatyevo", "Алпатьево"),
+    ("slyomy", "Слёмы"),
+    ("divovo", "Дивово"),
+    ("istodniki", "Истодники"),
+    ("km179", "179 км"),
+    ("rybnoye", "Рыбное"),
+    ("khodynino", "Ходынино"),
+    ("depo_ryazan", "Депо (Рязань)"),
+    ("ryazan_sort", "Рязань-Сорт."),
+    ("km187", "187 км"),
+    ("km189", "189 км"),
+    ("nedostoevo", "Недостоево"),
+    ("dyagilevo", "Дягилево"),
+    ("lagerny", "Лагерный"),
+    ("ryazan_1", "Рязань-1"),
+    ("ryazan_2", "Рязань-2"),
+
+    # ─── Казанский ход (от Люберец-1) ───
+    ("lyubertsy2", "Люберцы-2"),
+    ("korenyovo", "Коренёво"),
+    ("ovrazhki", "Овражки"),
+    ("rodniki", "Родники"),
+    ("vyalki", "Вялки"),
+    ("khripan", "Хрипань"),
+    ("km41_kaz", "41 км"),
+    ("donino", "Донино"),
+    ("igumnovo_49", "Игумново (49 км)"),
+    ("km52", "52 км"),
+    ("grigorovo", "Григорово"),
+    ("gzhel_istochniki_55", "Гжельские Источники (55 км)"),
+    ("gzhel", "Гжель"),
+    ("ignatyevo", "Игнатьево"),
+    ("kuzyayevo", "Кузяево"),
+    ("shevlyagino", "Шевлягино"),
+    ("smolevo", "Смолево"),
+    ("antsiferovo", "Анциферово"),
+    ("podosinki", "Подосинки"),
+    ("kurovskaya", "Куровская"),
+    ("lokomotivnoe_depo_90", "Локомотивное депо (90 км)"),
+    ("belivo", "Беливо"),
+    ("avsyunino", "Авсюнино"),
+    ("zapolitsy", "Заполицы"),
+    ("zaputnaya", "Запутная"),
+    ("shaturtorf", "Шатурторф"),
+    ("shatura", "Шатура"),
+    ("botino", "Ботино"),
+    ("krivandino", "Кривандино"),
+    ("tugolesye", "Туголесье"),
+    ("voymezhny", "Воймежный"),
+    ("cherusti", "Черусти"),
+    ("struya", "Струя"),
+    ("tasin", "Тасин"),
+    ("ilichyov", "Ильичёв"),
+    ("torfoprodukt", "Торфопродукт"),
+    ("miltsevo", "Мильцево"),
+    ("nechaevskaya", "Нечаевская"),
+    ("vekovka", "Вековка"),
+
+    # ─── Ветка в Рязановку (от Кривандина) ───
+    ("osanovo", "Осаново"),
+    ("km15_kaz", "15 км"),
+    ("pozhoga", "Пожога"),
+    ("km29_kaz", "29 км"),
+    ("barmino", "Бармино"),
+    ("sazonovo", "Сазоново"),
+    ("km47_kaz", "47 км"),
+    ("ryazanovka", "Рязановка"),
+
+    # ─── Ветка в Озёры (от Голутвина) ───
+    ("bachmanovo", "Бачманово"),
+    ("proezd_stankostroiteley_6", "Проезд Станкостроителей (6 км)"),
+    ("sychyovo", "Сычёво"),
+    ("lystsevskaya", "Лысцовская"),
+    ("semyonovsky", "Семёновский"),
+    ("posyolok_lesnoy_18", "Посёлок Лесной (18 км)"),
+    ("karasyovo", "Карасёво"),
+    ("kudryavtsevo", "Кудрявцево"),
+    ("danilovskaya", "Даниловская"),
+    ("kholmy_30", "Холмы (30 км)"),
+    ("km38_kaz", "38 км"),
+    ("ozyory", "Озёры"),
 ]
 
 
@@ -583,6 +720,12 @@ def build_moscow_network() -> RailNetwork:
     # ─── Рижское ───
     riga = Line("riga", "Рижское направление", "#f754e1", "cppk", headway=15)
     riga_m = Line("riga_m", "Ветка на Рижский вокзал", "#f754e1", "cppk", headway=30)
+    # ─── Казанское ───
+    kaz = Line("kaz", "Казанское направление", "#00A651", "cppk", headway=10)
+    kaz_khod = Line("kaz_khod", "Казанский ход", "#00A651", "cppk", headway=20)
+    kaz_ryazanovka = Line("kaz_ryazanovka", "Ветка в Рязановку", "#00A651", "cppk", headway=60)
+    kaz_ozery = Line("kaz_ozery", "Ветка в Озёры", "#00A651", "cppk", headway=60)
+    mcd3 = Line("mcd3", "МЦД-3", "#E5231B", "mcd", headway=10, train_kind="mcd")
 
     # ─── Ярославское: основной ход ───
     net.add_segment(yar, [
@@ -773,6 +916,98 @@ def build_moscow_network() -> RailNetwork:
         "reshetnikovo", "puteprovodnaya", "konakovskiy_moh",
         "donhovka", "konakovo_gres",
     ], [7, 7, 7, 7], kind="local")
+
+    # ─── МЦД-3 (Петровско-Разумовская → Ипподром) ───
+    net.add_segment(mcd3, [
+        "petrovsko_razumovskaya", "ostankino", "mitkovo",
+        "elektrozavodskaya", "sortirovochnaya", "aviamotornaya",
+        "andronovka", "perovo", "plyushchevo", "veshnyaki",
+        "vykhino", "kosino", "ukhtomskaya", "lyubertsy1",
+        "panki", "tomilino", "kraskovo", "malakhovka", "udelnaya",
+        "bykovo", "ilyinskaya", "otdykh", "kratovo", "eseninskaya",
+        "fabrichnaya", "ramenskoye", "ippodrom",
+    ], [
+        5, 6, 6, 4, 4, 4, 4, 4, 3, 4, 3, 4, 4, 4,
+        5, 5, 5, 5, 5, 4, 4, 4, 4, 4,
+        4, 5,
+    ], kind="mcd")
+
+    # ─── Казанское: основной ход до Рязани-1 ───
+    net.add_segment(kaz, [
+        "m_kaz",
+        "elektrozavodskaya", "sortirovochnaya", "aviamotornaya",
+        "andronovka", "perovo", "plyushchevo", "veshnyaki",
+        "vykhino", "kosino", "ukhtomskaya", "lyubertsy1",
+        "panki", "tomilino", "kraskovo", "malakhovka", "udelnaya",
+        "bykovo", "ilyinskaya", "otdykh", "kratovo", "eseninskaya",
+        "fabrichnaya", "ramenskoye", "ippodrom",
+        "sovkhoz", "zagornovo", "bronnitsy", "raduga", "tsibino_63",
+        "beloozerskaya", "faustovo", "zolotovo", "vinogradovo",
+        "konobeevo", "trofimovo_84", "km88", "voskresensk",
+        "lopatino", "shifernaya", "ilyinsky_pogost", "tsemgigant",
+        "peski", "konev_bor", "khoroshevo", "amerevo_113", "kolomna",
+        "golutvin", "shchurovo", "chyornaya",
+        "lukhovitsy", "km142", "podlipki_kaz", "fruktovaya", "alpatyevo",
+        "slyomy", "divovo", "istodniki", "km179", "rybnoye",
+        "khodynino", "depo_ryazan", "ryazan_sort", "km187", "km189",
+        "nedostoevo", "dyagilevo", "lagerny", "ryazan_1",
+    ], [
+        5, 4, 4, 4, 4, 4, 3, 4, 3, 4, 4, 4,
+        5, 5, 5, 5, 5, 4, 4, 4, 4, 4, 4, 5, 5,
+        5, 4, 4, 5, 4, 5, 4, 4, 5, 4, 4, 5, 4, 5,
+        4, 4, 5, 5, 5, 4, 4, 5, 4, 4,
+        4, 5, 4, 4, 4, 5, 4, 4, 5, 4,
+        4, 4, 4, 4, 4, 4, 4, 5, 5,
+    ], kind="local")
+
+    # ─── Ветка в Рязань-2 (тупик от Лагерного) ───
+    net.add_segment(kaz, [
+        "lagerny", "ryazan_2",
+    ], [6], kind="local")
+
+    # ─── Казанский ход ───
+    net.add_segment(kaz_khod, [
+        "lyubertsy1", "lyubertsy2",
+        "korenyovo", "ovrazhki", "rodniki", "vyalki",
+        "khripan", "km41_kaz", "donino",
+        "igumnovo_49", "km52", "grigorovo", "gzhel_istochniki_55",
+        "gzhel", "ignatyevo", "kuzyayevo",
+        "shevlyagino", "smolevo",
+        "antsiferovo", "podosinki",
+        "kurovskaya",
+        "lokomotivnoe_depo_90", "belivo", "avsyunino",
+        "zapolitsy", "zaputnaya", "shaturtorf", "shatura",
+        "botino", "krivandino",
+        "tugolesye", "voymezhny", "cherusti",
+        "struya", "tasin", "ilichyov", "torfoprodukt",
+        "miltsevo", "nechaevskaya", "vekovka",
+    ], [
+        8, 5, 5, 5, 5, 5, 5, 5, 5, 5, 4, 5, 5,
+        5, 5, 5, 5, 5, 5, 5, 5,
+        4, 5, 5, 5, 5, 5, 5,
+        5, 5,
+        5, 5, 5,
+        5, 5, 5, 5,
+        5, 5,
+    ], kind="local")
+
+    # ─── Ветка в Рязановку ───
+    net.add_segment(kaz_ryazanovka, [
+        "krivandino",
+        "osanovo", "km15_kaz", "pozhoga", "km29_kaz",
+        "barmino", "sazonovo", "km47_kaz", "ryazanovka",
+    ], [6, 5, 5, 5, 5, 5, 5, 5], kind="local")
+
+    # ─── Ветка в Озёры ───
+    net.add_segment(kaz_ozery, [
+        "golutvin",
+        "bachmanovo", "proezd_stankostroiteley_6", "sychyovo", "lystsevskaya",
+        "semyonovsky",
+        "posyolok_lesnoy_18", "karasyovo", "kudryavtsevo", "danilovskaya",
+        "kholmy_30", "km38_kaz", "ozyory",
+    ], [5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5], kind="local")
+
+    # ─── Пересадки между вокзалами ───
     
 
     # ─── Пересадки между вокзалами ───
