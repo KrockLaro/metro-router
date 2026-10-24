@@ -172,7 +172,7 @@ export const LINES: SchemaLine[] = [
       'lianozovo', 'sheremetyevo_junction', 'sheremetyevo_south', 'sheremetyevo_north',
     ],
   },
-    // ══════════════════════════════════════════════════════════════
+  // ══════════════════════════════════════════════════════════════
   // КУРСКОЕ НАПРАВЛЕНИЕ
   // ══════════════════════════════════════════════════════════════
   {
@@ -227,7 +227,51 @@ export const LINES: SchemaLine[] = [
     kind: 'cppk',
     path: ['dmitrovskaya', 'm_riga'],
   },
+
     // ══════════════════════════════════════════════════════════════
+  // ГОРЬКОВСКОЕ НАПРАВЛЕНИЕ
+  // ══════════════════════════════════════════════════════════════
+  {
+    id: 'gorky',
+    name: 'Горьковское направление',
+    color: '#1bc7e5',
+    kind: 'cppk',
+    path: [
+      'm_kursk', 'moskva_tovarnaya', 'nizhegorodskaya', 'chukhlinka',
+      'kuskovo', 'novogireevo', 'reutov', 'nikolskoe', 'saltykovskaya',
+      'kuchino', 'olgino', 'zheleznodorozhnaya', 'chernoye', 'zarya',
+      'kupavna', 'vishnyakovo', 'elektrougli', 'poselok_vorovskogo',
+      'khrapunovo', 'esino', 'fryazevo', 'kazanskoe', 'vokhna',
+      'lenskaya', 'nazarevo', 'drezna', 'kabanovo', 'malinovskie_luga',
+      'orekhovo_zuevo', 'krutoe', 'voynovo', 'usad', 'glubokovo',
+      'pokrov', 'novoe_perepochino', 'omutishche', 'leonovo', 'petushki',
+      'kosterovo', 'boldino', 'sushnevo', 'krasnaya_okhota', 'undol',
+      'ugor', 'koloksha', 'yuryevets', 'vladimir'
+    ],
+  },
+  {
+    id: 'gorky_balashikha',
+    name: 'Ветка в Балашиху',
+    color: '#1bc7e5',
+    kind: 'cppk',
+    path: ['reutov', 'stroyka', 'gorneki', 'balashikha'],
+  },
+  {
+    id: 'gorky_zakharovo',
+    name: 'Ветка в Захарово',
+    color: '#1bc7e5',
+    kind: 'cppk',
+    path: ['fryazevo', 'metallurg', 'elektrostal', 'mashinostroitel', 'noginsk', 'zakharovo'],
+  },
+  {
+    id: 'gorky_elektrogorsk',
+    name: 'Ветка в Электрогорск',
+    color: '#1bc7e5',
+    kind: 'cppk',
+    path: ['lenskaya', 'kovrigino', 'km14_gorky', 'elektrogorsk'],
+  },
+  
+  // ══════════════════════════════════════════════════════════════
   // МЦД-1 (Лобня — Одинцово) — overlay поверх Савёловского и Белорусского
   // ══════════════════════════════════════════════════════════════
   {
@@ -415,19 +459,79 @@ export const LINES: SchemaLine[] = [
     ],
   },
 
-    {
+      // ══════════════════════════════════════════════════════════════
+  // МЦД-4
+  // Западный участок (Апрелевка — Поклонная — Кутузовская —
+  // Тестовская) подключён в маршрутизатор. Восточный (через
+  // Курский и Комсомольскую) пока только на схеме.
+  // ══════════════════════════════════════════════════════════════
+  {
     id: 'mcd4',
     name: 'МЦД-4',
     color: '#7DC242',
     kind: 'mcd',
     path: [
-      'moskva_tovarnaya',         // Серп и Молот
-      'm_kursk',                  // Курский вокзал
-      'ploshchad_trekh_vokzalov', // Комсомольская площадь
-      'marya_roshcha',            // Марьина Роща
-      'm_sav',                    // Савёловский вокзал
-      'm_bel',                    // Белорусский вокзал
+      'aprelevka',                // Западная конечная МЦД-4, граница МЦД
+      'pobeda',
+      'krekshino',
+      'sanino',
+      'kokoshkino',
+      'tolstopaltsevo',
+      'lesnoy_gorodok',
+      'vnukovo',
+      'michurinets',
+      'peredelkino',
+      'solnechnaya',
+      'meshcherskaya',
+      'ochakovo',
+      'aminievskaya',
+      'matveevskaya',
+      'minskaya',
+      'poklonnaya',               // стыковка с Киевским направлением
+      'kutuzovskaya_4',           // Кутузовская (в будущем — МЦК)
       'testovskaya',              // Москва-Сити
+      'm_bel',                    // Белорусский вокзал
+      'm_sav',                    // Савёловский вокзал
+      'marya_roshcha',            // Марьина Роща
+      'ploshchad_trekh_vokzalov', // Комсомольская площадь
+      'm_kursk',                  // Курский вокзал
+      'moskva_tovarnaya',         // Серп и Молот
     ],
+  },
+
+  // ══════════════════════════════════════════════════════════════
+  // КИЕВСКОЕ НАПРАВЛЕНИЕ
+  // ══════════════════════════════════════════════════════════════
+  {
+    id: 'kiev',
+    name: 'Киевское направление',
+    color: '#3B82F6',
+    kind: 'cppk',
+    path: [
+      'm_kiev', 'poklonnaya', 'minskaya', 'matveevskaya', 'aminievskaya',
+      'ochakovo', 'meshcherskaya', 'solnechnaya', 'peredelkino',
+      'michurinets', 'vnukovo', 'lesnoy_gorodok', 'tolstopaltsevo',
+      'kokoshkino', 'sanino', 'krekshino', 'pobeda', 'aprelevka',
+      'dachnaya', 'alabino', 'selyatino', 'rassudovo', 'ozhigovo',
+      'bekasovo_1', 'zosimova_pustyn', 'nara', 'latyshskaya', 'bashkino',
+      'vorsino', 'balabanovo', 'obninskoe', 'shemyakino', 'maloyaroslavets',
+      'erdenevo', 'km140', 'suhodrev', 'rodinka', 'slyadnevo',
+      'km167', 'tikhonova_pustyn', 'muratovka', 'sadovaya_k', 'azarovo',
+      'kaluga_1',
+    ],
+  },
+  {
+    id: 'kiev_novoperedelkino',
+    name: 'Ветка на Новопеределкино',
+    color: '#3B82F6',
+    kind: 'cppk',
+    path: ['solnechnaya', 'novoperedelkino'],
+  },
+  {
+    id: 'kiev_aero',
+    name: 'Экспресс в аэропорт Внуково',
+    color: '#3B82F6',
+    kind: 'cppk',
+    path: ['lesnoy_gorodok', 'vnukovo_junction', 'aeroport_staraya', 'vnukovo_airport'],
   },
 ];

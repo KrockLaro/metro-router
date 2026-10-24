@@ -15,6 +15,9 @@ NO_SCHEDULE: set[str] = {
     "pl124km",
     "domodedovo_junction",
     "sheremetyevo_junction",
+    "vnukovo_junction",
+    "krasnaya_okhota",  # Нет остановки пригородных поездов (404)
+    "vnukovo_airport",
     # Курское — нет у Яндекса
     "km92_k",
     "km107_k",
@@ -62,10 +65,15 @@ OVERRIDES: dict[str, str] = {
     "testovskaya":"s9601349",   # Тестовская МЦД-1, а не МЦК
     "savelovo":  "s9603083",    # Савёлово [Тверская], а не Савёловская МЦД-4
     "khoroshevo": "s9602286",   # Хорошево (МО, пос. Хорошово), не МЦК-Хорошёво
+    "sadovaya_k":      "s9601686",  # Садовая (Киевское направление, Калужская обл.)
+    "kutuzovskaya_4":  "s9885732",  # Кутузовская (МЦД-4)
 
     # ─── Шереметьево ───
     "sheremetyevo_south": "s9881841",
     "sheremetyevo_north": "s9881704",
+
+     # ─── Внуково ───
+    "aeroport_staraya": "s9654533",  # Аэропорт (старая платф.)
 
     # ─── Проверены ранее ───
     "arsaki":          "s9600792",
@@ -73,6 +81,17 @@ OVERRIDES: dict[str, str] = {
     "balakirevo":      "s9604157",
     "biryulyovo_tov":  "s9601698",
     "biryulyovo_pass": "s9601703",
+
+    # Хвост Горьковского (Петушки — Владимир)
+    "petushki":             "s9612144",
+    "kosterovo":            "s9612145",  # Вычислил по порядку (между Петушками и Болдино)
+    "boldino":              "s9612146",
+    "undol":                "s9612147",
+    "koloksha":             "s9612148",
+    "yuryevets":            "s9612149",
+    "ugor":                 "s9612561",
+    "sushnevo":             "s9612727",
+    "vladimir":             "s2060340",
 
     # ═════════════════════════════════════════════════════════
     # КУРСКОЕ НАПРАВЛЕНИЕ

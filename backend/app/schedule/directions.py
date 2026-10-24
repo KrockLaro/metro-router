@@ -1,7 +1,4 @@
-﻿"""Ротация направлений по дням недели.
-
-Индексы 0..6 = Пн..Вс (datetime.weekday()).
-"""
+﻿"""Ротация направлений по дням недели."""
 from __future__ import annotations
 
 
@@ -30,19 +27,19 @@ DIRECTIONS: dict[str, dict] = {
             "bakovka", "odintsovo", "otradnoe", "pionerskaya", "perhushkovo",
             "zdravnitsa", "zhavoronki", "dachnoe", "malye_vyazemy", "golitsyno",
             "sushkinskaya", "petelino", "chastsovskaya", "portnovskaya",
-            "chapaevka", "polushkino", "sanatornaya", "tuchkovo", "teatralnaya",
-            "sadovaya", "dorohovo", "partizanskaya", "shalikovo", "kukarinskaya",
-            "pl109km", "mozhaysk", "borodino",
+            "kubinka1", "chapaevka", "polushkino", "sanatornaya", "tuchkovo",
+            "teatralnaya", "sadovaya", "dorohovo", "partizanskaya", "shalikovo",
+            "kukarinskaya", "pl109km", "mozhaysk", "borodino",
             # Усовская ветка
             "kuntsevo2", "romashkovo", "razdory", "barviha", "ilyinskoe", "usovo",
             # Звенигородская ветка
             "zaharovo", "hlyupino", "skorotovo", "zvenigorod",
             # Аэроэкспресс в Шереметьево
-            "sheremetyevo_south", "sheremetyevo_north",
+            "sheremetyevo_junction", "sheremetyevo_south", "sheremetyevo_north",
         ],
         "line_id": "bel",
     },
-        "kurskoye": {
+    "kurskoye": {
         "name": "Курское",
         "stations": [
             "m_kursk", "moskva_tovarnaya", "kalitniki", "novokhokhlovskaya",
@@ -78,7 +75,7 @@ DIRECTIONS: dict[str, dict] = {
         ],
         "line_id": "riga",
     },
-        "leningradskoye": {
+    "leningradskoye": {
         "name": "Ленинградское",
         "stations": [
             "m_len", "ostankino", "petrovsko_razumovskaya", "likhobory",
@@ -95,65 +92,83 @@ DIRECTIONS: dict[str, dict] = {
         ],
         "line_id": "len",
     },
-        "kazanskoye": {
+    "kazanskoye": {
         "name": "Казанское",
         "stations": [
-            # Стартовая точка — Казанский вокзал
-            "m_kaz",
-            # МЦД-3 участок (Митьково между Останкино и Электрозаводской)
-            "mitkovo",
-            # Основной Рязанский ход: Москва → Рязань-1
-            "elektrozavodskaya", "sortirovochnaya", "aviamotornaya",
-            "andronovka", "perovo", "plyushchevo", "veshnyaki",
-            "vykhino", "kosino", "ukhtomskaya", "lyubertsy1",
+            "m_kaz", "elektrozavodskaya", "sortirovochnaya", "aviamotornaya",
+            "andronovka", "perovo", "plyushchevo", "veshnyaki", "vykhino",
+            "kosino", "ukhtomskaya", "lyubertsy_1",
             "panki", "tomilino", "kraskovo", "malakhovka", "udelnaya",
-            "bykovo", "ilyinskaya", "otdykh", "kratovo", "eseninskaya",
-            "fabrichnaya", "ramenskoye", "ippodrom",
-            "sovkhoz", "zagornovo", "bronnitsy", "raduga", "tsibino_63",
-            "beloozerskaya", "faustovo", "zolotovo", "vinogradovo",
-            "konobeevo", "trofimovo_84", "km88", "voskresensk",
-            "lopatino", "shifernaya", "ilyinsky_pogost", "tsemgigant",
-            "peski", "konev_bor", "khoroshevo", "amerevo_113", "kolomna",
-            "golutvin", "shchurovo", "chyornaya",
+            "bykovo", "ilinskaya", "otdykh", "kratovo", "eseninskaya",
+            "fabrichnaya", "ramenskoe", "ippodrom", "sovkhoz", "zagornovo",
+            "bronnitsy", "raduga", "tsibino_63", "beloozerskaya", "faustovo",
+            "zolotovo", "vinogradovo", "konobeevo", "trofimovo_84", "km88",
+            "voskresensk", "lopatino", "shifernaya", "ilyinsky_pogost",
+            "tsemgigant", "peski", "konev_bor", "khoroshevo", "amerevo_113",
+            "kolomna", "golutvin", "shchurovo", "chyornaya", "semyonovsky",
             "lukhovitsy", "km142", "podlipki_kaz", "fruktovaya", "alpatyevo",
-            "slyomy", "divovo", "istodniki", "km179", "rybnoye",
+            "ozyory", "slyomy", "divovo", "istodniki", "km179", "rybnoe",
             "khodynino", "depo_ryazan", "ryazan_sort", "km187", "km189",
-            "nedostoevo", "dyagilevo", "lagerny", "ryazan_1",
-            # Тупиковая ветка на Рязань-2 (от Лагерного)
-            "ryazan_2",
-            # Казанский ход (ответвление от Люберец-1)
-            "lyubertsy2", "korenyovo", "ovrazhki", "rodniki", "vyalki",
-            "khripan", "km41_kaz", "donino",
-            "igumnovo_49", "km52", "grigorovo", "gzhel_istochniki_55",
-            "gzhel", "ignatyevo", "kuzyayevo",
-            "shevlyagino", "smolevo",
-            "antsiferovo", "podosinki", "kurovskaya",
-            "lokomotivnoe_depo_90", "belivo", "avsyunino",
-            "zapolitsy", "zaputnaya", "shaturtorf", "shatura",
-            "botino", "krivandino",
-            "tugolesye", "voymezhny", "cherusti",
-            "struya", "tasin", "ilichyov", "torfoprodukt",
+            "nedostoevo", "dyagilevo", "lagerny", "ryazan_2", "ryazan_1",
+            # Казанский ход
+            "lyubertsy_2", "korenyovo", "ovrazhki", "rodniki",
+            "vyalki", "khripan", "km41", "donino", "igumnovo_49", "km52",
+            "grigorovo", "gzhelskie_istochniki_55", "gzhel", "ignatyevo",
+            "kuzyaevo", "shevlyagino", "smolevo", "antsiferovo", "podosinki",
+            "kurovskaya", "lokomotivnoe_depo_90", "belivo", "avsyunino",
+            "zapolitsy", "zaputnaya", "shaturtorf", "shatura", "botino",
+            "krivandino", "tugolesye", "voymezhny",
+            "cherusti", "struya", "tasin", "ilichyov", "torfoprodukt",
             "miltsevo", "nechaevskaya", "vekovka",
-            # Ветка в Рязановку (от Кривандина)
+            # Линия в Озёры
+            "bachmanovo", "proezd_stankostroiteley_6", "sychyovo",
+            "lystsevskaya", "posyolok_lesnoy_18", "karasyovo",
+            "kudryavtsevo", "danilovskaya", "kholmy_30", "km38",
+            # Линия в Рязановку
             "osanovo", "km15_kaz", "pozhoga", "km29_kaz",
             "barmino", "sazonovo", "km47_kaz", "ryazanovka",
-            # Ветка в Озёры (от Голутвина)
-            "bachmanovo", "proezd_stankostroiteley_6", "sychyovo", "lystsevskaya",
-            "semyonovsky",
-            "posyolok_lesnoy_18", "karasyovo", "kudryavtsevo", "danilovskaya",
-            "kholmy_30", "km38_kaz", "ozyory",
         ],
         "line_id": "kaz",
     },
+        "kiyevskoye": {
+        "name": "Киевское",
+        "stations": [
+            "m_kiev", "poklonnaya", "minskaya", "matveevskaya", "aminievskaya",
+            "ochakovo", "meshcherskaya", "solnechnaya", "peredelkino",
+            "michurinets", "vnukovo", "lesnoy_gorodok", "tolstopaltsevo",
+            "kokoshkino", "sanino", "krekshino", "pobeda", "aprelevka",
+            "dachnaya", "alabino", "selyatino", "rassudovo", "ozhigovo",
+            "bekasovo_1", "zosimova_pustyn", "nara", "latyshskaya", "bashkino",
+            "vorsino", "balabanovo", "obninskoe", "shemyakino", "maloyaroslavets",
+            "erdenevo", "km140", "suhodrev", "rodinka", "slyadnevo",
+            "km167", "tikhonova_pustyn", "muratovka", "sadovaya_k", "azarovo",
+            "kaluga_1",
+            "novoperedelkino",
+            "aeroport_staraya", "vnukovo_airport",
+        ],
+        "line_id": "kiev",
+    },
     "gorkovskoye": {
         "name": "Горьковское",
-        "stations": [],
-        "line_id": "gork",
-    },
-    "kiyevskoye": {
-        "name": "Киевское",
-        "stations": [],
-        "line_id": "kiev",
+        "stations": [
+            "m_kursk", "moskva_tovarnaya", "nizhegorodskaya", "chukhlinka",
+            "kuskovo", "novogireevo", "reutov", "nikolskoe", "saltykovskaya",
+            "kuchino", "olgino", "zheleznodorozhnaya", "chernoye", "zarya",
+            "kupavna", "vishnyakovo", "elektrougli", "poselok_vorovskogo",
+            "khrapunovo", "esino", "fryazevo", "kazanskoe", "vokhna",
+            "lenskaya", "nazarevo", "drezna", "kabanovo", "malinovskie_luga",
+            "orekhovo_zuevo", "krutoe", "voynovo", "usad", "glubokovo",
+            "pokrov", "novoe_perepochino", "omutishche", "leonovo", "petushki",
+            "kosterovo", "boldino", "sushnevo", "krasnaya_okhota", "undol",
+            "ugor", "koloksha", "yuryevets", "vladimir",
+            # Ветка в Балашиху
+            "stroyka", "gorneki", "balashikha",
+            # Ветка в Захарово
+            "metallurg", "elektrostal", "mashinostroitel", "noginsk", "zakharovo",
+            # Ветка в Электрогорск
+            "kovrigino", "km14_gorky", "elektrogorsk",
+        ],
+        "line_id": "gorky",
     },
     "yaroslavskoye": {
         "name": "Ярославское",
@@ -181,7 +196,7 @@ DIRECTIONS: dict[str, dict] = {
         "name": "Павелецкое",
         "stations": [
             "m_pav", "derbenevskaya", "tulskaya", "varshavskaya",
-            "verhnie_kotly", "nagatinskaya", "chertanovo",
+            "verhnie_kotly", "nagatinskaya", "kolomenskoye", "chertanovo",
             "biryulyovo_tov", "biryulyovo_pass", "bulatnikovo",
             "rastorguevo", "kalinina", "leninskaya", "km32",
             "domodedovo", "aviacionnaya", "kosmos",
@@ -195,26 +210,16 @@ DIRECTIONS: dict[str, dict] = {
         ],
         "line_id": "pav",
     },
-    "bmo": {
-        "name": "БМО",
-        "stations": [],
-        "line_id": "bmo",
-    },
-    "mcc": {
-        "name": "МЦК",
-        "stations": [],
-        "line_id": "mcc",
-    },
 }
 
 
 # День недели → список direction_id
 WEEKLY_ROTATION: dict[int, list[str]] = {
-    0: ["savyolovskoye", "belorusskoye"],         # Пн
-    1: ["kurskoye", "rizhskoye"],                 # Вт
-    2: ["leningradskoye", "kazanskoye"],          # Ср
-    3: ["gorkovskoye", "kiyevskoye"],             # Чт
-    4: ["yaroslavskoye", "paveletskoye"],         # Пт
-    5: ["bmo"],                                   # Сб
-    6: ["mcc"],                                   # Вс
+    0: ["savyolovskoye", "belorusskoye"],           # Пн
+    1: ["kurskoye", "rizhskoye"],                   # Вт
+    2: ["leningradskoye"],                          # Ср
+    3: ["gorkovskoye", "kiyevskoye",],              # Чт
+    4: ["yaroslavskoye", "paveletskoye"],           # Пт
+    5: ["kazanskoye"],                              # Сб
+    6: [],                                          # Вс
 }

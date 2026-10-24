@@ -37,12 +37,12 @@ export default function MapScreen() {
 
   const handleStationPress = useCallback((s: SchemaStation) => {
     setSelected(s);
-    mapApiRef.current?.focusStation(s.id, 1.4);
+    mapApiRef.current?.focusStation(s.id);
   }, []);
 
   const handleSearchPick = useCallback((s: SchemaStation) => {
     setSelected(s);
-    mapApiRef.current?.focusStation(s.id, 1.6);
+    mapApiRef.current?.focusStation(s.id);
   }, []);
 
   const handleMapReady = useCallback((api: SchematicMapHandle) => {
@@ -57,7 +57,6 @@ export default function MapScreen() {
     if (selected) {
       setFrom(selected);
       setSelected(null);
-      mapApiRef.current?.resetView();
     }
   }, [selected]);
 
@@ -65,7 +64,6 @@ export default function MapScreen() {
     if (selected) {
       setTo(selected);
       setSelected(null);
-      mapApiRef.current?.resetView();
     }
   }, [selected]);
 
@@ -251,7 +249,6 @@ export default function MapScreen() {
           station={selected}
           onClose={() => {
             setSelected(null);
-            mapApiRef.current?.resetView();
           }}
           onFrom={handleSetFrom}
           onTo={handleSetTo}

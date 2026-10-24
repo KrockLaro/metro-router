@@ -15,7 +15,6 @@ import { LINES } from './schemaLines';
 import { useTheme } from '../theme/ThemeProvider';
 
 const { width: SCREEN_W, height: SCREEN_H } = Dimensions.get('window');
-const ASPECT = SCREEN_W / SCREEN_H;
 
 const _bounds = (() => {
   let minX = Infinity, maxX = -Infinity, minY = Infinity, maxY = -Infinity;
@@ -40,24 +39,8 @@ const BY = _bounds.y;
 const BW = _bounds.w;
 const BH = _bounds.h;
 
-const BOUNDS_ASPECT = BW / BH;
-
-let initVbW: number;
-let initVbH: number;
-if (BOUNDS_ASPECT > ASPECT) {
-  initVbW = BW;
-  initVbH = BW / ASPECT;
-} else {
-  initVbH = BH;
-  initVbW = BH * ASPECT;
-}
-const initVbX = BX + BW / 2 - initVbW / 2;
-const initVbY = BY + BH / 2 - initVbH / 2;
-
 const TAP_RADIUS = 30;
-const MIN_VB_W = BW / 5;
-const MAX_VB_W = BW * 1.5;
-const PAN_OVERSCROLL = 0.25;
+const PAN_OVERSCROLL = 0.1; // Небольшой запас при перетаскивании
 
 const STATION_R_HUB = 10;
 const STATION_R_REG = 6;
@@ -71,11 +54,6 @@ const BADGE_GAP = 5;
 const FONT_SIZE_REG = 13;
 const FONT_SIZE_HUB = 16;
 const FONT_SIZE_BADGE = 10;
-
-const LOD_FAR = 0.7;
-const LOD_MID = 0.35;
-
-const OFFSET_MAX = 15;
 
 const FONT_SCALE_MIN = 0.7;
 const FONT_SCALE_MAX = 1.4;
@@ -184,18 +162,21 @@ const SchematicMap: React.FC<Props> = ({
 }) => {
   const { theme } = useTheme();
 
-  const vbX = useSharedValue(initVbX);
-  const vbY = useSharedValue(initVbY);
-  const vbW = useSharedValue(initVbW);
-  const vbH = useSharedValue(initVbH);
+  const viewW = useSharedValue(SCREEN_W);
+  const viewH = useSharedValue(SCREEN_H);
 
-  const savedVbX = useSharedValue(initVbX);
-  const savedVbY = useSharedValue(initVbY);
-  const savedVbW = useSharedValue(initVbW);
-  const savedVbH = useSharedValue(initVbH);
+  // Инициализация параметров масштабирования и положения
+  const initZoom = Math.min(SCREEN_W / BW, SCREEN_H / BH);
+  const minZoom = useSharedValue(initZoom);
+  const maxZoom = useSharedValue(initZoom * 5);
 
-  const pinchAnchorX = useSharedValue(initVbX);
-  const pinchAnchorY = useSharedValue(initVbY);
+  const zoom = useSharedValue(initZoom);
+  const centerX = useSharedValue(BX + BW / 2);
+  const centerY = useSharedValue(BY + BH / 2);
+
+  const savedCenterX = useSharedValue(0);
+  const savedCenterY = useSharedValue(0);
+  const savedZoom = useSharedValue(1);
 
   const [lodLevel, setLodLevel] = useState<LodLevel>(2);
   const lodShared = useSharedValue<number>(2);
@@ -203,21 +184,41 @@ const SchematicMap: React.FC<Props> = ({
   const [fontScale, setFontScale] = useState(1.0);
   const fontScaleShared = useSharedValue<number>(1.0);
 
+  const handleLayout = (e: any) => {
+    const { width, height } = e.nativeEvent.layout;
+    const fitZoom = Math.min(width / BW, height / BH);
+
+    if (viewW.value !== width || viewH.value !== height) {
+      viewW.value = width;
+      viewH.value = height;
+      minZoom.value = fitZoom;
+      maxZoom.value = fitZoom * 5;
+      
+      // Если карта была в минимальном зуме, обновляем её под новые размеры
+      if (Math.abs(zoom.value - minZoom.value) < 0.01) {
+        zoom.value = fitZoom;
+      }
+    }
+  };
+
   const transform = useDerivedValue(() => {
-    const scale = SCREEN_W / vbW.value;
     return [
-      { translateX: -vbX.value * scale },
-      { translateY: -vbY.value * scale },
-      { scale },
+      { translateX: viewW.value / 2 },
+      { translateY: viewH.value / 2 },
+      { scale: zoom.value },
+      { translateX: -centerX.value },
+      { translateY: -centerY.value },
     ];
   });
 
+  // LOD (Level of Detail) - зависит от зума
   useAnimatedReaction(
-    () => vbW.value,
-    (w) => {
+    () => zoom.value,
+    (z) => {
+      const ratio = z / minZoom.value;
       let next: number;
-      if (w > initVbW * LOD_FAR) next = 0;
-      else if (w > initVbW * LOD_MID) next = 1;
+      if (ratio < 1.5) next = 0;
+      else if (ratio < 3.0) next = 1;
       else next = 2;
       if (next !== lodShared.value) {
         lodShared.value = next;
@@ -226,12 +227,13 @@ const SchematicMap: React.FC<Props> = ({
     },
   );
 
+  // Масштабирование шрифта (чтобы при сильном зуме текст не становился гигантским)
   useAnimatedReaction(
-    () => vbW.value,
-    (w) => {
-      const ratio = w / initVbW;
-      const clampedRatio = Math.max(0.2, Math.min(2.0, ratio));
-      const raw = Math.pow(clampedRatio, FONT_SCALE_POW);
+    () => zoom.value,
+    (z) => {
+      const ratio = z / minZoom.value;
+      const clampedRatio = Math.max(0.2, Math.min(5.0, ratio));
+      const raw = Math.pow(1.0 / clampedRatio, FONT_SCALE_POW);
       const scaled = Math.max(FONT_SCALE_MIN, Math.min(FONT_SCALE_MAX, raw));
       const bucket = Math.round(scaled / FONT_SCALE_BUCKET) * FONT_SCALE_BUCKET;
       if (Math.abs(bucket - fontScaleShared.value) > FONT_SCALE_BUCKET / 2) {
@@ -341,6 +343,7 @@ const SchematicMap: React.FC<Props> = ({
       const totalDx = x - s.x;
       const totalDy = y - s.y;
       const totalDist = Math.hypot(totalDx, totalDy);
+      const OFFSET_MAX = 15;
       if (totalDist > OFFSET_MAX) {
         const k = OFFSET_MAX / totalDist;
         x = s.x + totalDx * k;
@@ -461,20 +464,6 @@ const SchematicMap: React.FC<Props> = ({
         const textW = font.measureText(s.name).width;
         const lineHeight = size * 1.1;
 
-        if (!isDense(s)) {
-          const ori = s.orientation ?? 'right';
-          const layout = computeLabelLayout(cx, cy, hasBadge, size, textW, r, ori, fontScale);
-          placed.push({ s, tx: layout.tx, ty: layout.ty, font, ori });
-          obstacles.push({
-            x: layout.tx - 1,
-            y: layout.ty - lineHeight + 2,
-            w: textW + 2,
-            h: lineHeight,
-          });
-          placedOk = true;
-          break;
-        }
-
         const orients = candidateOrientations(s.orientation);
         for (const ori of orients) {
           const layout = computeLabelLayout(cx, cy, hasBadge, size, textW, r, ori, fontScale);
@@ -516,8 +505,6 @@ const SchematicMap: React.FC<Props> = ({
     [labels],
   );
 
-  // Ориентация, которая реально использовалась при размещении подписи.
-  // Нужна, чтобы значок «Э» стоял там же, где текст, а не по данным станции.
   const usedOrientation = useMemo(() => {
     const m = new Map<string, StationOrientation>();
     for (const l of labels) m.set(l.s.id, l.ori);
@@ -525,37 +512,32 @@ const SchematicMap: React.FC<Props> = ({
   }, [labels]);
 
   const focusStation = useCallback(
-    (stationId: string, targetScale = 1.4) => {
+    (stationId: string, targetScale?: number) => {
       const s = STATIONS[stationId];
       if (!s) return;
       const off = getOffset(stationId);
-      const cx = s.x + off.dx;
-      const cy = s.y + off.dy;
-
-      const targetW = initVbW / targetScale;
-      const targetH = initVbH / targetScale;
-      const padX = targetW * 0.5;
-      const padY = targetH * 0.5;
-      const minX = BX - padX;
-      const maxX = BX + BW - targetW + padX;
-      const minY = BY - padY;
-      const maxY = BY + BH - targetH + padY;
-      const nx = cx - targetW / 2;
-      const ny = cy - targetH / 2;
-      vbW.value = withTiming(targetW, { duration: 400 });
-      vbH.value = withTiming(targetH, { duration: 400 });
-      vbX.value = withTiming(Math.max(minX, Math.min(maxX, nx)), { duration: 400 });
-      vbY.value = withTiming(Math.max(minY, Math.min(maxY, ny)), { duration: 400 });
+      const targetX = s.x + off.dx;
+      const targetY = s.y + off.dy;
+      
+      // Если targetScale задан, берем его от минимального зума.
+      // Но не отдаляем карту, если ты уже приблизил её сильнее.
+      const targetZ = Math.max(
+        zoom.value, 
+        minZoom.value * (targetScale ?? 1.5)
+      );
+      
+      zoom.value = withTiming(targetZ, { duration: 400 });
+      centerX.value = withTiming(targetX, { duration: 400 });
+      centerY.value = withTiming(targetY, { duration: 400 });
     },
-    [vbX, vbY, vbW, vbH, getOffset],
+    [zoom, minZoom, centerX, centerY, getOffset],
   );
 
   const resetView = useCallback(() => {
-    vbX.value = withTiming(initVbX, { duration: 350 });
-    vbY.value = withTiming(initVbY, { duration: 350 });
-    vbW.value = withTiming(initVbW, { duration: 350 });
-    vbH.value = withTiming(initVbH, { duration: 350 });
-  }, [vbX, vbY, vbW, vbH]);
+    zoom.value = withTiming(minZoom.value, { duration: 350 });
+    centerX.value = withTiming(BX + BW / 2, { duration: 350 });
+    centerY.value = withTiming(BY + BH / 2, { duration: 350 });
+  }, [zoom, minZoom, centerX, centerY]);
 
   useEffect(() => {
     if (onMapReady) onMapReady({ focusStation, resetView });
@@ -564,90 +546,103 @@ const SchematicMap: React.FC<Props> = ({
   const pan = Gesture.Pan()
     .maxPointers(1).averageTouches(true).minDistance(4)
     .onStart(() => {
-      savedVbX.value = vbX.value; savedVbY.value = vbY.value;
-      savedVbW.value = vbW.value; savedVbH.value = vbH.value;
+      savedCenterX.value = centerX.value;
+      savedCenterY.value = centerY.value;
     })
     .onUpdate((e) => {
-      const w = savedVbW.value, h = savedVbH.value;
-      const dx = (e.translationX / SCREEN_W) * w;
-      const dy = (e.translationY / SCREEN_H) * h;
-      const padX = w * PAN_OVERSCROLL, padY = h * PAN_OVERSCROLL;
-      const minX = BX - padX, maxX = BX + BW - w + padX;
-      const minY = BY - padY, maxY = BY + BH - h + padY;
-      const nx = savedVbX.value - dx, ny = savedVbY.value - dy;
-      vbX.value = Math.max(minX, Math.min(maxX, nx));
-      vbY.value = Math.max(minY, Math.min(maxY, ny));
+      const dx = e.translationX / zoom.value;
+      const dy = e.translationY / zoom.value;
+      
+      let nx = savedCenterX.value - dx;
+      let ny = savedCenterY.value - dy;
+      
+      const halfVW = viewW.value / 2 / zoom.value;
+      const halfVH = viewH.value / 2 / zoom.value;
+      
+      const minX = BX + halfVW;
+      const maxX = BX + BW - halfVW;
+      const minY = BY + halfVH;
+      const maxY = BY + BH - halfVH;
+      
+      // Если карта меньше экрана, центрируем её. Иначе — не даём выехать за края.
+      if (minX > maxX) nx = BX + BW / 2;
+      else nx = Math.max(minX, Math.min(maxX, nx));
+      
+      if (minY > maxY) ny = BY + BH / 2;
+      else ny = Math.max(minY, Math.min(maxY, ny));
+      
+      centerX.value = nx;
+      centerY.value = ny;
     })
     .onEnd((e) => {
-      const w = savedVbW.value, h = savedVbH.value;
-      const vx = (e.velocityX / SCREEN_W) * w;
-      const vy = (e.velocityY / SCREEN_H) * h;
-      const padX = w * PAN_OVERSCROLL, padY = h * PAN_OVERSCROLL;
-      const minX = BX - padX, maxX = BX + BW - w + padX;
-      const minY = BY - padY, maxY = BY + BH - h + padY;
-      vbX.value = withDecay({ velocity: -vx, deceleration: 0.997, clamp: [minX, maxX] });
-      vbY.value = withDecay({ velocity: -vy, deceleration: 0.997, clamp: [minY, maxY] });
+      const vx = e.velocityX / zoom.value;
+      const vy = e.velocityY / zoom.value;
+      
+      const halfVW = viewW.value / 2 / zoom.value;
+      const halfVH = viewH.value / 2 / zoom.value;
+      
+      const minX = BX + halfVW;
+      const maxX = BX + BW - halfVW;
+      const minY = BY + halfVH;
+      const maxY = BY + BH - halfVH;
+
+      if (minX <= maxX) {
+        centerX.value = withDecay({ velocity: -vx, deceleration: 0.997, clamp: [minX, maxX] });
+      }
+      if (minY <= maxY) {
+        centerY.value = withDecay({ velocity: -vy, deceleration: 0.997, clamp: [minY, maxY] });
+      }
     });
 
   const pinch = Gesture.Pinch()
     .onStart((e) => {
-      savedVbW.value = vbW.value; savedVbH.value = vbH.value;
-      savedVbX.value = vbX.value; savedVbY.value = vbY.value;
-      pinchAnchorX.value = vbX.value + (e.focalX / SCREEN_W) * vbW.value;
-      pinchAnchorY.value = vbY.value + (e.focalY / SCREEN_H) * vbH.value;
+      savedCenterX.value = centerX.value;
+      savedCenterY.value = centerY.value;
+      savedZoom.value = zoom.value;
     })
     .onUpdate((e) => {
-      const factor = Math.max(0.3, Math.min(5, e.scale));
-      const newW = savedVbW.value / factor;
-      const newH = savedVbH.value / factor;
-      const padX = newW * PAN_OVERSCROLL, padY = newH * PAN_OVERSCROLL;
-      const minX = BX - padX, maxX = BX + BW - newW + padX;
-      const minY = BY - padY, maxY = BY + BH - newH + padY;
-      const nx = pinchAnchorX.value - (e.focalX / SCREEN_W) * newW;
-      const ny = pinchAnchorY.value - (e.focalY / SCREEN_H) * newH;
-      vbW.value = newW; vbH.value = newH;
-      vbX.value = Math.max(minX, Math.min(maxX, nx));
-      vbY.value = Math.max(minY, Math.min(maxY, ny));
-    })
-    .onEnd(() => {
-      const currentW = vbW.value, currentH = vbH.value;
-      let targetW = currentW, targetH = currentH;
-      if (currentW > MAX_VB_W) {
-        const f = MAX_VB_W / currentW;
-        targetW = MAX_VB_W; targetH = currentH * f;
-      } else if (currentW < MIN_VB_W) {
-        const f = MIN_VB_W / currentW;
-        targetW = MIN_VB_W; targetH = currentH * f;
-      }
-      if (targetW === currentW && targetH === currentH) return;
-      const cx = vbX.value + currentW / 2;
-      const cy = vbY.value + currentH / 2;
-      const padX = targetW * PAN_OVERSCROLL, padY = targetH * PAN_OVERSCROLL;
-      const minX = BX - padX, maxX = BX + BW - targetW + padX;
-      const minY = BY - padY, maxY = BY + BH - targetH + padY;
-      const nx = cx - targetW / 2, ny = cy - targetH / 2;
-      vbW.value = withTiming(targetW, { duration: 250 });
-      vbH.value = withTiming(targetH, { duration: 250 });
-      vbX.value = withTiming(Math.max(minX, Math.min(maxX, nx)), { duration: 250 });
-      vbY.value = withTiming(Math.max(minY, Math.min(maxY, ny)), { duration: 250 });
+      const newZoom = Math.max(minZoom.value, Math.min(maxZoom.value, savedZoom.value * e.scale));
+      
+      // Точка, на которую мы нацелились пальцами, должна остаться на месте
+      const focalWorldX = (e.focalX - viewW.value / 2) / savedZoom.value + savedCenterX.value;
+      const focalWorldY = (e.focalY - viewH.value / 2) / savedZoom.value + savedCenterY.value;
+      
+      const newCenterX = focalWorldX - (e.focalX - viewW.value / 2) / newZoom;
+      const newCenterY = focalWorldY - (e.focalY - viewH.value / 2) / newZoom;
+      
+      zoom.value = newZoom;
+      
+      // Ограничиваем перемещение
+      const halfVW = viewW.value / 2 / newZoom;
+      const halfVH = viewH.value / 2 / newZoom;
+      
+      const minX = BX + halfVW;
+      const maxX = BX + BW - halfVW;
+      const minY = BY + halfVH;
+      const maxY = BY + BH - halfVH;
+      
+      if (minX > maxX) centerX.value = BX + BW / 2;
+      else centerX.value = Math.max(minX, Math.min(maxX, newCenterX));
+      
+      if (minY > maxY) centerY.value = BY + BH / 2;
+      else centerY.value = Math.max(minY, Math.min(maxY, newCenterY));
     });
 
   const doubleTap = Gesture.Tap().numberOfTaps(2).maxDelay(300)
     .onEnd((e, success) => {
       if (!success) return;
-      const isZoomedIn = vbW.value < initVbW * 0.6;
-      const targetW = isZoomedIn ? initVbW : initVbW / 1.8;
-      const targetH = isZoomedIn ? initVbH : initVbH / 1.8;
-      const tapX = vbX.value + (e.x / SCREEN_W) * vbW.value;
-      const tapY = vbY.value + (e.y / SCREEN_H) * vbH.value;
-      const padX = targetW * PAN_OVERSCROLL, padY = targetH * PAN_OVERSCROLL;
-      const minX = BX - padX, maxX = BX + BW - targetW + padX;
-      const minY = BY - padY, maxY = BY + BH - targetH + padY;
-      const nx = tapX - targetW / 2, ny = tapY - targetH / 2;
-      vbW.value = withTiming(targetW, { duration: 280 });
-      vbH.value = withTiming(targetH, { duration: 280 });
-      vbX.value = withTiming(Math.max(minX, Math.min(maxX, nx)), { duration: 280 });
-      vbY.value = withTiming(Math.max(minY, Math.min(maxY, ny)), { duration: 280 });
+      const isZoomedIn = zoom.value > minZoom.value * 1.5;
+      const targetZ = isZoomedIn ? minZoom.value : minZoom.value * 2.5;
+      
+      const focalWorldX = (e.x - viewW.value / 2) / zoom.value + centerX.value;
+      const focalWorldY = (e.y - viewH.value / 2) / zoom.value + centerY.value;
+      
+      const newCenterX = focalWorldX - (e.x - viewW.value / 2) / targetZ;
+      const newCenterY = focalWorldY - (e.y - viewH.value / 2) / targetZ;
+      
+      zoom.value = withTiming(targetZ, { duration: 300 });
+      centerX.value = withTiming(newCenterX, { duration: 300 });
+      centerY.value = withTiming(newCenterY, { duration: 300 });
     });
 
   const offsetsRef = useSharedValue<Record<string, { dx: number; dy: number }>>({});
@@ -660,21 +655,26 @@ const SchematicMap: React.FC<Props> = ({
   const singleTap = Gesture.Tap().numberOfTaps(1).maxDelay(300)
     .onEnd((e, success) => {
       if (!success) return;
-      const canvasX = vbX.value + (e.x / SCREEN_W) * vbW.value;
-      const canvasY = vbY.value + (e.y / SCREEN_H) * vbH.value;
+      const worldX = (e.x - viewW.value / 2) / zoom.value + centerX.value;
+      const worldY = (e.y - viewH.value / 2) / zoom.value + centerY.value;
+      
+      // Радиус нажатия переводим из экранных пикселей в мировые единицы
+      const worldRadius = TAP_RADIUS / zoom.value;
+      
       const offs = offsetsRef.value;
       let closest: SchemaStation | null = null;
       let minDist = Infinity;
       for (const s of stationEntries) {
         const o = offs[s.id] ?? { dx: 0, dy: 0 };
-        const dx = s.x + o.dx - canvasX;
-        const dy = s.y + o.dy - canvasY;
-        const d = dx * dx + dy * dy;
+        const dx = s.x + o.dx - worldX;
+        const dy = s.y + o.dy - worldY;
+        const d = Math.sqrt(dx * dx + dy * dy);
         const bonus = s.lines.length > 1 ? 0.6 : 1;
         const weighted = d * bonus;
         if (weighted < minDist) { minDist = weighted; closest = s; }
       }
-      if (closest && Math.sqrt(minDist) < TAP_RADIUS) {
+      
+      if (closest && minDist < worldRadius) {
         runOnJS(onStationPress)(closest);
       }
     });
@@ -691,7 +691,10 @@ const SchematicMap: React.FC<Props> = ({
   const scaledBadgeH = BADGE_H * fontScale;
 
   return (
-    <View style={[styles.container, { backgroundColor: theme.mapBg }]}>
+    <View
+      style={[styles.container, { backgroundColor: theme.mapBg }]}
+      onLayout={handleLayout}
+    >
       <GestureDetector gesture={gesture}>
         <Canvas style={StyleSheet.absoluteFill}>
           <Group transform={transform}>

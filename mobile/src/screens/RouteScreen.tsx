@@ -14,6 +14,7 @@ import {
   getDirectionInfo, Fare,
 } from '../map/tariffs';
 import { STATIONS } from '../map/schemaStations';
+import { METRO_TRANSFERS } from '../map/metroData';
 
 // ------------------------------------------------------------
 // Вспомогательные функции
@@ -77,6 +78,51 @@ function getRouteColors(theme: Theme): RouteColors {
 }
 
 // ------------------------------------------------------------
+// Компонент метки метро
+// ------------------------------------------------------------
+
+function MetroBadge({ stationIds, theme, isDark }: { stationIds: (string | undefined)[]; theme: any; isDark: boolean }) {
+  // Собираем уникальные линии со всех станций (например, при переходе с Ярославского на Казанский)
+  const metroLinesMap = new Map();
+  for (const id of stationIds) {
+    if (!id) continue;
+    const lines = METRO_TRANSFERS[id];
+    if (lines) {
+      for (const l of lines) {
+        metroLinesMap.set(l.id, l);
+      }
+    }
+  }
+  
+  const lines = Array.from(metroLinesMap.values()).sort((a, b) => a.id - b.id);
+  if (lines.length === 0) return null;
+
+  return (
+    <View style={[
+      stylesMetro.container,
+      { backgroundColor: isDark ? 'rgba(0, 85, 164, 0.18)' : 'rgba(0, 85, 164, 0.08)' }
+    ]}>
+      <View style={stylesMetro.header}>
+        <View style={stylesMetro.icon}>
+          <Text style={stylesMetro.iconText}>М</Text>
+        </View>
+        <Text style={[stylesMetro.title, { color: theme.text }]}>
+          Переход на:
+        </Text>
+      </View>
+      <View style={stylesMetro.list}>
+        {lines.map((line) => (
+          <Text key={line.id} style={[stylesMetro.lineText, { color: theme.textMuted }]}>
+            {line.id} {line.name}
+            {line.shortName ? ` (${line.shortName})` : ''}
+          </Text>
+        ))}
+      </View>
+    </View>
+  );
+}
+
+// ------------------------------------------------------------
 // Склейка сегментов
 // ------------------------------------------------------------
 
@@ -93,8 +139,7 @@ interface MergedLeg {
   trainNumber?: string;
   waitMinutes?: number;
   scheduleFound?: boolean;
-  /** Реальный тип поезда из enrich: local | express | aeroexpress */
-  trainType?: 'local' | 'express' | 'aeroexpress';
+  trainType?: 'local' | 'express' | 'aeroexpress' | 'mcd';
 }
 
 function mergeLegs(segments: RouteSegment[]): MergedLeg[] {
@@ -140,13 +185,7 @@ function mergeLegs(segments: RouteSegment[]): MergedLeg[] {
   return result;
 }
 
-// ------------------------------------------------------------
-// Извлечение начала и конца маршрута
-// ------------------------------------------------------------
-
-function extractEndpoints(
-  route: RouteResult | undefined,
-): { fromId?: string; toId?: string } {
+function extractEndpoints(route: RouteResult | undefined): { fromId?: string; toId?: string } {
   if (!route || route.segments.length === 0) return {};
   const first = route.segments[0];
   const last = route.segments[route.segments.length - 1];
@@ -154,7 +193,7 @@ function extractEndpoints(
 }
 
 // ------------------------------------------------------------
-// Компонент
+// Компонент экрана
 // ------------------------------------------------------------
 
 interface Props {
@@ -177,6 +216,7 @@ export default function RouteScreen({
   const { theme } = useTheme();
   const c = useMemo(() => getRouteColors(theme), [theme]);
   const styles = useMemo(() => makeStyles(c), [c]);
+  const isDark = theme.name === 'dark';
 
   const propVariants = useMemo<RouteResult[]>(() => {
     if (variants && variants.length > 0) return variants;
@@ -460,35 +500,52 @@ export default function RouteScreen({
 
           if (leg.kind === 'transfer') {
             return (
-              <View key={i} style={styles.transferRow}>
-                <View style={styles.timeCol} />
-                <View style={styles.timelineCol}>
-                  <View style={styles.transferDots}>
-                    <View style={styles.transferDot} />
-                    <View style={styles.transferDot} />
-                    <View style={styles.transferDot} />
+              <React.Fragment key={i}>
+                <View style={styles.transferRow}>
+                  <View style={styles.timeCol} />
+                  <View style={styles.timelineCol}>
+                    <View style={styles.transferDots}>
+                      <View style={styles.transferDot} />
+                      <View style={styles.transferDot} />
+                      <View style={styles.transferDot} />
+                    </View>
+                  </View>
+                  <View style={styles.contentCol}>
+                    <Text style={styles.transferLabel}>Пересадка</Text>
+                    <Text style={styles.transferSub}>
+                      {Math.round(leg.minutes)} мин
+                    </Text>
+                    {/* Метки метро для пересадки */}
+                    <MetroBadge stationIds={[leg.from.id, leg.to.id]} theme={theme} isDark={isDark} />
                   </View>
                 </View>
-                <View style={styles.contentCol}>
-                  <Text style={styles.transferLabel}>Пересадка</Text>
-                  <Text style={styles.transferSub}>
-                    {Math.round(leg.minutes)} мин
-                  </Text>
-                </View>
-              </View>
+
+                {/* Если пересадка последняя — дорисовываем конечную станцию */}
+                {isLast && (
+                  <View style={styles.rideRow}>
+                    <View style={styles.timeCol}>
+                      <Text style={styles.timeText}>{fmtTime(endTime)}</Text>
+                    </View>
+                    <View style={styles.timelineCol}>
+                      <View style={[styles.dot, { backgroundColor: c.textMuted }]} />
+                    </View>
+                    <View style={styles.contentCol}>
+                      <Text style={styles.stationName}>{leg.to.name}</Text>
+                      <MetroBadge stationIds={[leg.to.id]} theme={theme} isDark={isDark} />
+                    </View>
+                  </View>
+                )}
+              </React.Fragment>
             );
           }
 
           const color = leg.line_color || c.accent;
           const km = estimateKm(leg.minutes);
 
-          // Тип поезда: если enrich вернул train_type — используем его,
-          // иначе смотрим на isExpress из графа.
           const trainType = leg.trainType ?? (leg.isExpress ? 'express' : 'local');
           const isExpressTrain = trainType === 'express';
 
           const allIntermediates = getIntermediateStations(leg.from.id, leg.to.id);
-          // Для экспресса оставляем только станции с флагом expressStop.
           const intermediates = isExpressTrain
             ? allIntermediates.filter((st) => st.expressStop)
             : allIntermediates;
@@ -529,7 +586,10 @@ export default function RouteScreen({
                 {hideFromName ? (
                   <View style={styles.stationSpacer} />
                 ) : (
-                  <Text style={styles.stationName}>{leg.from.name}</Text>
+                  <React.Fragment>
+                    <Text style={styles.stationName}>{leg.from.name}</Text>
+                    <MetroBadge stationIds={[leg.from.id]} theme={theme} isDark={isDark} />
+                  </React.Fragment>
                 )}
 
                 <View style={styles.lineCard}>
@@ -631,6 +691,7 @@ export default function RouteScreen({
                 </View>
 
                 <Text style={styles.stationName}>{leg.to.name}</Text>
+                <MetroBadge stationIds={[leg.to.id]} theme={theme} isDark={isDark} />
               </View>
             </View>
           );
@@ -643,7 +704,50 @@ export default function RouteScreen({
 }
 
 // ------------------------------------------------------------
-// Стили
+// Стили для метро
+// ------------------------------------------------------------
+const stylesMetro = StyleSheet.create({
+  container: {
+    marginTop: 6,
+    marginBottom: 8,
+    padding: 8,
+    borderRadius: 8,
+  },
+  header: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginBottom: 4,
+  },
+  icon: {
+    width: 16,
+    height: 16,
+    borderRadius: 3,
+    backgroundColor: '#0055A4',
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginRight: 6,
+  },
+  iconText: {
+    color: '#FFFFFF',
+    fontSize: 11,
+    fontWeight: '700',
+    lineHeight: 13,
+  },
+  title: {
+    fontSize: 13,
+    fontWeight: '600',
+  },
+  list: {
+    paddingLeft: 22,
+  },
+  lineText: {
+    fontSize: 12,
+    lineHeight: 18,
+  },
+});
+
+// ------------------------------------------------------------
+// Основные стили
 // ------------------------------------------------------------
 
 const makeStyles = (c: RouteColors) =>

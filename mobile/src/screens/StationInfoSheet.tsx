@@ -12,6 +12,7 @@ import {
   StationFacilities,
   SubStationInfo,
 } from '../map/schemaStations';
+import { METRO_TRANSFERS } from '../map/metroData';
 import { useTheme } from '../theme/ThemeProvider';
 import ScheduleBlock from './ScheduleBlock';
 import {
@@ -43,7 +44,7 @@ export default function StationInfoSheet({ station, onClose, onFrom, onTo }: Pro
   useEffect(() => {
     if (station) {
       setRenderStation(station);
-      setExpandedSubId(null); // при открытии новой станции всегда показываем верхний уровень
+      setExpandedSubId(null);
       translateY.value = withTiming(0, { duration: 250 });
       backdropOpacity.value = withTiming(1, { duration: 250 });
     } else {
@@ -78,6 +79,12 @@ export default function StationInfoSheet({ station, onClose, onFrom, onTo }: Pro
   const title = showSubDetails
     ? `${renderStation.name} · ${expandedSub!.shortName}`
     : renderStation.name;
+
+  // Ключ для поиска метро: у обычной станции это её id, у подстанции — id подстанции
+  const metroKey = showSubDetails ? expandedSub!.id : renderStation.id;
+  const metroLines = METRO_TRANSFERS[metroKey];
+
+  const isDark = theme.name === 'dark';
 
   return (
     <>
@@ -143,7 +150,42 @@ export default function StationInfoSheet({ station, onClose, onFrom, onTo }: Pro
             </Text>
           )}
 
-          {/* Кнопки "Отсюда / Сюда" — работают на уровне хаба (или обычной станции) */}
+          {/* Блок пересадок на метро */}
+          {!!metroLines?.length && (
+            <View
+              style={[
+                styles.metroContainer,
+                {
+                  backgroundColor: isDark
+                    ? 'rgba(0, 85, 164, 0.18)'
+                    : 'rgba(0, 85, 164, 0.08)',
+                },
+              ]}
+            >
+              <View style={styles.metroHeader}>
+                <View style={styles.metroIcon}>
+                  <Text style={styles.metroIconText}>М</Text>
+                </View>
+                <Text style={[styles.metroTitle, { color: theme.text }]}>Переход на:</Text>
+              </View>
+
+              <View style={styles.metroList}>
+                {[...metroLines]
+                  .sort((a, b) => a.id - b.id)
+                  .map((line) => (
+                    <Text
+                      key={line.id}
+                      style={[styles.metroLineText, { color: theme.textMuted }]}
+                    >
+                      {line.id} {line.name}
+                      {line.shortName ? ` (${line.shortName})` : ''}
+                    </Text>
+                  ))}
+              </View>
+            </View>
+          )}
+
+          {/* Кнопки "Отсюда / Сюда" */}
           <View style={styles.routeBtns}>
             <TouchableOpacity
               style={[styles.routeBtn, { borderColor: theme.border }]}
@@ -399,6 +441,45 @@ const styles = StyleSheet.create({
     marginBottom: 16,
   },
   backBtnText: { fontSize: 14, fontWeight: '600' },
+
+  // Метро
+  metroContainer: {
+    marginTop: 4,
+    marginBottom: 16,
+    padding: 12,
+    borderRadius: 12,
+  },
+  metroHeader: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginBottom: 8,
+  },
+  metroIcon: {
+    width: 20,
+    height: 20,
+    borderRadius: 4,
+    backgroundColor: '#0055A4',
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginRight: 8,
+  },
+  metroIconText: {
+    color: '#FFFFFF',
+    fontSize: 13,
+    fontWeight: '700',
+    lineHeight: 16,
+  },
+  metroTitle: {
+    fontSize: 15,
+    fontWeight: '600',
+  },
+  metroList: {
+    paddingLeft: 28,
+  },
+  metroLineText: {
+    fontSize: 14,
+    lineHeight: 22,
+  },
 
   routeBtns: { flexDirection: 'row', gap: 10, marginBottom: 16 },
   routeBtn: {

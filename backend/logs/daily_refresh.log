@@ -6422,3 +6422,1002 @@ app.schedule.yandex_client.YandexHTTPError: Yandex Rasp вернул HTTP 404 д
 2026-10-21 17:50:59,163 | ERROR   | daily_refresh | Квота исчерпана — прерываю оставшиеся направления
 2026-10-21 17:50:59,170 | INFO    | daily_refresh | Daily refresh завершён: 2026-10-21 17:50 МСК, 418.2 сек, всего 9157 рейсов, квота 500/500
 2026-10-21 17:50:59,171 | WARNING | daily_refresh | С ошибками: kazanskoye
+2026-10-22 17:15:35,849 | INFO    | daily_refresh | ======================================================================
+2026-10-22 17:15:35,850 | INFO    | daily_refresh | Daily refresh запущен: 2026-10-22 17:15 МСК, Четверг
+2026-10-22 17:15:35,852 | INFO    | daily_refresh | По ротации сегодня: ['gorkovskoye', 'kiyevskoye', 'kazanskoye']
+2026-10-22 17:15:36,150 | INFO    | daily_refresh | Направление 'Горьковское' (gorkovskoye): станции ещё не заданы — пропускаю
+2026-10-22 17:15:36,151 | INFO    | daily_refresh | Направление 'Киевское' (kiyevskoye): 47 станций, дни ['2026-10-24', '2026-10-25', '2026-10-26']
+2026-10-22 17:15:37,513 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=1/500
+2026-10-22 17:15:38,203 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=2/500
+2026-10-22 17:15:38,878 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=3/500
+2026-10-22 17:15:38,917 | INFO    | app.schedule.worker | Сохранено 91 рейсов для m_kiev (по 3 дням)
+2026-10-22 17:15:38,918 | WARNING | app.schedule.worker | Нет Яндекс-кода для poklonnaya — пропускаю
+2026-10-22 17:15:38,918 | WARNING | app.schedule.worker | Нет Яндекс-кода для minskaya — пропускаю
+2026-10-22 17:15:38,918 | WARNING | app.schedule.worker | Нет Яндекс-кода для matveevskaya — пропускаю
+2026-10-22 17:15:38,918 | WARNING | app.schedule.worker | Нет Яндекс-кода для aminievskaya — пропускаю
+2026-10-22 17:15:38,918 | WARNING | app.schedule.worker | Нет Яндекс-кода для ochakovo — пропускаю
+2026-10-22 17:15:38,918 | WARNING | app.schedule.worker | Нет Яндекс-кода для meshcherskaya — пропускаю
+2026-10-22 17:15:38,918 | WARNING | app.schedule.worker | Нет Яндекс-кода для solnechnaya — пропускаю
+2026-10-22 17:15:38,918 | WARNING | app.schedule.worker | Нет Яндекс-кода для peredelkino — пропускаю
+2026-10-22 17:15:38,919 | WARNING | app.schedule.worker | Нет Яндекс-кода для michurinets — пропускаю
+2026-10-22 17:15:38,919 | WARNING | app.schedule.worker | Нет Яндекс-кода для vnukovo — пропускаю
+2026-10-22 17:15:38,919 | WARNING | app.schedule.worker | Нет Яндекс-кода для lesnoy_gorodok — пропускаю
+2026-10-22 17:15:38,919 | WARNING | app.schedule.worker | Нет Яндекс-кода для tolstopaltsevo — пропускаю
+2026-10-22 17:15:38,919 | WARNING | app.schedule.worker | Нет Яндекс-кода для kokoshkino — пропускаю
+2026-10-22 17:15:38,919 | WARNING | app.schedule.worker | Нет Яндекс-кода для sanino — пропускаю
+2026-10-22 17:15:38,919 | WARNING | app.schedule.worker | Нет Яндекс-кода для krekshino — пропускаю
+2026-10-22 17:15:38,919 | WARNING | app.schedule.worker | Нет Яндекс-кода для pobeda — пропускаю
+2026-10-22 17:15:38,919 | WARNING | app.schedule.worker | Нет Яндекс-кода для aprelevka — пропускаю
+2026-10-22 17:15:38,919 | WARNING | app.schedule.worker | Нет Яндекс-кода для dachnaya — пропускаю
+2026-10-22 17:15:38,920 | WARNING | app.schedule.worker | Нет Яндекс-кода для alabino — пропускаю
+2026-10-22 17:15:38,920 | WARNING | app.schedule.worker | Нет Яндекс-кода для selyatino — пропускаю
+2026-10-22 17:15:38,920 | WARNING | app.schedule.worker | Нет Яндекс-кода для rassudovo — пропускаю
+2026-10-22 17:15:38,920 | WARNING | app.schedule.worker | Нет Яндекс-кода для ozhigovo — пропускаю
+2026-10-22 17:15:38,920 | WARNING | app.schedule.worker | Нет Яндекс-кода для bekasovo_1 — пропускаю
+2026-10-22 17:15:38,920 | WARNING | app.schedule.worker | Нет Яндекс-кода для zosimova_pustyn — пропускаю
+2026-10-22 17:15:38,920 | WARNING | app.schedule.worker | Нет Яндекс-кода для nara — пропускаю
+2026-10-22 17:15:38,920 | WARNING | app.schedule.worker | Нет Яндекс-кода для latyshskaya — пропускаю
+2026-10-22 17:15:38,920 | WARNING | app.schedule.worker | Нет Яндекс-кода для bashkino — пропускаю
+2026-10-22 17:15:38,920 | WARNING | app.schedule.worker | Нет Яндекс-кода для kresty — пропускаю
+2026-10-22 17:15:38,920 | WARNING | app.schedule.worker | Нет Яндекс-кода для balabanovo — пропускаю
+2026-10-22 17:15:38,920 | WARNING | app.schedule.worker | Нет Яндекс-кода для obninskoe — пропускаю
+2026-10-22 17:15:38,920 | WARNING | app.schedule.worker | Нет Яндекс-кода для shemyakino — пропускаю
+2026-10-22 17:15:38,921 | WARNING | app.schedule.worker | Нет Яндекс-кода для maloyaroslavets — пропускаю
+2026-10-22 17:15:38,921 | WARNING | app.schedule.worker | Нет Яндекс-кода для erdenevo — пропускаю
+2026-10-22 17:15:38,921 | WARNING | app.schedule.worker | Нет Яндекс-кода для km140 — пропускаю
+2026-10-22 17:15:38,921 | WARNING | app.schedule.worker | Нет Яндекс-кода для suhodrev — пропускаю
+2026-10-22 17:15:38,921 | WARNING | app.schedule.worker | Нет Яндекс-кода для rodinka — пропускаю
+2026-10-22 17:15:38,921 | WARNING | app.schedule.worker | Нет Яндекс-кода для slyadnevo — пропускаю
+2026-10-22 17:15:38,921 | WARNING | app.schedule.worker | Нет Яндекс-кода для km167 — пропускаю
+2026-10-22 17:15:38,922 | WARNING | app.schedule.worker | Нет Яндекс-кода для tikhonova_pustyn — пропускаю
+2026-10-22 17:15:38,922 | WARNING | app.schedule.worker | Нет Яндекс-кода для muratovka — пропускаю
+2026-10-22 17:15:38,922 | WARNING | app.schedule.worker | Нет Яндекс-кода для sadovaya_k — пропускаю
+2026-10-22 17:15:38,922 | WARNING | app.schedule.worker | Нет Яндекс-кода для azarovo — пропускаю
+2026-10-22 17:15:38,922 | WARNING | app.schedule.worker | Нет Яндекс-кода для kaluga_1 — пропускаю
+2026-10-22 17:15:38,922 | WARNING | app.schedule.worker | Нет Яндекс-кода для novoperedelkino — пропускаю
+2026-10-22 17:15:38,922 | WARNING | app.schedule.worker | Нет Яндекс-кода для aeroport_staraya — пропускаю
+2026-10-22 17:15:38,922 | WARNING | app.schedule.worker | Нет Яндекс-кода для vnukovo_airport — пропускаю
+2026-10-22 17:15:38,922 | INFO    | daily_refresh | Направление 'kiyevskoye': всего 91 рейсов
+2026-10-22 17:15:38,923 | INFO    | daily_refresh | Направление 'Казанское' (kazanskoye): 129 станций, дни ['2026-10-24', '2026-10-25', '2026-10-26']
+2026-10-22 17:15:39,831 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=4/500
+2026-10-22 17:15:41,992 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=5/500
+2026-10-22 17:15:42,877 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=6/500
+2026-10-22 17:15:42,903 | INFO    | app.schedule.worker | Сохранено 215 рейсов для m_kaz (по 3 дням)
+2026-10-22 17:15:44,206 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=7/500
+2026-10-22 17:15:45,571 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=8/500
+2026-10-22 17:15:46,990 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=9/500
+2026-10-22 17:15:47,023 | INFO    | app.schedule.worker | Сохранено 546 рейсов для elektrozavodskaya (по 3 дням)
+2026-10-22 17:15:48,318 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=10/500
+2026-10-22 17:15:49,751 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=11/500
+2026-10-22 17:15:51,126 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=12/500
+2026-10-22 17:15:51,161 | INFO    | app.schedule.worker | Сохранено 546 рейсов для sortirovochnaya (по 3 дням)
+2026-10-22 17:15:52,498 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=13/500
+2026-10-22 17:15:53,931 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=14/500
+2026-10-22 17:15:55,888 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=15/500
+2026-10-22 17:15:55,934 | INFO    | app.schedule.worker | Сохранено 578 рейсов для aviamotornaya (по 3 дням)
+2026-10-22 17:15:57,363 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=16/500
+2026-10-22 17:15:58,682 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=17/500
+2026-10-22 17:16:00,048 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=18/500
+2026-10-22 17:16:00,082 | INFO    | app.schedule.worker | Сохранено 569 рейсов для andronovka (по 3 дням)
+2026-10-22 17:16:01,375 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=19/500
+2026-10-22 17:16:02,759 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=20/500
+2026-10-22 17:16:03,946 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=21/500
+2026-10-22 17:16:03,983 | INFO    | app.schedule.worker | Сохранено 549 рейсов для perovo (по 3 дням)
+2026-10-22 17:16:05,217 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=22/500
+2026-10-22 17:16:06,575 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=23/500
+2026-10-22 17:16:07,766 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=24/500
+2026-10-22 17:16:07,801 | INFO    | app.schedule.worker | Сохранено 546 рейсов для plyushchevo (по 3 дням)
+2026-10-22 17:16:09,125 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=25/500
+2026-10-22 17:16:10,397 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=26/500
+2026-10-22 17:16:12,183 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=27/500
+2026-10-22 17:16:12,218 | INFO    | app.schedule.worker | Сохранено 546 рейсов для veshnyaki (по 3 дням)
+2026-10-22 17:16:13,815 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=28/500
+2026-10-22 17:16:15,293 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=29/500
+2026-10-22 17:16:16,907 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=30/500
+2026-10-22 17:16:16,949 | INFO    | app.schedule.worker | Сохранено 650 рейсов для vykhino (по 3 дням)
+2026-10-22 17:16:18,259 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=31/500
+2026-10-22 17:16:20,033 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=32/500
+2026-10-22 17:16:21,848 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=33/500
+2026-10-22 17:16:21,882 | INFO    | app.schedule.worker | Сохранено 546 рейсов для kosino (по 3 дням)
+2026-10-22 17:16:23,717 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=34/500
+2026-10-22 17:16:25,024 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=35/500
+2026-10-22 17:16:26,355 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=36/500
+2026-10-22 17:16:26,391 | INFO    | app.schedule.worker | Сохранено 546 рейсов для ukhtomskaya (по 3 дням)
+2026-10-22 17:16:26,392 | WARNING | app.schedule.worker | Нет Яндекс-кода для lyubertsy_1 — пропускаю
+2026-10-22 17:16:27,535 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=37/500
+2026-10-22 17:16:28,750 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=38/500
+2026-10-22 17:16:29,984 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=39/500
+2026-10-22 17:16:30,014 | INFO    | app.schedule.worker | Сохранено 432 рейсов для panki (по 3 дням)
+2026-10-22 17:16:31,721 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=40/500
+2026-10-22 17:16:32,974 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=41/500
+2026-10-22 17:16:34,090 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=42/500
+2026-10-22 17:16:34,128 | INFO    | app.schedule.worker | Сохранено 424 рейсов для tomilino (по 3 дням)
+2026-10-22 17:16:35,419 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=43/500
+2026-10-22 17:16:36,447 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=44/500
+2026-10-22 17:16:37,654 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=45/500
+2026-10-22 17:16:37,680 | INFO    | app.schedule.worker | Сохранено 424 рейсов для kraskovo (по 3 дням)
+2026-10-22 17:16:38,746 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=46/500
+2026-10-22 17:16:39,914 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=47/500
+2026-10-22 17:16:40,990 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=48/500
+2026-10-22 17:16:41,015 | INFO    | app.schedule.worker | Сохранено 424 рейсов для malakhovka (по 3 дням)
+2026-10-22 17:16:42,128 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=49/500
+2026-10-22 17:16:43,287 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=50/500
+2026-10-22 17:16:44,680 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=51/500
+2026-10-22 17:16:44,707 | INFO    | app.schedule.worker | Сохранено 424 рейсов для udelnaya (по 3 дням)
+2026-10-22 17:16:45,816 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=52/500
+2026-10-22 17:16:47,016 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=53/500
+2026-10-22 17:16:48,122 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=54/500
+2026-10-22 17:16:48,150 | INFO    | app.schedule.worker | Сохранено 410 рейсов для bykovo (по 3 дням)
+2026-10-22 17:16:48,150 | WARNING | app.schedule.worker | Нет Яндекс-кода для ilinskaya — пропускаю
+2026-10-22 17:16:49,321 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=55/500
+2026-10-22 17:16:50,476 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=56/500
+2026-10-22 17:16:51,820 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=57/500
+2026-10-22 17:16:51,846 | INFO    | app.schedule.worker | Сохранено 456 рейсов для otdykh (по 3 дням)
+2026-10-22 17:16:52,902 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=58/500
+2026-10-22 17:16:53,927 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=59/500
+2026-10-22 17:16:54,988 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=60/500
+2026-10-22 17:16:55,012 | INFO    | app.schedule.worker | Сохранено 397 рейсов для kratovo (по 3 дням)
+2026-10-22 17:16:56,181 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=61/500
+2026-10-22 17:16:57,302 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=62/500
+2026-10-22 17:16:58,466 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=63/500
+2026-10-22 17:16:58,490 | INFO    | app.schedule.worker | Сохранено 397 рейсов для eseninskaya (по 3 дням)
+2026-10-22 17:17:00,030 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=64/500
+2026-10-22 17:17:01,092 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=65/500
+2026-10-22 17:17:02,259 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=66/500
+2026-10-22 17:17:02,281 | INFO    | app.schedule.worker | Сохранено 404 рейсов для fabrichnaya (по 3 дням)
+2026-10-22 17:17:02,282 | WARNING | app.schedule.worker | Нет Яндекс-кода для ramenskoe — пропускаю
+2026-10-22 17:17:03,338 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=67/500
+2026-10-22 17:17:04,364 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=68/500
+2026-10-22 17:17:05,380 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=69/500
+2026-10-22 17:17:05,397 | INFO    | app.schedule.worker | Сохранено 254 рейсов для ippodrom (по 3 дням)
+2026-10-22 17:17:05,986 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=70/500
+2026-10-22 17:17:06,541 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=71/500
+2026-10-22 17:17:07,080 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=72/500
+2026-10-22 17:17:07,088 | INFO    | app.schedule.worker | Сохранено 124 рейсов для sovkhoz (по 3 дням)
+2026-10-22 17:17:07,679 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=73/500
+2026-10-22 17:17:08,271 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=74/500
+2026-10-22 17:17:08,858 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=75/500
+2026-10-22 17:17:08,866 | INFO    | app.schedule.worker | Сохранено 132 рейсов для zagornovo (по 3 дням)
+2026-10-22 17:17:09,871 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=76/500
+2026-10-22 17:17:10,528 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=77/500
+2026-10-22 17:17:11,208 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=78/500
+2026-10-22 17:17:11,219 | INFO    | app.schedule.worker | Сохранено 170 рейсов для bronnitsy (по 3 дням)
+2026-10-22 17:17:11,768 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=79/500
+2026-10-22 17:17:12,382 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=80/500
+2026-10-22 17:17:12,926 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=81/500
+2026-10-22 17:17:12,933 | INFO    | app.schedule.worker | Сохранено 118 рейсов для raduga (по 3 дням)
+2026-10-22 17:17:13,439 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=82/500
+2026-10-22 17:17:14,073 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=83/500
+2026-10-22 17:17:14,638 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=84/500
+2026-10-22 17:17:14,645 | INFO    | app.schedule.worker | Сохранено 108 рейсов для tsibino_63 (по 3 дням)
+2026-10-22 17:17:15,437 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=85/500
+2026-10-22 17:17:16,093 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=86/500
+2026-10-22 17:17:16,807 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=87/500
+2026-10-22 17:17:16,818 | INFO    | app.schedule.worker | Сохранено 168 рейсов для beloozerskaya (по 3 дням)
+2026-10-22 17:17:18,335 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=88/500
+2026-10-22 17:17:19,066 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=89/500
+2026-10-22 17:17:19,861 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=90/500
+2026-10-22 17:17:19,871 | INFO    | app.schedule.worker | Сохранено 152 рейсов для faustovo (по 3 дням)
+2026-10-22 17:17:20,501 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=91/500
+2026-10-22 17:17:21,108 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=92/500
+2026-10-22 17:17:21,706 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=93/500
+2026-10-22 17:17:21,714 | INFO    | app.schedule.worker | Сохранено 129 рейсов для zolotovo (по 3 дням)
+2026-10-22 17:17:22,435 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=94/500
+2026-10-22 17:17:23,187 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=95/500
+2026-10-22 17:17:23,847 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=96/500
+2026-10-22 17:17:23,857 | INFO    | app.schedule.worker | Сохранено 142 рейсов для vinogradovo (по 3 дням)
+2026-10-22 17:17:24,515 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=97/500
+2026-10-22 17:17:25,108 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=98/500
+2026-10-22 17:17:25,756 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=99/500
+2026-10-22 17:17:25,766 | INFO    | app.schedule.worker | Сохранено 125 рейсов для konobeevo (по 3 дням)
+2026-10-22 17:17:26,220 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=100/500
+2026-10-22 17:17:26,732 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=101/500
+2026-10-22 17:17:27,179 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=102/500
+2026-10-22 17:17:27,185 | INFO    | app.schedule.worker | Сохранено 69 рейсов для trofimovo_84 (по 3 дням)
+2026-10-22 17:17:27,824 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=103/500
+2026-10-22 17:17:28,427 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=104/500
+2026-10-22 17:17:29,151 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=105/500
+2026-10-22 17:17:29,160 | INFO    | app.schedule.worker | Сохранено 138 рейсов для km88 (по 3 дням)
+2026-10-22 17:17:29,664 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=106/500
+2026-10-22 17:17:30,186 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=107/500
+2026-10-22 17:17:30,759 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=108/500
+2026-10-22 17:17:30,766 | INFO    | app.schedule.worker | Сохранено 105 рейсов для voskresensk (по 3 дням)
+2026-10-22 17:17:31,123 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=109/500
+2026-10-22 17:17:31,447 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=110/500
+2026-10-22 17:17:31,769 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=111/500
+2026-10-22 17:17:31,771 | INFO    | app.schedule.worker | Сохранено 10 рейсов для lopatino (по 3 дням)
+2026-10-22 17:17:32,324 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=112/500
+2026-10-22 17:17:32,812 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=113/500
+2026-10-22 17:17:33,329 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=114/500
+2026-10-22 17:17:33,335 | INFO    | app.schedule.worker | Сохранено 83 рейсов для shifernaya (по 3 дням)
+2026-10-22 17:17:33,718 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=115/500
+2026-10-22 17:17:34,117 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=116/500
+2026-10-22 17:17:34,514 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=117/500
+2026-10-22 17:17:34,518 | INFO    | app.schedule.worker | Сохранено 35 рейсов для ilyinsky_pogost (по 3 дням)
+2026-10-22 17:17:35,040 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=118/500
+2026-10-22 17:17:35,550 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=119/500
+2026-10-22 17:17:36,050 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=120/500
+2026-10-22 17:17:36,056 | INFO    | app.schedule.worker | Сохранено 86 рейсов для tsemgigant (по 3 дням)
+2026-10-22 17:17:36,951 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=121/500
+2026-10-22 17:17:37,414 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=122/500
+2026-10-22 17:17:37,912 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=123/500
+2026-10-22 17:17:37,917 | INFO    | app.schedule.worker | Сохранено 84 рейсов для peski (по 3 дням)
+2026-10-22 17:17:38,406 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=124/500
+2026-10-22 17:17:38,876 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=125/500
+2026-10-22 17:17:39,320 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=126/500
+2026-10-22 17:17:39,324 | INFO    | app.schedule.worker | Сохранено 54 рейсов для konev_bor (по 3 дням)
+2026-10-22 17:17:39,791 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=127/500
+2026-10-22 17:17:40,287 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=128/500
+2026-10-22 17:17:40,710 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=129/500
+2026-10-22 17:17:40,715 | INFO    | app.schedule.worker | Сохранено 67 рейсов для khoroshevo (по 3 дням)
+2026-10-22 17:17:41,158 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=130/500
+2026-10-22 17:17:41,581 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=131/500
+2026-10-22 17:17:41,972 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=132/500
+2026-10-22 17:17:41,976 | INFO    | app.schedule.worker | Сохранено 37 рейсов для amerevo_113 (по 3 дням)
+2026-10-22 17:17:42,463 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=133/500
+2026-10-22 17:17:43,240 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=134/500
+2026-10-22 17:17:43,739 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=135/500
+2026-10-22 17:17:43,745 | INFO    | app.schedule.worker | Сохранено 86 рейсов для kolomna (по 3 дням)
+2026-10-22 17:17:44,250 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=136/500
+2026-10-22 17:17:44,772 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=137/500
+2026-10-22 17:17:45,311 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=138/500
+2026-10-22 17:17:45,316 | INFO    | app.schedule.worker | Сохранено 74 рейсов для golutvin (по 3 дням)
+2026-10-22 17:17:45,679 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=139/500
+2026-10-22 17:17:46,058 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=140/500
+2026-10-22 17:17:46,438 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=141/500
+2026-10-22 17:17:46,441 | INFO    | app.schedule.worker | Сохранено 25 рейсов для shchurovo (по 3 дням)
+2026-10-22 17:17:46,827 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=142/500
+2026-10-22 17:17:47,200 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=143/500
+2026-10-22 17:17:47,575 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=144/500
+2026-10-22 17:17:47,577 | INFO    | app.schedule.worker | Сохранено 25 рейсов для chyornaya (по 3 дням)
+2026-10-22 17:17:47,957 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=145/500
+2026-10-22 17:17:48,345 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=146/500
+2026-10-22 17:17:48,703 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=147/500
+2026-10-22 17:17:48,705 | INFO    | app.schedule.worker | Сохранено 12 рейсов для semyonovsky (по 3 дням)
+2026-10-22 17:17:49,079 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=148/500
+2026-10-22 17:17:49,494 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=149/500
+2026-10-22 17:17:49,870 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=150/500
+2026-10-22 17:17:49,874 | INFO    | app.schedule.worker | Сохранено 35 рейсов для lukhovitsy (по 3 дням)
+2026-10-22 17:17:50,236 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=151/500
+2026-10-22 17:17:50,629 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=152/500
+2026-10-22 17:17:50,977 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=153/500
+2026-10-22 17:17:50,979 | INFO    | app.schedule.worker | Сохранено 17 рейсов для km142 (по 3 дням)
+2026-10-22 17:17:51,362 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=154/500
+2026-10-22 17:17:51,789 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=155/500
+2026-10-22 17:17:52,141 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=156/500
+2026-10-22 17:17:52,143 | INFO    | app.schedule.worker | Сохранено 22 рейсов для podlipki_kaz (по 3 дням)
+2026-10-22 17:17:52,549 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=157/500
+2026-10-22 17:17:52,965 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=158/500
+2026-10-22 17:17:53,352 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=159/500
+2026-10-22 17:17:53,354 | INFO    | app.schedule.worker | Сохранено 35 рейсов для fruktovaya (по 3 дням)
+2026-10-22 17:17:53,739 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=160/500
+2026-10-22 17:17:54,459 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=161/500
+2026-10-22 17:17:55,118 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=162/500
+2026-10-22 17:17:55,120 | INFO    | app.schedule.worker | Сохранено 23 рейсов для alpatyevo (по 3 дням)
+2026-10-22 17:17:56,531 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=163/500
+2026-10-22 17:17:57,165 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=164/500
+2026-10-22 17:17:57,742 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=165/500
+2026-10-22 17:17:57,743 | INFO    | app.schedule.worker | Сохранено 6 рейсов для ozyory (по 3 дням)
+2026-10-22 17:17:58,414 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=166/500
+2026-10-22 17:17:58,797 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=167/500
+2026-10-22 17:17:59,152 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=168/500
+2026-10-22 17:17:59,154 | INFO    | app.schedule.worker | Сохранено 23 рейсов для slyomy (по 3 дням)
+2026-10-22 17:18:00,533 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=169/500
+2026-10-22 17:18:00,948 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=170/500
+2026-10-22 17:18:01,325 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=171/500
+2026-10-22 17:18:01,327 | INFO    | app.schedule.worker | Сохранено 24 рейсов для divovo (по 3 дням)
+2026-10-22 17:18:01,712 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=172/500
+2026-10-22 17:18:02,096 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=173/500
+2026-10-22 17:18:02,750 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=174/500
+2026-10-22 17:18:02,752 | INFO    | app.schedule.worker | Сохранено 26 рейсов для istodniki (по 3 дням)
+2026-10-22 17:18:02,753 | WARNING | app.schedule.worker | Нет Яндекс-кода для km179 — пропускаю
+2026-10-22 17:18:02,753 | WARNING | app.schedule.worker | Нет Яндекс-кода для rybnoe — пропускаю
+2026-10-22 17:18:03,182 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=175/500
+2026-10-22 17:18:03,607 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=176/500
+2026-10-22 17:18:03,999 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=177/500
+2026-10-22 17:18:04,003 | INFO    | app.schedule.worker | Сохранено 42 рейсов для khodynino (по 3 дням)
+2026-10-22 17:18:04,003 | WARNING | app.schedule.worker | Нет Яндекс-кода для depo_ryazan — пропускаю
+2026-10-22 17:18:04,879 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=178/500
+2026-10-22 17:18:05,315 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=179/500
+2026-10-22 17:18:06,191 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=180/500
+2026-10-22 17:18:06,195 | INFO    | app.schedule.worker | Сохранено 42 рейсов для ryazan_sort (по 3 дням)
+2026-10-22 17:18:06,617 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=181/500
+2026-10-22 17:18:07,127 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=182/500
+2026-10-22 17:18:07,610 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=183/500
+2026-10-22 17:18:07,613 | INFO    | app.schedule.worker | Сохранено 41 рейсов для km187 (по 3 дням)
+2026-10-22 17:18:07,613 | WARNING | app.schedule.worker | Нет Яндекс-кода для km189 — пропускаю
+2026-10-22 17:18:08,025 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=184/500
+2026-10-22 17:18:09,718 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=185/500
+2026-10-22 17:18:10,432 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=186/500
+2026-10-22 17:18:10,435 | INFO    | app.schedule.worker | Сохранено 42 рейсов для nedostoevo (по 3 дням)
+2026-10-22 17:18:10,897 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=187/500
+2026-10-22 17:18:11,367 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=188/500
+2026-10-22 17:18:11,815 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=189/500
+2026-10-22 17:18:11,818 | INFO    | app.schedule.worker | Сохранено 42 рейсов для dyagilevo (по 3 дням)
+2026-10-22 17:18:12,288 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=190/500
+2026-10-22 17:18:12,697 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=191/500
+2026-10-22 17:18:14,032 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=192/500
+2026-10-22 17:18:14,036 | INFO    | app.schedule.worker | Сохранено 42 рейсов для lagerny (по 3 дням)
+2026-10-22 17:18:14,548 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=193/500
+2026-10-22 17:18:14,923 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=194/500
+2026-10-22 17:18:15,347 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=195/500
+2026-10-22 17:18:15,349 | INFO    | app.schedule.worker | Сохранено 10 рейсов для ryazan_2 (по 3 дням)
+2026-10-22 17:18:15,817 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=196/500
+2026-10-22 17:18:16,314 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=197/500
+2026-10-22 17:18:16,781 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=198/500
+2026-10-22 17:18:16,785 | INFO    | app.schedule.worker | Сохранено 40 рейсов для ryazan_1 (по 3 дням)
+2026-10-22 17:18:16,786 | WARNING | app.schedule.worker | Нет Яндекс-кода для lyubertsy_2 — пропускаю
+2026-10-22 17:18:17,318 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=199/500
+2026-10-22 17:18:17,854 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=200/500
+2026-10-22 17:18:18,461 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=201/500
+2026-10-22 17:18:18,469 | INFO    | app.schedule.worker | Сохранено 123 рейсов для korenyovo (по 3 дням)
+2026-10-22 17:18:19,111 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=202/500
+2026-10-22 17:18:19,659 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=203/500
+2026-10-22 17:18:20,787 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=204/500
+2026-10-22 17:18:20,814 | INFO    | app.schedule.worker | Сохранено 117 рейсов для ovrazhki (по 3 дням)
+2026-10-22 17:18:21,374 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=205/500
+2026-10-22 17:18:21,973 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=206/500
+2026-10-22 17:18:23,536 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=207/500
+2026-10-22 17:18:23,544 | INFO    | app.schedule.worker | Сохранено 117 рейсов для rodniki (по 3 дням)
+2026-10-22 17:18:24,335 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=208/500
+2026-10-22 17:18:24,885 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=209/500
+2026-10-22 17:18:25,442 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=210/500
+2026-10-22 17:18:25,448 | INFO    | app.schedule.worker | Сохранено 113 рейсов для vyalki (по 3 дням)
+2026-10-22 17:18:25,957 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=211/500
+2026-10-22 17:18:26,510 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=212/500
+2026-10-22 17:18:27,065 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=213/500
+2026-10-22 17:18:27,072 | INFO    | app.schedule.worker | Сохранено 105 рейсов для khripan (по 3 дням)
+2026-10-22 17:18:27,073 | WARNING | app.schedule.worker | Нет Яндекс-кода для km41 — пропускаю
+2026-10-22 17:18:27,630 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=214/500
+2026-10-22 17:18:28,205 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=215/500
+2026-10-22 17:18:28,771 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=216/500
+2026-10-22 17:18:28,778 | INFO    | app.schedule.worker | Сохранено 99 рейсов для donino (по 3 дням)
+2026-10-22 17:18:29,311 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=217/500
+2026-10-22 17:18:30,109 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=218/500
+2026-10-22 17:18:30,625 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=219/500
+2026-10-22 17:18:30,632 | INFO    | app.schedule.worker | Сохранено 104 рейсов для igumnovo_49 (по 3 дням)
+2026-10-22 17:18:31,206 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=220/500
+2026-10-22 17:18:31,762 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=221/500
+2026-10-22 17:18:32,485 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=222/500
+2026-10-22 17:18:32,492 | INFO    | app.schedule.worker | Сохранено 98 рейсов для km52 (по 3 дням)
+2026-10-22 17:18:33,066 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=223/500
+2026-10-22 17:18:33,618 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=224/500
+2026-10-22 17:18:34,230 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=225/500
+2026-10-22 17:18:34,237 | INFO    | app.schedule.worker | Сохранено 109 рейсов для grigorovo (по 3 дням)
+2026-10-22 17:18:34,237 | WARNING | app.schedule.worker | Нет Яндекс-кода для gzhelskie_istochniki_55 — пропускаю
+2026-10-22 17:18:34,856 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=226/500
+2026-10-22 17:18:35,575 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=227/500
+2026-10-22 17:18:36,156 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=228/500
+2026-10-22 17:18:36,166 | INFO    | app.schedule.worker | Сохранено 123 рейсов для gzhel (по 3 дням)
+2026-10-22 17:18:36,725 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=229/500
+2026-10-22 17:18:37,290 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=230/500
+2026-10-22 17:18:37,817 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=231/500
+2026-10-22 17:18:37,825 | INFO    | app.schedule.worker | Сохранено 109 рейсов для ignatyevo (по 3 дням)
+2026-10-22 17:18:37,826 | WARNING | app.schedule.worker | Нет Яндекс-кода для kuzyaevo — пропускаю
+2026-10-22 17:18:38,376 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=232/500
+2026-10-22 17:18:38,968 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=233/500
+2026-10-22 17:18:39,615 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=234/500
+2026-10-22 17:18:39,624 | INFO    | app.schedule.worker | Сохранено 113 рейсов для shevlyagino (по 3 дням)
+2026-10-22 17:18:40,392 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=235/500
+2026-10-22 17:18:40,968 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=236/500
+2026-10-22 17:18:41,527 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=237/500
+2026-10-22 17:18:41,535 | INFO    | app.schedule.worker | Сохранено 96 рейсов для smolevo (по 3 дням)
+2026-10-22 17:18:42,131 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=238/500
+2026-10-22 17:18:42,715 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=239/500
+2026-10-22 17:18:43,232 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=240/500
+2026-10-22 17:18:43,240 | INFO    | app.schedule.worker | Сохранено 114 рейсов для antsiferovo (по 3 дням)
+2026-10-22 17:18:43,779 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=241/500
+2026-10-22 17:18:44,313 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=242/500
+2026-10-22 17:18:44,927 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=243/500
+2026-10-22 17:18:44,935 | INFO    | app.schedule.worker | Сохранено 105 рейсов для podosinki (по 3 дням)
+2026-10-22 17:18:45,523 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=244/500
+2026-10-22 17:18:46,193 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=245/500
+2026-10-22 17:18:46,823 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=246/500
+2026-10-22 17:18:46,832 | INFO    | app.schedule.worker | Сохранено 125 рейсов для kurovskaya (по 3 дням)
+2026-10-22 17:18:47,353 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=247/500
+2026-10-22 17:18:47,847 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=248/500
+2026-10-22 17:18:48,307 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=249/500
+2026-10-22 17:18:48,312 | INFO    | app.schedule.worker | Сохранено 85 рейсов для lokomotivnoe_depo_90 (по 3 дням)
+2026-10-22 17:18:48,769 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=250/500
+2026-10-22 17:18:49,262 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=251/500
+2026-10-22 17:18:49,752 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=252/500
+2026-10-22 17:18:49,757 | INFO    | app.schedule.worker | Сохранено 81 рейсов для belivo (по 3 дням)
+2026-10-22 17:18:50,275 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=253/500
+2026-10-22 17:18:50,784 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=254/500
+2026-10-22 17:18:51,255 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=255/500
+2026-10-22 17:18:51,261 | INFO    | app.schedule.worker | Сохранено 87 рейсов для avsyunino (по 3 дням)
+2026-10-22 17:18:51,755 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=256/500
+2026-10-22 17:18:52,209 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=257/500
+2026-10-22 17:18:52,698 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=258/500
+2026-10-22 17:18:52,705 | INFO    | app.schedule.worker | Сохранено 84 рейсов для zapolitsy (по 3 дням)
+2026-10-22 17:18:53,207 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=259/500
+2026-10-22 17:18:53,683 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=260/500
+2026-10-22 17:18:54,137 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=261/500
+2026-10-22 17:18:54,143 | INFO    | app.schedule.worker | Сохранено 83 рейсов для zaputnaya (по 3 дням)
+2026-10-22 17:18:54,653 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=262/500
+2026-10-22 17:18:55,147 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=263/500
+2026-10-22 17:18:55,638 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=264/500
+2026-10-22 17:18:55,644 | INFO    | app.schedule.worker | Сохранено 87 рейсов для shaturtorf (по 3 дням)
+2026-10-22 17:18:56,116 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=265/500
+2026-10-22 17:18:56,652 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=266/500
+2026-10-22 17:18:57,129 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=267/500
+2026-10-22 17:18:57,154 | INFO    | app.schedule.worker | Сохранено 72 рейсов для shatura (по 3 дням)
+2026-10-22 17:18:57,600 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=268/500
+2026-10-22 17:18:58,039 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=269/500
+2026-10-22 17:18:58,753 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=270/500
+2026-10-22 17:18:58,757 | INFO    | app.schedule.worker | Сохранено 55 рейсов для botino (по 3 дням)
+2026-10-22 17:18:59,207 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=271/500
+2026-10-22 17:18:59,725 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=272/500
+2026-10-22 17:19:00,175 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=273/500
+2026-10-22 17:19:00,180 | INFO    | app.schedule.worker | Сохранено 61 рейсов для krivandino (по 3 дням)
+2026-10-22 17:19:00,616 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=274/500
+2026-10-22 17:19:01,096 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=275/500
+2026-10-22 17:19:01,521 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=276/500
+2026-10-22 17:19:01,527 | INFO    | app.schedule.worker | Сохранено 58 рейсов для tugolesye (по 3 дням)
+2026-10-22 17:19:01,980 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=277/500
+2026-10-22 17:19:02,396 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=278/500
+2026-10-22 17:19:02,856 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=279/500
+2026-10-22 17:19:02,861 | INFO    | app.schedule.worker | Сохранено 57 рейсов для voymezhny (по 3 дням)
+2026-10-22 17:19:03,267 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=280/500
+2026-10-22 17:19:03,693 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=281/500
+2026-10-22 17:19:04,128 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=282/500
+2026-10-22 17:19:04,132 | INFO    | app.schedule.worker | Сохранено 29 рейсов для cherusti (по 3 дням)
+2026-10-22 17:19:04,526 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=283/500
+2026-10-22 17:19:04,916 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=284/500
+2026-10-22 17:19:05,378 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=285/500
+2026-10-22 17:19:05,379 | INFO    | app.schedule.worker | Сохранено 11 рейсов для struya (по 3 дням)
+2026-10-22 17:19:05,802 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=286/500
+2026-10-22 17:19:06,184 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=287/500
+2026-10-22 17:19:06,556 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=288/500
+2026-10-22 17:19:06,558 | INFO    | app.schedule.worker | Сохранено 11 рейсов для tasin (по 3 дням)
+2026-10-22 17:19:06,924 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=289/500
+2026-10-22 17:19:09,233 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=290/500
+2026-10-22 17:19:09,574 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=291/500
+2026-10-22 17:19:09,576 | INFO    | app.schedule.worker | Сохранено 11 рейсов для ilichyov (по 3 дням)
+2026-10-22 17:19:10,054 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=292/500
+2026-10-22 17:19:10,565 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=293/500
+2026-10-22 17:19:10,947 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=294/500
+2026-10-22 17:19:10,949 | INFO    | app.schedule.worker | Сохранено 11 рейсов для torfoprodukt (по 3 дням)
+2026-10-22 17:19:11,317 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=295/500
+2026-10-22 17:19:11,714 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=296/500
+2026-10-22 17:19:12,077 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=297/500
+2026-10-22 17:19:12,079 | INFO    | app.schedule.worker | Сохранено 11 рейсов для miltsevo (по 3 дням)
+2026-10-22 17:19:12,449 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=298/500
+2026-10-22 17:19:12,808 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=299/500
+2026-10-22 17:19:13,156 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=300/500
+2026-10-22 17:19:13,158 | INFO    | app.schedule.worker | Сохранено 11 рейсов для nechaevskaya (по 3 дням)
+2026-10-22 17:19:13,534 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=301/500
+2026-10-22 17:19:13,897 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=302/500
+2026-10-22 17:19:14,284 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=303/500
+2026-10-22 17:19:14,285 | INFO    | app.schedule.worker | Сохранено 10 рейсов для vekovka (по 3 дням)
+2026-10-22 17:19:14,630 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=304/500
+2026-10-22 17:19:14,958 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=305/500
+2026-10-22 17:19:15,329 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=306/500
+2026-10-22 17:19:15,331 | INFO    | app.schedule.worker | Сохранено 12 рейсов для bachmanovo (по 3 дням)
+2026-10-22 17:19:15,657 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=307/500
+2026-10-22 17:19:15,981 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=308/500
+2026-10-22 17:19:16,322 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=309/500
+2026-10-22 17:19:16,324 | INFO    | app.schedule.worker | Сохранено 12 рейсов для proezd_stankostroiteley_6 (по 3 дням)
+2026-10-22 17:19:16,658 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=310/500
+2026-10-22 17:19:17,011 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=311/500
+2026-10-22 17:19:17,406 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=312/500
+2026-10-22 17:19:17,408 | INFO    | app.schedule.worker | Сохранено 12 рейсов для sychyovo (по 3 дням)
+2026-10-22 17:19:17,752 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=313/500
+2026-10-22 17:19:18,124 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=314/500
+2026-10-22 17:19:18,522 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=315/500
+2026-10-22 17:19:18,524 | INFO    | app.schedule.worker | Сохранено 12 рейсов для lystsevskaya (по 3 дням)
+2026-10-22 17:19:18,871 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=316/500
+2026-10-22 17:19:19,227 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=317/500
+2026-10-22 17:19:19,566 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=318/500
+2026-10-22 17:19:19,568 | INFO    | app.schedule.worker | Сохранено 12 рейсов для posyolok_lesnoy_18 (по 3 дням)
+2026-10-22 17:19:19,924 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=319/500
+2026-10-22 17:19:20,265 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=320/500
+2026-10-22 17:19:20,627 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=321/500
+2026-10-22 17:19:20,629 | INFO    | app.schedule.worker | Сохранено 12 рейсов для karasyovo (по 3 дням)
+2026-10-22 17:19:21,013 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=322/500
+2026-10-22 17:19:21,352 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=323/500
+2026-10-22 17:19:21,734 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=324/500
+2026-10-22 17:19:21,735 | INFO    | app.schedule.worker | Сохранено 12 рейсов для kudryavtsevo (по 3 дням)
+2026-10-22 17:19:22,073 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=325/500
+2026-10-22 17:19:22,426 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=326/500
+2026-10-22 17:19:22,766 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=327/500
+2026-10-22 17:19:22,768 | INFO    | app.schedule.worker | Сохранено 12 рейсов для danilovskaya (по 3 дням)
+2026-10-22 17:19:23,159 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=328/500
+2026-10-22 17:19:23,505 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=329/500
+2026-10-22 17:19:23,872 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=330/500
+2026-10-22 17:19:23,874 | INFO    | app.schedule.worker | Сохранено 12 рейсов для kholmy_30 (по 3 дням)
+2026-10-22 17:19:23,874 | WARNING | app.schedule.worker | Нет Яндекс-кода для km38 — пропускаю
+2026-10-22 17:19:24,233 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=331/500
+2026-10-22 17:19:24,561 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=332/500
+2026-10-22 17:19:24,935 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=333/500
+2026-10-22 17:19:24,937 | INFO    | app.schedule.worker | Сохранено 6 рейсов для osanovo (по 3 дням)
+2026-10-22 17:19:25,266 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=334/500
+2026-10-22 17:19:25,588 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=335/500
+2026-10-22 17:19:26,211 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=336/500
+2026-10-22 17:19:26,213 | INFO    | app.schedule.worker | Сохранено 6 рейсов для km15_kaz (по 3 дням)
+2026-10-22 17:19:26,540 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=337/500
+2026-10-22 17:19:26,897 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=338/500
+2026-10-22 17:19:27,234 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=339/500
+2026-10-22 17:19:27,236 | INFO    | app.schedule.worker | Сохранено 6 рейсов для pozhoga (по 3 дням)
+2026-10-22 17:19:27,563 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=340/500
+2026-10-22 17:19:27,886 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=341/500
+2026-10-22 17:19:28,230 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=342/500
+2026-10-22 17:19:28,231 | INFO    | app.schedule.worker | Сохранено 6 рейсов для km29_kaz (по 3 дням)
+2026-10-22 17:19:28,614 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=343/500
+2026-10-22 17:19:28,941 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=344/500
+2026-10-22 17:19:29,315 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=345/500
+2026-10-22 17:19:29,316 | INFO    | app.schedule.worker | Сохранено 6 рейсов для barmino (по 3 дням)
+2026-10-22 17:19:29,676 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=346/500
+2026-10-22 17:19:30,035 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=347/500
+2026-10-22 17:19:30,396 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=348/500
+2026-10-22 17:19:30,398 | INFO    | app.schedule.worker | Сохранено 6 рейсов для sazonovo (по 3 дням)
+2026-10-22 17:19:30,729 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=349/500
+2026-10-22 17:19:31,078 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=350/500
+2026-10-22 17:19:31,454 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=351/500
+2026-10-22 17:19:31,455 | INFO    | app.schedule.worker | Сохранено 6 рейсов для km47_kaz (по 3 дням)
+2026-10-22 17:19:31,768 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=352/500
+2026-10-22 17:19:32,118 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=353/500
+2026-10-22 17:19:32,471 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=354/500
+2026-10-22 17:19:32,473 | INFO    | app.schedule.worker | Сохранено 3 рейсов для ryazanovka (по 3 дням)
+2026-10-22 17:19:32,473 | INFO    | daily_refresh | Направление 'kazanskoye': всего 15991 рейсов
+2026-10-22 17:19:32,478 | INFO    | daily_refresh | Daily refresh завершён: 2026-10-22 17:19 МСК, 236.6 сек, всего 16082 рейсов, квота 354/500
+2026-10-22 17:19:32,478 | INFO    | daily_refresh | Пропущено: gorkovskoye
+2026-10-23 14:39:18,508 | INFO    | daily_refresh | ======================================================================
+2026-10-23 14:39:18,509 | INFO    | daily_refresh | Daily refresh запущен: 2026-10-23 14:39 МСК, Пятница
+2026-10-23 14:39:18,510 | INFO    | daily_refresh | По ротации сегодня: ['yaroslavskoye', 'paveletskoye']
+2026-10-23 14:39:18,691 | INFO    | daily_refresh | Направление 'Ярославское' (yaroslavskoye): 65 станций, дни ['2026-10-24', '2026-10-25', '2026-10-26']
+2026-10-23 14:39:21,094 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=1/500
+2026-10-23 14:39:22,681 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=2/500
+2026-10-23 14:39:24,201 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=3/500
+2026-10-23 14:39:24,300 | INFO    | app.schedule.worker | Сохранено 381 рейсов для m_yar (по 3 дням)
+2026-10-23 14:39:25,968 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=4/500
+2026-10-23 14:39:28,085 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=5/500
+2026-10-23 14:39:29,530 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=6/500
+2026-10-23 14:39:29,590 | INFO    | app.schedule.worker | Сохранено 576 рейсов для moscow3 (по 3 дням)
+2026-10-23 14:39:31,136 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=7/500
+2026-10-23 14:39:33,360 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=8/500
+2026-10-23 14:39:35,027 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=9/500
+2026-10-23 14:39:35,100 | INFO    | app.schedule.worker | Сохранено 573 рейсов для malenkovskaya (по 3 дням)
+2026-10-23 14:39:36,759 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=10/500
+2026-10-23 14:39:38,362 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=11/500
+2026-10-23 14:39:40,014 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=12/500
+2026-10-23 14:39:40,065 | INFO    | app.schedule.worker | Сохранено 565 рейсов для yauza (по 3 дням)
+2026-10-23 14:39:42,022 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=13/500
+2026-10-23 14:39:43,683 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=14/500
+2026-10-23 14:39:45,684 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=15/500
+2026-10-23 14:39:45,781 | INFO    | app.schedule.worker | Сохранено 771 рейсов для rostokino (по 3 дням)
+2026-10-23 14:39:47,468 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=16/500
+2026-10-23 14:39:49,194 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=17/500
+2026-10-23 14:39:51,025 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=18/500
+2026-10-23 14:39:51,080 | INFO    | app.schedule.worker | Сохранено 738 рейсов для losinoostrovskaya (по 3 дням)
+2026-10-23 14:39:52,674 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=19/500
+2026-10-23 14:39:54,113 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=20/500
+2026-10-23 14:39:55,660 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=21/500
+2026-10-23 14:39:55,709 | INFO    | app.schedule.worker | Сохранено 575 рейсов для los (по 3 дням)
+2026-10-23 14:39:57,044 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=22/500
+2026-10-23 14:39:58,467 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=23/500
+2026-10-23 14:39:59,873 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=24/500
+2026-10-23 14:39:59,913 | INFO    | app.schedule.worker | Сохранено 485 рейсов для perlovskaya (по 3 дням)
+2026-10-23 14:40:01,285 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=25/500
+2026-10-23 14:40:02,762 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=26/500
+2026-10-23 14:40:04,309 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=27/500
+2026-10-23 14:40:04,361 | INFO    | app.schedule.worker | Сохранено 485 рейсов для tayninskaya (по 3 дням)
+2026-10-23 14:40:06,111 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=28/500
+2026-10-23 14:40:08,502 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=29/500
+2026-10-23 14:40:10,908 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=30/500
+2026-10-23 14:40:10,977 | INFO    | app.schedule.worker | Сохранено 759 рейсов для mytishchi (по 3 дням)
+2026-10-23 14:40:11,911 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=31/500
+2026-10-23 14:40:12,725 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=32/500
+2026-10-23 14:40:13,633 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=33/500
+2026-10-23 14:40:13,657 | INFO    | app.schedule.worker | Сохранено 279 рейсов для stroitel (по 3 дням)
+2026-10-23 14:40:14,603 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=34/500
+2026-10-23 14:40:16,013 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=35/500
+2026-10-23 14:40:16,771 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=36/500
+2026-10-23 14:40:16,813 | INFO    | app.schedule.worker | Сохранено 252 рейсов для chelyuskinskaya (по 3 дням)
+2026-10-23 14:40:17,712 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=37/500
+2026-10-23 14:40:18,676 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=38/500
+2026-10-23 14:40:19,637 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=39/500
+2026-10-23 14:40:19,663 | INFO    | app.schedule.worker | Сохранено 247 рейсов для tarasovskaya (по 3 дням)
+2026-10-23 14:40:20,560 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=40/500
+2026-10-23 14:40:21,316 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=41/500
+2026-10-23 14:40:22,118 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=42/500
+2026-10-23 14:40:22,151 | INFO    | app.schedule.worker | Сохранено 242 рейсов для klyazma (по 3 дням)
+2026-10-23 14:40:23,044 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=43/500
+2026-10-23 14:40:23,863 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=44/500
+2026-10-23 14:40:24,672 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=45/500
+2026-10-23 14:40:24,689 | INFO    | app.schedule.worker | Сохранено 234 рейсов для mamontovskaya (по 3 дням)
+2026-10-23 14:40:25,924 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=46/500
+2026-10-23 14:40:26,940 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=47/500
+2026-10-23 14:40:27,991 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=48/500
+2026-10-23 14:40:28,022 | INFO    | app.schedule.worker | Сохранено 287 рейсов для pushkino (по 3 дням)
+2026-10-23 14:40:28,753 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=49/500
+2026-10-23 14:40:29,438 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=50/500
+2026-10-23 14:40:30,161 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=51/500
+2026-10-23 14:40:30,179 | INFO    | app.schedule.worker | Сохранено 190 рейсов для zavety_ilyicha (по 3 дням)
+2026-10-23 14:40:30,832 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=52/500
+2026-10-23 14:40:31,500 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=53/500
+2026-10-23 14:40:32,192 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=54/500
+2026-10-23 14:40:32,210 | INFO    | app.schedule.worker | Сохранено 181 рейсов для pravda (по 3 дням)
+2026-10-23 14:40:32,868 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=55/500
+2026-10-23 14:40:33,539 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=56/500
+2026-10-23 14:40:34,246 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=57/500
+2026-10-23 14:40:34,269 | INFO    | app.schedule.worker | Сохранено 177 рейсов для zelenogradskaya (по 3 дням)
+2026-10-23 14:40:34,940 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=58/500
+2026-10-23 14:40:35,602 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=59/500
+2026-10-23 14:40:36,232 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=60/500
+2026-10-23 14:40:36,250 | INFO    | app.schedule.worker | Сохранено 144 рейсов для km43 (по 3 дням)
+2026-10-23 14:40:36,954 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=61/500
+2026-10-23 14:40:37,800 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=62/500
+2026-10-23 14:40:38,512 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=63/500
+2026-10-23 14:40:38,536 | INFO    | app.schedule.worker | Сохранено 211 рейсов для sofrino (по 3 дням)
+2026-10-23 14:40:39,147 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=64/500
+2026-10-23 14:40:39,719 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=65/500
+2026-10-23 14:40:40,294 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=66/500
+2026-10-23 14:40:40,311 | INFO    | app.schedule.worker | Сохранено 131 рейсов для ashukinskaya (по 3 дням)
+2026-10-23 14:40:40,874 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=67/500
+2026-10-23 14:40:41,475 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=68/500
+2026-10-23 14:40:42,082 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=69/500
+2026-10-23 14:40:42,096 | INFO    | app.schedule.worker | Сохранено 126 рейсов для kalistovo (по 3 дням)
+2026-10-23 14:40:42,691 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=70/500
+2026-10-23 14:40:43,328 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=71/500
+2026-10-23 14:40:43,949 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=72/500
+2026-10-23 14:40:43,965 | INFO    | app.schedule.worker | Сохранено 131 рейсов для radonezh (по 3 дням)
+2026-10-23 14:40:44,528 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=73/500
+2026-10-23 14:40:45,072 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=74/500
+2026-10-23 14:40:45,646 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=75/500
+2026-10-23 14:40:45,662 | INFO    | app.schedule.worker | Сохранено 124 рейсов для abramtsevo (по 3 дням)
+2026-10-23 14:40:46,356 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=76/500
+2026-10-23 14:40:47,025 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=77/500
+2026-10-23 14:40:47,687 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=78/500
+2026-10-23 14:40:47,707 | INFO    | app.schedule.worker | Сохранено 171 рейсов для hotkovo (по 3 дням)
+2026-10-23 14:40:48,311 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=79/500
+2026-10-23 14:40:48,869 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=80/500
+2026-10-23 14:40:49,513 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=81/500
+2026-10-23 14:40:49,529 | INFO    | app.schedule.worker | Сохранено 136 рейсов для semhoz (по 3 дням)
+2026-10-23 14:40:50,110 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=82/500
+2026-10-23 14:40:50,780 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=83/500
+2026-10-23 14:40:51,374 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=84/500
+2026-10-23 14:40:51,387 | INFO    | app.schedule.worker | Сохранено 117 рейсов для sergiev_posad (по 3 дням)
+2026-10-23 14:40:51,814 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=85/500
+2026-10-23 14:40:52,271 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=86/500
+2026-10-23 14:40:52,676 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=87/500
+2026-10-23 14:40:52,686 | INFO    | app.schedule.worker | Сохранено 53 рейсов для km76 (по 3 дням)
+2026-10-23 14:40:54,785 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=88/500
+2026-10-23 14:40:55,233 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=89/500
+2026-10-23 14:40:55,853 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=90/500
+2026-10-23 14:40:55,860 | INFO    | app.schedule.worker | Сохранено 65 рейсов для km81 (по 3 дням)
+2026-10-23 14:40:56,310 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=91/500
+2026-10-23 14:40:56,752 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=92/500
+2026-10-23 14:40:57,200 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=93/500
+2026-10-23 14:40:57,206 | INFO    | app.schedule.worker | Сохранено 63 рейсов для km83 (по 3 дням)
+2026-10-23 14:40:57,634 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=94/500
+2026-10-23 14:40:58,140 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=95/500
+2026-10-23 14:40:58,600 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=96/500
+2026-10-23 14:40:58,609 | INFO    | app.schedule.worker | Сохранено 65 рейсов для buzhaninovo (по 3 дням)
+2026-10-23 14:40:59,033 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=97/500
+2026-10-23 14:40:59,541 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=98/500
+2026-10-23 14:41:00,070 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=99/500
+2026-10-23 14:41:00,081 | INFO    | app.schedule.worker | Сохранено 63 рейсов для km90 (по 3 дням)
+2026-10-23 14:41:00,568 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=100/500
+2026-10-23 14:41:01,035 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=101/500
+2026-10-23 14:41:01,506 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=102/500
+2026-10-23 14:41:01,516 | INFO    | app.schedule.worker | Сохранено 65 рейсов для arsaki (по 3 дням)
+2026-10-23 14:41:01,973 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=103/500
+2026-10-23 14:41:02,699 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=104/500
+2026-10-23 14:41:03,205 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=105/500
+2026-10-23 14:41:03,216 | INFO    | app.schedule.worker | Сохранено 74 рейсов для strunino (по 3 дням)
+2026-10-23 14:41:03,746 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=106/500
+2026-10-23 14:41:04,265 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=107/500
+2026-10-23 14:41:04,766 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=108/500
+2026-10-23 14:41:04,776 | INFO    | app.schedule.worker | Сохранено 57 рейсов для aleksandrov (по 3 дням)
+2026-10-23 14:41:05,158 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=109/500
+2026-10-23 14:41:05,518 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=110/500
+2026-10-23 14:41:05,868 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=111/500
+2026-10-23 14:41:05,871 | INFO    | app.schedule.worker | Сохранено 15 рейсов для balakirevo (по 3 дням)
+2026-10-23 14:41:06,859 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=112/500
+2026-10-23 14:41:07,952 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=113/500
+2026-10-23 14:41:09,148 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=114/500
+2026-10-23 14:41:09,178 | INFO    | app.schedule.worker | Сохранено 375 рейсов для podlipki (по 3 дням)
+2026-10-23 14:41:10,294 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=115/500
+2026-10-23 14:41:11,492 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=116/500
+2026-10-23 14:41:12,551 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=117/500
+2026-10-23 14:41:12,593 | INFO    | app.schedule.worker | Сохранено 371 рейсов для bolshevo (по 3 дням)
+2026-10-23 14:41:13,372 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=118/500
+2026-10-23 14:41:14,124 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=119/500
+2026-10-23 14:41:14,798 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=120/500
+2026-10-23 14:41:14,814 | INFO    | app.schedule.worker | Сохранено 203 рейсов для valentinovka (по 3 дням)
+2026-10-23 14:41:15,606 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=121/500
+2026-10-23 14:41:16,373 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=122/500
+2026-10-23 14:41:17,117 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=123/500
+2026-10-23 14:41:17,136 | INFO    | app.schedule.worker | Сохранено 228 рейсов для zagoryanskaya (по 3 дням)
+2026-10-23 14:41:17,817 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=124/500
+2026-10-23 14:41:18,584 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=125/500
+2026-10-23 14:41:19,304 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=126/500
+2026-10-23 14:41:19,328 | INFO    | app.schedule.worker | Сохранено 201 рейсов для sokolovskaya (по 3 дням)
+2026-10-23 14:41:20,092 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=127/500
+2026-10-23 14:41:20,852 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=128/500
+2026-10-23 14:41:21,631 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=129/500
+2026-10-23 14:41:21,672 | INFO    | app.schedule.worker | Сохранено 228 рейсов для voronok (по 3 дням)
+2026-10-23 14:41:22,352 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=130/500
+2026-10-23 14:41:23,001 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=131/500
+2026-10-23 14:41:24,239 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=132/500
+2026-10-23 14:41:24,274 | INFO    | app.schedule.worker | Сохранено 185 рейсов для shchelkovo (по 3 дням)
+2026-10-23 14:41:24,899 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=133/500
+2026-10-23 14:41:25,573 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=134/500
+2026-10-23 14:41:26,243 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=135/500
+2026-10-23 14:41:26,260 | INFO    | app.schedule.worker | Сохранено 168 рейсов для gagarinskaya (по 3 дням)
+2026-10-23 14:41:26,938 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=136/500
+2026-10-23 14:41:27,667 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=137/500
+2026-10-23 14:41:28,388 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=138/500
+2026-10-23 14:41:28,416 | INFO    | app.schedule.worker | Сохранено 193 рейсов для chkalovskaya (по 3 дням)
+2026-10-23 14:41:29,047 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=139/500
+2026-10-23 14:41:29,715 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=140/500
+2026-10-23 14:41:30,456 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=141/500
+2026-10-23 14:41:30,476 | INFO    | app.schedule.worker | Сохранено 193 рейсов для bakhchivandzhi (по 3 дням)
+2026-10-23 14:41:31,100 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=142/500
+2026-10-23 14:41:31,689 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=143/500
+2026-10-23 14:41:32,346 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=144/500
+2026-10-23 14:41:32,364 | INFO    | app.schedule.worker | Сохранено 168 рейсов для tsiolkovskaya (по 3 дням)
+2026-10-23 14:41:32,980 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=145/500
+2026-10-23 14:41:33,683 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=146/500
+2026-10-23 14:41:34,370 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=147/500
+2026-10-23 14:41:34,384 | INFO    | app.schedule.worker | Сохранено 119 рейсов для monino (по 3 дням)
+2026-10-23 14:41:34,845 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=148/500
+2026-10-23 14:41:35,264 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=149/500
+2026-10-23 14:41:36,037 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=150/500
+2026-10-23 14:41:36,043 | INFO    | app.schedule.worker | Сохранено 44 рейсов для kashino (по 3 дням)
+2026-10-23 14:41:36,453 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=151/500
+2026-10-23 14:41:36,910 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=152/500
+2026-10-23 14:41:37,347 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=153/500
+2026-10-23 14:41:37,353 | INFO    | app.schedule.worker | Сохранено 44 рейсов для kolontaevo (по 3 дням)
+2026-10-23 14:41:37,757 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=154/500
+2026-10-23 14:41:38,402 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=155/500
+2026-10-23 14:41:38,849 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=156/500
+2026-10-23 14:41:38,857 | INFO    | app.schedule.worker | Сохранено 44 рейсов для lesnaya (по 3 дням)
+2026-10-23 14:41:39,643 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=157/500
+2026-10-23 14:41:40,508 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=158/500
+2026-10-23 14:41:41,899 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=159/500
+2026-10-23 14:41:41,917 | INFO    | app.schedule.worker | Сохранено 219 рейсов для fryazevo (по 3 дням)
+2026-10-23 14:41:42,451 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=160/500
+2026-10-23 14:41:43,004 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=161/500
+2026-10-23 14:41:43,524 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=162/500
+2026-10-23 14:41:43,533 | INFO    | app.schedule.worker | Сохранено 109 рейсов для fabrika1maya (по 3 дням)
+2026-10-23 14:41:44,051 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=163/500
+2026-10-23 14:41:44,632 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=164/500
+2026-10-23 14:41:45,225 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=165/500
+2026-10-23 14:41:45,235 | INFO    | app.schedule.worker | Сохранено 108 рейсов для zelyony_bor (по 3 дням)
+2026-10-23 14:41:45,814 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=166/500
+2026-10-23 14:41:46,373 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=167/500
+2026-10-23 14:41:47,132 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=168/500
+2026-10-23 14:41:47,142 | INFO    | app.schedule.worker | Сохранено 110 рейсов для ivanteevka2 (по 3 дням)
+2026-10-23 14:41:47,680 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=169/500
+2026-10-23 14:41:48,213 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=170/500
+2026-10-23 14:41:48,775 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=171/500
+2026-10-23 14:41:48,785 | INFO    | app.schedule.worker | Сохранено 107 рейсов для ivanteevka (по 3 дням)
+2026-10-23 14:41:49,369 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=172/500
+2026-10-23 14:41:49,932 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=173/500
+2026-10-23 14:41:50,445 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=174/500
+2026-10-23 14:41:50,452 | INFO    | app.schedule.worker | Сохранено 107 рейсов для detskaya (по 3 дням)
+2026-10-23 14:41:50,942 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=175/500
+2026-10-23 14:41:51,427 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=176/500
+2026-10-23 14:41:51,891 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=177/500
+2026-10-23 14:41:51,916 | INFO    | app.schedule.worker | Сохранено 56 рейсов для fryazino_tov (по 3 дням)
+2026-10-23 14:41:52,786 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=178/500
+2026-10-23 14:41:53,259 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=179/500
+2026-10-23 14:41:53,710 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=180/500
+2026-10-23 14:41:53,715 | INFO    | app.schedule.worker | Сохранено 56 рейсов для fryazino (по 3 дням)
+2026-10-23 14:41:54,083 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=181/500
+2026-10-23 14:41:54,453 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=182/500
+2026-10-23 14:41:54,864 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=183/500
+2026-10-23 14:41:54,868 | INFO    | app.schedule.worker | Сохранено 26 рейсов для poselok_dalniy (по 3 дням)
+2026-10-23 14:41:55,261 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=184/500
+2026-10-23 14:41:55,686 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=185/500
+2026-10-23 14:41:56,073 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=186/500
+2026-10-23 14:41:56,077 | INFO    | app.schedule.worker | Сохранено 26 рейсов для rahmanovo (по 3 дням)
+2026-10-23 14:41:56,500 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=187/500
+2026-10-23 14:41:56,875 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=188/500
+2026-10-23 14:41:57,314 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=189/500
+2026-10-23 14:41:57,317 | INFO    | app.schedule.worker | Сохранено 26 рейсов для fedorovskoe (по 3 дням)
+2026-10-23 14:41:57,687 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=190/500
+2026-10-23 14:41:58,096 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=191/500
+2026-10-23 14:41:58,496 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=192/500
+2026-10-23 14:41:58,500 | INFO    | app.schedule.worker | Сохранено 26 рейсов для putilovo (по 3 дням)
+2026-10-23 14:41:58,900 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=193/500
+2026-10-23 14:41:59,252 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=194/500
+2026-10-23 14:41:59,631 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=195/500
+2026-10-23 14:41:59,634 | INFO    | app.schedule.worker | Сохранено 15 рейсов для krasnoarmeysk (по 3 дням)
+2026-10-23 14:41:59,634 | INFO    | daily_refresh | Направление 'yaroslavskoye': всего 13563 рейсов
+2026-10-23 14:41:59,635 | INFO    | daily_refresh | Направление 'Павелецкое' (paveletskoye): 47 станций, дни ['2026-10-24', '2026-10-25', '2026-10-26']
+2026-10-23 14:42:00,477 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=196/500
+2026-10-23 14:42:01,318 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=197/500
+2026-10-23 14:42:02,333 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=198/500
+2026-10-23 14:42:02,353 | INFO    | app.schedule.worker | Сохранено 199 рейсов для m_pav (по 3 дням)
+2026-10-23 14:42:03,365 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=199/500
+2026-10-23 14:42:04,205 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=200/500
+2026-10-23 14:42:04,895 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=201/500
+2026-10-23 14:42:04,913 | INFO    | app.schedule.worker | Сохранено 204 рейсов для derbenevskaya (по 3 дням)
+2026-10-23 14:42:06,007 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=202/500
+2026-10-23 14:42:06,847 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=203/500
+2026-10-23 14:42:07,762 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=204/500
+2026-10-23 14:42:07,788 | INFO    | app.schedule.worker | Сохранено 244 рейсов для tulskaya (по 3 дням)
+2026-10-23 14:42:09,100 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=205/500
+2026-10-23 14:42:10,017 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=206/500
+2026-10-23 14:42:10,943 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=207/500
+2026-10-23 14:42:10,969 | INFO    | app.schedule.worker | Сохранено 311 рейсов для varshavskaya (по 3 дням)
+2026-10-23 14:42:12,135 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=208/500
+2026-10-23 14:42:13,371 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=209/500
+2026-10-23 14:42:14,816 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=210/500
+2026-10-23 14:42:14,845 | INFO    | app.schedule.worker | Сохранено 396 рейсов для verhnie_kotly (по 3 дням)
+2026-10-23 14:42:15,719 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=211/500
+2026-10-23 14:42:16,626 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=212/500
+2026-10-23 14:42:17,624 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=213/500
+2026-10-23 14:42:17,647 | INFO    | app.schedule.worker | Сохранено 314 рейсов для nagatinskaya (по 3 дням)
+2026-10-23 14:42:17,648 | WARNING | app.schedule.worker | Нет Яндекс-кода для kolomenskoye — пропускаю
+2026-10-23 14:42:18,460 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=214/500
+2026-10-23 14:42:19,243 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=215/500
+2026-10-23 14:42:20,077 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=216/500
+2026-10-23 14:42:20,098 | INFO    | app.schedule.worker | Сохранено 247 рейсов для chertanovo (по 3 дням)
+2026-10-23 14:42:21,592 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=217/500
+2026-10-23 14:42:22,512 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=218/500
+2026-10-23 14:42:23,402 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=219/500
+2026-10-23 14:42:23,425 | INFO    | app.schedule.worker | Сохранено 292 рейсов для biryulyovo_tov (по 3 дням)
+2026-10-23 14:42:24,383 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=220/500
+2026-10-23 14:42:25,713 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=221/500
+2026-10-23 14:42:26,633 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=222/500
+2026-10-23 14:42:26,654 | INFO    | app.schedule.worker | Сохранено 291 рейсов для biryulyovo_pass (по 3 дням)
+2026-10-23 14:42:27,345 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=223/500
+2026-10-23 14:42:28,047 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=224/500
+2026-10-23 14:42:28,714 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=225/500
+2026-10-23 14:42:28,725 | INFO    | app.schedule.worker | Сохранено 162 рейсов для bulatnikovo (по 3 дням)
+2026-10-23 14:42:29,595 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=226/500
+2026-10-23 14:42:30,474 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=227/500
+2026-10-23 14:42:31,341 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=228/500
+2026-10-23 14:42:31,360 | INFO    | app.schedule.worker | Сохранено 264 рейсов для rastorguevo (по 3 дням)
+2026-10-23 14:42:32,041 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=229/500
+2026-10-23 14:42:32,725 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=230/500
+2026-10-23 14:42:33,453 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=231/500
+2026-10-23 14:42:33,464 | INFO    | app.schedule.worker | Сохранено 171 рейсов для kalinina (по 3 дням)
+2026-10-23 14:42:34,243 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=232/500
+2026-10-23 14:42:35,075 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=233/500
+2026-10-23 14:42:35,929 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=234/500
+2026-10-23 14:42:35,945 | INFO    | app.schedule.worker | Сохранено 215 рейсов для leninskaya (по 3 дням)
+2026-10-23 14:42:36,335 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=235/500
+2026-10-23 14:42:36,733 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=236/500
+2026-10-23 14:42:37,152 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=237/500
+2026-10-23 14:42:37,155 | INFO    | app.schedule.worker | Сохранено 39 рейсов для km32 (по 3 дням)
+2026-10-23 14:42:38,045 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=238/500
+2026-10-23 14:42:39,034 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=239/500
+2026-10-23 14:42:40,102 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=240/500
+2026-10-23 14:42:40,123 | INFO    | app.schedule.worker | Сохранено 280 рейсов для domodedovo (по 3 дням)
+2026-10-23 14:42:40,826 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=241/500
+2026-10-23 14:42:41,245 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=242/500
+2026-10-23 14:42:41,652 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=243/500
+2026-10-23 14:42:41,657 | INFO    | app.schedule.worker | Сохранено 57 рейсов для aviacionnaya (по 3 дням)
+2026-10-23 14:42:42,138 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=244/500
+2026-10-23 14:42:42,538 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=245/500
+2026-10-23 14:42:43,068 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=246/500
+2026-10-23 14:42:43,072 | INFO    | app.schedule.worker | Сохранено 56 рейсов для kosmos (по 3 дням)
+2026-10-23 14:42:43,677 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=247/500
+2026-10-23 14:42:44,282 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=248/500
+2026-10-23 14:42:44,830 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=249/500
+2026-10-23 14:42:44,836 | INFO    | app.schedule.worker | Сохранено 74 рейсов для aeroport_domodedovo (по 3 дням)
+2026-10-23 14:42:45,471 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=250/500
+2026-10-23 14:42:46,109 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=251/500
+2026-10-23 14:42:46,745 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=252/500
+2026-10-23 14:42:46,754 | INFO    | app.schedule.worker | Сохранено 136 рейсов для vzlyotnaya (по 3 дням)
+2026-10-23 14:42:47,367 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=253/500
+2026-10-23 14:42:47,992 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=254/500
+2026-10-23 14:42:48,590 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=255/500
+2026-10-23 14:42:48,598 | INFO    | app.schedule.worker | Сохранено 114 рейсов для vostryakovo (по 3 дням)
+2026-10-23 14:42:49,238 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=256/500
+2026-10-23 14:42:49,937 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=257/500
+2026-10-23 14:42:50,684 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=258/500
+2026-10-23 14:42:50,695 | INFO    | app.schedule.worker | Сохранено 157 рейсов для belye_stolby (по 3 дням)
+2026-10-23 14:42:51,317 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=259/500
+2026-10-23 14:42:51,932 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=260/500
+2026-10-23 14:42:52,580 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=261/500
+2026-10-23 14:42:52,590 | INFO    | app.schedule.worker | Сохранено 146 рейсов для barybino (по 3 дням)
+2026-10-23 14:42:53,168 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=262/500
+2026-10-23 14:42:53,741 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=263/500
+2026-10-23 14:42:54,288 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=264/500
+2026-10-23 14:42:54,295 | INFO    | app.schedule.worker | Сохранено 92 рейсов для danilovo_52 (по 3 дням)
+2026-10-23 14:42:54,787 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=265/500
+2026-10-23 14:42:55,326 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=266/500
+2026-10-23 14:42:55,865 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=267/500
+2026-10-23 14:42:55,870 | INFO    | app.schedule.worker | Сохранено 82 рейсов для privalovo (по 3 дням)
+2026-10-23 14:42:56,407 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=268/500
+2026-10-23 14:42:56,997 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=269/500
+2026-10-23 14:42:57,547 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=270/500
+2026-10-23 14:42:57,554 | INFO    | app.schedule.worker | Сохранено 98 рейсов для velyaminovo (по 3 дням)
+2026-10-23 14:42:58,197 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=271/500
+2026-10-23 14:42:58,833 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=272/500
+2026-10-23 14:42:59,787 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=273/500
+2026-10-23 14:42:59,811 | INFO    | app.schedule.worker | Сохранено 134 рейсов для mihnevo (по 3 дням)
+2026-10-23 14:43:00,348 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=274/500
+2026-10-23 14:43:00,848 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=275/500
+2026-10-23 14:43:01,408 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=276/500
+2026-10-23 14:43:01,414 | INFO    | app.schedule.worker | Сохранено 78 рейсов для shugarovo (по 3 дням)
+2026-10-23 14:43:02,392 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=277/500
+2026-10-23 14:43:03,137 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=278/500
+2026-10-23 14:43:03,547 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=279/500
+2026-10-23 14:43:03,551 | INFO    | app.schedule.worker | Сохранено 32 рейсов для km85 (по 3 дням)
+2026-10-23 14:43:04,397 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=280/500
+2026-10-23 14:43:04,966 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=281/500
+2026-10-23 14:43:05,612 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=282/500
+2026-10-23 14:43:05,620 | INFO    | app.schedule.worker | Сохранено 123 рейсов для zhilyovo (по 3 дням)
+2026-10-23 14:43:06,129 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=283/500
+2026-10-23 14:43:06,618 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=284/500
+2026-10-23 14:43:07,151 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=285/500
+2026-10-23 14:43:07,157 | INFO    | app.schedule.worker | Сохранено 78 рейсов для sitenka (по 3 дням)
+2026-10-23 14:43:07,741 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=286/500
+2026-10-23 14:43:08,363 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=287/500
+2026-10-23 14:43:08,951 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=288/500
+2026-10-23 14:43:08,958 | INFO    | app.schedule.worker | Сохранено 111 рейсов для stupino (по 3 дням)
+2026-10-23 14:43:09,460 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=289/500
+2026-10-23 14:43:09,988 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=290/500
+2026-10-23 14:43:10,491 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=291/500
+2026-10-23 14:43:10,497 | INFO    | app.schedule.worker | Сохранено 79 рейсов для akri (по 3 дням)
+2026-10-23 14:43:11,034 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=292/500
+2026-10-23 14:43:11,507 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=293/500
+2026-10-23 14:43:12,041 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=294/500
+2026-10-23 14:43:12,077 | INFO    | app.schedule.worker | Сохранено 78 рейсов для belopesotsky (по 3 дням)
+2026-10-23 14:43:12,598 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=295/500
+2026-10-23 14:43:13,210 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=296/500
+2026-10-23 14:43:13,738 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=297/500
+2026-10-23 14:43:13,746 | INFO    | app.schedule.worker | Сохранено 99 рейсов для kashira (по 3 дням)
+2026-10-23 14:43:14,247 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=298/500
+2026-10-23 14:43:14,772 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=299/500
+2026-10-23 14:43:15,297 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=300/500
+2026-10-23 14:43:15,304 | INFO    | app.schedule.worker | Сохранено 89 рейсов для tesna (по 3 дням)
+2026-10-23 14:43:15,873 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=301/500
+2026-10-23 14:43:16,345 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=302/500
+2026-10-23 14:43:16,826 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=303/500
+2026-10-23 14:43:16,832 | INFO    | app.schedule.worker | Сохранено 71 рейсов для ozherelye (по 3 дням)
+2026-10-23 14:43:17,218 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=304/500
+2026-10-23 14:43:17,646 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=305/500
+2026-10-23 14:43:18,069 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=306/500
+2026-10-23 14:43:18,072 | INFO    | app.schedule.worker | Сохранено 27 рейсов для zubovo_121 (по 3 дням)
+2026-10-23 14:43:18,524 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=307/500
+2026-10-23 14:43:18,939 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=308/500
+2026-10-23 14:43:19,329 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=309/500
+2026-10-23 14:43:19,332 | INFO    | app.schedule.worker | Сохранено 38 рейсов для purlovo (по 3 дням)
+2026-10-23 14:43:19,719 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=310/500
+2026-10-23 14:43:20,135 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=311/500
+2026-10-23 14:43:20,560 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=312/500
+2026-10-23 14:43:20,563 | INFO    | app.schedule.worker | Сохранено 38 рейсов для kolmenka_131 (по 3 дням)
+2026-10-23 14:43:20,996 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=313/500
+2026-10-23 14:43:21,413 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=314/500
+2026-10-23 14:43:21,836 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=315/500
+2026-10-23 14:43:21,839 | INFO    | app.schedule.worker | Сохранено 38 рейсов для topkanovo (по 3 дням)
+2026-10-23 14:43:22,265 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=316/500
+2026-10-23 14:43:22,690 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=317/500
+2026-10-23 14:43:23,078 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=318/500
+2026-10-23 14:43:23,081 | INFO    | app.schedule.worker | Сохранено 38 рейсов для km137 (по 3 дням)
+2026-10-23 14:43:23,509 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=319/500
+2026-10-23 14:43:23,884 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=320/500
+2026-10-23 14:43:24,288 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=321/500
+2026-10-23 14:43:24,291 | INFO    | app.schedule.worker | Сохранено 38 рейсов для bogatishchevo (по 3 дням)
+2026-10-23 14:43:24,764 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=322/500
+2026-10-23 14:43:25,209 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=323/500
+2026-10-23 14:43:25,649 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=324/500
+2026-10-23 14:43:25,653 | INFO    | app.schedule.worker | Сохранено 38 рейсов для km146 (по 3 дням)
+2026-10-23 14:43:26,092 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=325/500
+2026-10-23 14:43:26,512 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=326/500
+2026-10-23 14:43:26,926 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=327/500
+2026-10-23 14:43:26,930 | INFO    | app.schedule.worker | Сохранено 38 рейсов для korovino (по 3 дням)
+2026-10-23 14:43:27,369 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=328/500
+2026-10-23 14:43:27,777 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=329/500
+2026-10-23 14:43:28,173 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=330/500
+2026-10-23 14:43:28,176 | INFO    | app.schedule.worker | Сохранено 38 рейсов для novosyolki_152 (по 3 дням)
+2026-10-23 14:43:28,593 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=331/500
+2026-10-23 14:43:29,041 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=332/500
+2026-10-23 14:43:29,492 | INFO    | app.schedule.yandex_client | Yandex Rasp OK, today used=333/500
+2026-10-23 14:43:29,495 | INFO    | app.schedule.worker | Сохранено 30 рейсов для uzunovo (по 3 дням)
+2026-10-23 14:43:29,495 | INFO    | daily_refresh | Направление 'paveletskoye': всего 5974 рейсов
+2026-10-23 14:43:29,500 | INFO    | daily_refresh | Daily refresh завершён: 2026-10-23 14:43 МСК, 251.0 сек, всего 19537 рейсов, квота 333/500
+2026-10-24 19:09:06,179 | INFO    | daily_refresh | ======================================================================
+2026-10-24 19:09:06,179 | INFO    | daily_refresh | Daily refresh запущен: 2026-10-24 19:09 МСК, Суббота
+2026-10-24 19:09:06,180 | INFO    | daily_refresh | По ротации сегодня: ['bmo']
+2026-10-24 19:09:06,543 | INFO    | daily_refresh | Направление 'БМО' (bmo): станции ещё не заданы — пропускаю
+2026-10-24 19:09:06,555 | INFO    | daily_refresh | Daily refresh завершён: 2026-10-24 19:09 МСК, 0.4 сек, всего 0 рейсов, квота 0/500
+2026-10-24 19:09:06,556 | INFO    | daily_refresh | Пропущено: bmo
