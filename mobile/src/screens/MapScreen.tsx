@@ -1,7 +1,7 @@
 import React, { useState, useCallback, useRef, useMemo } from 'react';
 import {
   View, StyleSheet, TouchableOpacity, Text, Alert,
-  ActivityIndicator, Platform,
+  Platform,
 } from 'react-native';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import DateTimePicker from '@react-native-community/datetimepicker';
@@ -10,6 +10,8 @@ import SchematicMap, { SchematicMapHandle } from '../map/SchematicMap';
 import StationInfoSheet from './StationInfoSheet';
 import SearchBar from './SearchBar';
 import RouteScreen from './RouteScreen';
+import RouteSkeleton from './RouteSkeleton';
+import RouteErrorScreen from './RouteErrorScreen'; // <-- Новый импорт
 import { SchemaStation } from '../map/schemaStations';
 import { osmFacilities } from '../map/osmFacilities';
 import { useTheme } from '../theme/ThemeProvider';
@@ -27,24 +29,18 @@ export default function MapScreen() {
 
   const [routeVariants, setRouteVariants] = useState<RouteResult[] | null>(null);
   const [routeLoading, setRouteLoading] = useState(false);
+  const [routeError, setRouteError] = useState<string | null>(null); // <-- Состояние ошибки
   const [routeDeparture, setRouteDeparture] = useState(new Date());
 
-  // ВЫБОР ВРЕМЕНИ
   const [useNow, setUseNow] = useState(true);
   const [customTime, setCustomTime] = useState(new Date());
   const [showTimePicker, setShowTimePicker] = useState(false);
 
-  // Формируем черный список станций, если включен фильтр доступности
   const avoidStationsList = useMemo(() => {
     if (!wheelchairOnly) return [];
     const badStations: string[] = [];
-    
-    // Проходим по всем станциям из OSM
     for (const [id, facs] of Object.entries(osmFacilities)) {
-      // Если нет полной доступности (т.е. нет лифтов или не отмечено), кидаем в черный список
-      if (facs.wheelchair !== 'full') {
-        badStations.push(id);
-      }
+      if (facs.wheelchair !== 'full') badStations.push(id);
     }
     return badStations;
   }, [wheelchairOnly]);
@@ -86,6 +82,7 @@ export default function MapScreen() {
     setFrom(null);
     setTo(null);
     setRouteVariants(null);
+    setRouteError(null);
   }, []);
 
   const handleBuildRoute = useCallback(async () => {
@@ -96,6 +93,8 @@ export default function MapScreen() {
     }
 
     setRouteLoading(true);
+    setRouteError(null); // Сбрасываем старую ошибку
+
     try {
       let depTimeStr: string;
       let depDate: Date;
@@ -123,15 +122,40 @@ export default function MapScreen() {
         avoid_stations: avoidStationsList,
       });
 
-      setRouteDeparture(depDate);
-      setRouteVariants(res.variants ?? []);
+      if (!res.variants || res.variants.length === 0) {
+        // Если бэкенд вернул пустой массив
+        setRouteError('Не удалось найти ни одного подходящего рейса на выбранное время.');
+      } else {
+        setRouteDeparture(depDate);
+        setRouteVariants(res.variants);
+      }
     } catch (e: any) {
       const details = e?.response?.data?.detail || e?.message || 'Неизвестная ошибка';
-      Alert.alert('Не удалось построить маршрут', details);
+      // Если бэкенд вернул 404 или другую ошибку
+      if (e?.response?.status === 404) {
+        setRouteError('Одна из станций не найдена в базе данных.');
+      } else {
+        setRouteError(details);
+      }
     } finally {
       setRouteLoading(false);
     }
   }, [from, to, useNow, customTime, avoidAeroexpress, avoidStationsList]);
+
+  // Показываем скелетон, пока идет загрузка
+  if (routeLoading) {
+    return <RouteSkeleton onBack={() => setRouteLoading(false)} />;
+  }
+
+  // Показываем экран ошибки, если маршрут не найден
+  if (routeError) {
+    return (
+      <RouteErrorScreen 
+        message={routeError} 
+        onBack={() => setRouteError(null)} 
+      />
+    );
+  }
 
   if (routeVariants && routeVariants.length > 0 && from && to) {
     return (
@@ -189,7 +213,6 @@ export default function MapScreen() {
               </Text>
             </View>
 
-            {/* Блок выбора времени */}
             <View style={[styles.timeSelector, { borderTopColor: theme.border }]}>
               <TouchableOpacity style={styles.timeOption} onPress={() => setUseNow(true)}>
                 <Text style={[styles.timeLabel, { color: useNow ? theme.accent : theme.textMuted }]}>Сейчас</Text>
@@ -216,11 +239,7 @@ export default function MapScreen() {
                 <Text style={[styles.actionText, { color: theme.danger }]}>Сбросить</Text>
               </TouchableOpacity>
               <TouchableOpacity disabled={!routeReady || routeLoading} onPress={handleBuildRoute}>
-                {routeLoading ? (
-                  <ActivityIndicator size="small" color={theme.accent} />
-                ) : (
-                  <Text style={[styles.actionText, { color: routeReady ? theme.accent : theme.iconMuted }]}>Построить</Text>
-                )}
+                <Text style={[styles.actionText, { color: routeReady ? theme.accent : theme.iconMuted }]}>Построить</Text>
               </TouchableOpacity>
             </View>
           </View>
@@ -253,23 +272,15 @@ export default function MapScreen() {
 const styles = StyleSheet.create({
   root: { flex: 1 },
   container: { flex: 1 },
-  
-  resetBtn: { 
-    position: 'absolute', top: 116, right: 16, 
-    width: 44, height: 44, borderRadius: 22, 
-    justifyContent: 'center', alignItems: 'center', borderWidth: 1, zIndex: 20 
-  },
+  resetBtn: { position: 'absolute', top: 116, right: 16, width: 44, height: 44, borderRadius: 22, justifyContent: 'center', alignItems: 'center', borderWidth: 1, zIndex: 20 },
   resetText: { fontSize: 22, fontWeight: '400' },
-
   routePanel: { position: 'absolute', left: 16, right: 16, bottom: 24, padding: 12, borderRadius: 16, borderWidth: 1, zIndex: 15 },
   routeRow: { flexDirection: 'row', alignItems: 'center', paddingVertical: 6, gap: 10 },
   routeDot: { width: 12, height: 12, borderRadius: 6 },
   routeText: { flex: 1, fontSize: 15, fontWeight: '500' },
-  
   timeSelector: { flexDirection: 'row', marginTop: 8, paddingTop: 8, borderTopWidth: 1, gap: 16 },
   timeOption: { paddingVertical: 4 },
   timeLabel: { fontSize: 14, fontWeight: '600' },
-
   routeActions: { flexDirection: 'row', justifyContent: 'space-between', marginTop: 8, paddingTop: 8, borderTopWidth: 1 },
   actionText: { fontSize: 14, fontWeight: '600' },
 });

@@ -1,8 +1,9 @@
 import React, { useEffect, useMemo, useState } from 'react';
 import {
-  View, Text, StyleSheet, ScrollView,
-  TouchableOpacity, Share, ActivityIndicator,
+  View, Text, StyleSheet, ScrollView, TouchableOpacity,
+  Share, ActivityIndicator, Alert, RefreshControl
 } from 'react-native';
+
 import { useTheme, Theme } from '../theme/ThemeProvider';
 import {
   BackIcon, ChevronLeftIcon, ChevronRightIcon,
@@ -287,7 +288,6 @@ export default function RouteScreen({
   );
 
   const fare: Fare | null = useMemo(() => {
-    // Исключаем метро из расчёта ж/д тарифа, чтобы функция calculateFare не сломалась
     const railLegs = legs.filter((l) => l.kind === 'ride' && l.line_kind !== 'metro' && l.line_kind !== 'mcc');
     if (railLegs.length === 0) return null;
     
@@ -309,7 +309,6 @@ export default function RouteScreen({
           inMetro = true;
         }
       } else if (leg.kind === 'transfer') {
-        // Пересадка внутри метро не сбрасывает счетчик
         continue;
       } else {
         inMetro = false;
@@ -438,6 +437,13 @@ export default function RouteScreen({
       <ScrollView
         contentContainerStyle={styles.scroll}
         showsVerticalScrollIndicator={false}
+        refreshControl={
+          <RefreshControl
+            refreshing={isRefreshing}
+            onRefresh={handleRefresh}
+            tintColor={c.accent}
+          />
+        }
       >
         {/* Большое время */}
         <View style={styles.timeRow}>
@@ -448,7 +454,7 @@ export default function RouteScreen({
             {Math.round(currentRoute.total_minutes)} мин
           </Text>
         </View>
-          <Text style={styles.subtitle}>
+        <Text style={styles.subtitle}>
           {currentDeparture.toDateString() === new Date().toDateString() 
             ? 'Сегодня' 
             : currentDeparture.toLocaleDateString('ru-RU', { day: 'numeric', month: 'long' })} 
@@ -573,13 +579,11 @@ export default function RouteScreen({
           const color = leg.line_color || c.accent;
           const km = estimateKm(leg.minutes);
 
-          // Определяем, является ли это виртуальной линией метро/МЦК
           const isMetro = leg.line_kind === 'metro' || leg.line_kind === 'mcc';
           
           const trainType = leg.trainType ?? (leg.isExpress ? 'express' : 'local');
           const isExpressTrain = trainType === 'express';
 
-          // Для метро мы не запрашиваем промежуточные станции
           const allIntermediates = isMetro ? [] : getIntermediateStations(leg.from.id, leg.to.id);
           const intermediates = isExpressTrain
             ? allIntermediates.filter((st) => st.expressStop)
@@ -632,7 +636,6 @@ export default function RouteScreen({
                     <Text style={styles.lineName}>
                       {leg.line || 'Маршрут'}
                     </Text>
-                    {/* Бейджик Метро / МЦК */}
                     {isMetro && (
                       <View style={[
                         styles.metroLineBadge, 
@@ -646,7 +649,6 @@ export default function RouteScreen({
                         </Text>
                       </View>
                     )}
-                    
                     {!isMetro && leg.isExpress && (
                       <View style={styles.expressBadge}>
                         <Text style={styles.expressBadgeText}>Э</Text>
@@ -694,8 +696,6 @@ export default function RouteScreen({
                         {' · '}
                         {km} км
                       </Text>
-                      
-                      {/* Информация о стоимости проезда */}
                       {isMetro && (
                         <Text style={{ marginTop: 4, fontSize: 12, color: c.textMuted, fontStyle: 'italic' }}>
                           Вход в метро: 73 ₽ (Тройка) / 83 ₽ (Банк. карта)
@@ -890,7 +890,6 @@ const makeStyles = (c: RouteColors) =>
     },
     lineName: { fontSize: 15, fontWeight: '600', color: c.text },
     
-    // Бейджики
     expressBadge: {
       backgroundColor: '#E5231B',
       paddingHorizontal: 6, paddingVertical: 2, borderRadius: 4,
