@@ -11,12 +11,22 @@ import StationInfoSheet from './StationInfoSheet';
 import SearchBar from './SearchBar';
 import RouteScreen from './RouteScreen';
 import RouteSkeleton from './RouteSkeleton';
-import RouteErrorScreen from './RouteErrorScreen'; // <-- Новый импорт
+import RouteErrorScreen from './RouteErrorScreen';
 import { SchemaStation } from '../map/schemaStations';
 import { osmFacilities } from '../map/osmFacilities';
 import { useTheme } from '../theme/ThemeProvider';
 import { useSettings } from '../store/SettingsContext';
 import { buildRoute, RouteResult } from '../api/client';
+import { ChevronRightIcon } from '../icons';
+
+// Вспомогательная функция для склонения слов
+function plural(n: number, forms: [string, string, string]): string {
+  const mod10 = n % 10;
+  const mod100 = n % 100;
+  if (mod10 === 1 && mod100 !== 11) return forms[0];
+  if (mod10 >= 2 && mod10 <= 4 && (mod100 < 10 || mod100 >= 20)) return forms[1];
+  return forms[2];
+}
 
 export default function MapScreen() {
   const { theme } = useTheme();
@@ -29,8 +39,11 @@ export default function MapScreen() {
 
   const [routeVariants, setRouteVariants] = useState<RouteResult[] | null>(null);
   const [routeLoading, setRouteLoading] = useState(false);
-  const [routeError, setRouteError] = useState<string | null>(null); // <-- Состояние ошибки
+  const [routeError, setRouteError] = useState<string | null>(null);
   const [routeDeparture, setRouteDeparture] = useState(new Date());
+  
+  // Показывать ли детальный экран маршрута поверх карты
+  const [showDetails, setShowDetails] = useState(false);
 
   const [useNow, setUseNow] = useState(true);
   const [customTime, setCustomTime] = useState(new Date());
@@ -44,6 +57,65 @@ export default function MapScreen() {
     }
     return badStations;
   }, [wheelchairOnly]);
+
+  // Вычисляем активные линии и станции для подсветки на карте
+  const activeRouteStations = useMemo(() => {
+    if (!routeVariants || routeVariants.length === 0) return [];
+    const stations = new Set<string>();
+    routeVariants[0].segments.forEach(s => {
+      stations.add(s.from.id);
+      stations.add(s.to.id);
+    });
+    return Array.from(stations);
+  }, [routeVariants]);
+
+  const activeRouteLines = useMemo(() => {
+    if (!routeVariants || routeVariants.length === 0) return [];
+    const lines = new Set<string>();
+    routeVariants[0].segments.forEach(s => {
+      if (s.line) lines.add(s.line); 
+    });
+    // Простой маппинг названий в ID для подсветки линий на карте
+    return Array.from(lines).map(name => {
+      if (name.includes('Ярославское')) return 'yar';
+      if (name.includes('Курское')) return 'kursk';
+      if (name.includes('Горьковское')) return 'gorky';
+      if (name.includes('Рижское')) return 'riga';
+      if (name.includes('Белорусское')) return 'bel';
+      if (name.includes('Киевское')) return 'kiev';
+      if (name.includes('Павелецкое')) return 'pav';
+      if (name.includes('Савёловское')) return 'sav';
+      if (name.includes('Ленинградское')) return 'len';
+      if (name.includes('Казанское')) return 'kaz';
+      if (name.includes('МЦД-1')) return 'mcd1';
+      if (name.includes('МЦД-2')) return 'mcd2';
+      if (name.includes('МЦД-3')) return 'mcd3';
+      if (name.includes('МЦД-4')) return 'mcd4';
+      if (name.includes('МЦК')) return 'mcc';
+      if (name.includes('Кольцевая')) return 'metro_kol';
+      return null;
+    }).filter(Boolean) as string[];
+  }, [routeVariants]);
+
+  // Правильный подсчет пересадок (включая смену электрички на метро/МЦК)
+  const transfersCount = useMemo(() => {
+    if (!routeVariants || routeVariants.length === 0) return 0;
+    let count = 0;
+    let prevLine = null;
+    for (const seg of routeVariants[0].segments) {
+      if (seg.kind === 'transfer') {
+        count++;
+        prevLine = null; // Сбрасываем линию после пешего перехода
+      } else if (seg.line) {
+        // Если едем на новом транспорте (сменили линию) — это пересадка
+        if (prevLine !== null && prevLine !== seg.line) {
+          count++;
+        }
+        prevLine = seg.line;
+      }
+    }
+    return count;
+  }, [routeVariants]);
 
   const handleStationPress = useCallback((s: SchemaStation) => {
     setSelected(s);
@@ -83,6 +155,7 @@ export default function MapScreen() {
     setTo(null);
     setRouteVariants(null);
     setRouteError(null);
+    setShowDetails(false);
   }, []);
 
   const handleBuildRoute = useCallback(async () => {
@@ -93,7 +166,7 @@ export default function MapScreen() {
     }
 
     setRouteLoading(true);
-    setRouteError(null); // Сбрасываем старую ошибку
+    setRouteError(null);
 
     try {
       let depTimeStr: string;
@@ -123,7 +196,6 @@ export default function MapScreen() {
       });
 
       if (!res.variants || res.variants.length === 0) {
-        // Если бэкенд вернул пустой массив
         setRouteError('Не удалось найти ни одного подходящего рейса на выбранное время.');
       } else {
         setRouteDeparture(depDate);
@@ -131,46 +203,30 @@ export default function MapScreen() {
       }
     } catch (e: any) {
       const details = e?.response?.data?.detail || e?.message || 'Неизвестная ошибка';
-      // Если бэкенд вернул 404 или другую ошибку
-      if (e?.response?.status === 404) {
-        setRouteError('Одна из станций не найдена в базе данных.');
-      } else {
-        setRouteError(details);
-      }
+      setRouteError(e?.response?.status === 404 ? 'Одна из станций не найдена в базе данных.' : details);
     } finally {
       setRouteLoading(false);
     }
   }, [from, to, useNow, customTime, avoidAeroexpress, avoidStationsList]);
 
-  // Показываем скелетон, пока идет загрузка
-  if (routeLoading) {
-    return <RouteSkeleton onBack={() => setRouteLoading(false)} />;
-  }
+  if (routeLoading) return <RouteSkeleton onBack={() => setRouteLoading(false)} />;
+  if (routeError) return <RouteErrorScreen message={routeError} onBack={() => setRouteError(null)} />;
 
-  // Показываем экран ошибки, если маршрут не найден
-  if (routeError) {
-    return (
-      <RouteErrorScreen 
-        message={routeError} 
-        onBack={() => setRouteError(null)} 
-      />
-    );
-  }
-
-  if (routeVariants && routeVariants.length > 0 && from && to) {
+  if (showDetails && routeVariants && routeVariants.length > 0 && from && to) {
     return (
       <RouteScreen
         variants={routeVariants}
         fromName={from.name}
         toName={to.name}
         departure={routeDeparture}
-        onBack={() => setRouteVariants(null)}
+        onBack={() => setShowDetails(false)}
       />
     );
   }
 
   const highlighted = [from?.id, to?.id].filter(Boolean) as string[];
   const routeReady = Boolean(from && to);
+  const hasActiveRoute = Boolean(routeVariants && routeVariants.length > 0);
 
   const formatTime = (d: Date) => {
     const hh = d.getHours().toString().padStart(2, '0');
@@ -187,6 +243,8 @@ export default function MapScreen() {
           highlightedStationIds={highlighted}
           activeStationId={selected?.id ?? null}
           mapFilter={mapFilter}
+          activeRouteStations={activeRouteStations}
+          activeRouteLines={activeRouteLines}
         />
 
         <SearchBar onPick={handleSearchPick} />
@@ -200,48 +258,73 @@ export default function MapScreen() {
 
         {(from || to) && (
           <View style={[styles.routePanel, { backgroundColor: theme.card, borderColor: theme.border }]}>
-            <View style={styles.routeRow}>
-              <View style={[styles.routeDot, { backgroundColor: '#34C759' }]} />
-              <Text style={[styles.routeText, { color: theme.text }]} numberOfLines={1}>
-                {from ? from.name : 'Выберите станцию отправления'}
-              </Text>
-            </View>
-            <View style={styles.routeRow}>
-              <View style={[styles.routeDot, { backgroundColor: '#FF3B30' }]} />
-              <Text style={[styles.routeText, { color: theme.text }]} numberOfLines={1}>
-                {to ? to.name : 'Выберите станцию назначения'}
-              </Text>
-            </View>
+            
+            {hasActiveRoute ? (
+              /* КОМПАКТНАЯ ПЛАШКА, КОГДА МАРШРУТ ПОСТРОЕН */
+              <TouchableOpacity style={styles.activeRouteSummary} onPress={() => setShowDetails(true)}>
+                <View style={{ flex: 1 }}>
+                  <Text style={[styles.routeText, { color: theme.text, fontSize: 18 }]}>
+                    Маршрут: {Math.round(routeVariants![0].total_minutes)} мин
+                  </Text>
+                  <Text style={{ color: theme.textMuted, fontSize: 13, marginTop: 4 }}>
+                    {transfersCount} {plural(transfersCount, ['пересадка', 'пересадки', 'пересадок'])} · Нажмите для деталей
+                  </Text>
+                </View>
+                <ChevronRightIcon size={24} color={theme.accent} />
+              </TouchableOpacity>
+            ) : (
+              /* ПАНЕЛЬ ВЫБОРА, КОГДА МАРШРУТА ЕЩЕ НЕТ */
+              <>
+                <View style={styles.routeRow}>
+                  <View style={[styles.routeDot, { backgroundColor: '#34C759' }]} />
+                  <Text style={[styles.routeText, { color: theme.text }]} numberOfLines={1}>
+                    {from ? from.name : 'Выберите станцию отправления'}
+                  </Text>
+                </View>
+                <View style={styles.routeRow}>
+                  <View style={[styles.routeDot, { backgroundColor: '#FF3B30' }]} />
+                  <Text style={[styles.routeText, { color: theme.text }]} numberOfLines={1}>
+                    {to ? to.name : 'Выберите станцию назначения'}
+                  </Text>
+                </View>
 
-            <View style={[styles.timeSelector, { borderTopColor: theme.border }]}>
-              <TouchableOpacity style={styles.timeOption} onPress={() => setUseNow(true)}>
-                <Text style={[styles.timeLabel, { color: useNow ? theme.accent : theme.textMuted }]}>Сейчас</Text>
-              </TouchableOpacity>
-              
-              <TouchableOpacity
-                style={styles.timeOption}
-                onPress={() => {
-                  setUseNow(false);
-                  setShowTimePicker(true);
-                }}
-              >
-                <Text style={[styles.timeLabel, { color: !useNow ? theme.accent : theme.textMuted }]}>
-                  {!useNow ? `В ${formatTime(customTime)}` : 'Выбрать время'}
-                </Text>
-              </TouchableOpacity>
-            </View>
+                <View style={[styles.timeSelector, { borderTopColor: theme.border }]}>
+                  <TouchableOpacity style={styles.timeOption} onPress={() => setUseNow(true)}>
+                    <Text style={[styles.timeLabel, { color: useNow ? theme.accent : theme.textMuted }]}>Сейчас</Text>
+                  </TouchableOpacity>
+                  
+                  <TouchableOpacity
+                    style={styles.timeOption}
+                    onPress={() => {
+                      setUseNow(false);
+                      setShowTimePicker(true);
+                    }}
+                  >
+                    <Text style={[styles.timeLabel, { color: !useNow ? theme.accent : theme.textMuted }]}>
+                      {!useNow ? `В ${formatTime(customTime)}` : 'Выбрать время'}
+                    </Text>
+                  </TouchableOpacity>
+                </View>
 
-            <View style={[styles.routeActions, { borderTopColor: theme.border }]}>
-              <TouchableOpacity onPress={handleSwap} disabled={!from || !to}>
-                <Text style={[styles.actionText, { color: from && to ? theme.accent : theme.iconMuted }]}>Поменять</Text>
+                <View style={[styles.routeActions, { borderTopColor: theme.border }]}>
+                  <TouchableOpacity onPress={handleSwap} disabled={!from || !to}>
+                    <Text style={[styles.actionText, { color: from && to ? theme.accent : theme.iconMuted }]}>Поменять</Text>
+                  </TouchableOpacity>
+                  <TouchableOpacity onPress={handleClear}>
+                    <Text style={[styles.actionText, { color: theme.danger }]}>Сбросить</Text>
+                  </TouchableOpacity>
+                  <TouchableOpacity disabled={!routeReady} onPress={handleBuildRoute}>
+                    <Text style={[styles.actionText, { color: routeReady ? theme.accent : theme.iconMuted }]}>Построить</Text>
+                  </TouchableOpacity>
+                </View>
+              </>
+            )}
+            
+            {hasActiveRoute && (
+              <TouchableOpacity onPress={handleClear} style={[styles.clearRouteBtn, { borderTopColor: theme.border }]}>
+                <Text style={{ color: theme.danger, textAlign: 'center', fontWeight: '600', fontSize: 14 }}>Сбросить маршрут</Text>
               </TouchableOpacity>
-              <TouchableOpacity onPress={handleClear}>
-                <Text style={[styles.actionText, { color: theme.danger }]}>Сбросить</Text>
-              </TouchableOpacity>
-              <TouchableOpacity disabled={!routeReady || routeLoading} onPress={handleBuildRoute}>
-                <Text style={[styles.actionText, { color: routeReady ? theme.accent : theme.iconMuted }]}>Построить</Text>
-              </TouchableOpacity>
-            </View>
+            )}
           </View>
         )}
 
@@ -278,9 +361,13 @@ const styles = StyleSheet.create({
   routeRow: { flexDirection: 'row', alignItems: 'center', paddingVertical: 6, gap: 10 },
   routeDot: { width: 12, height: 12, borderRadius: 6 },
   routeText: { flex: 1, fontSize: 15, fontWeight: '500' },
+  
   timeSelector: { flexDirection: 'row', marginTop: 8, paddingTop: 8, borderTopWidth: 1, gap: 16 },
   timeOption: { paddingVertical: 4 },
   timeLabel: { fontSize: 14, fontWeight: '600' },
   routeActions: { flexDirection: 'row', justifyContent: 'space-between', marginTop: 8, paddingTop: 8, borderTopWidth: 1 },
   actionText: { fontSize: 14, fontWeight: '600' },
+
+  activeRouteSummary: { flexDirection: 'row', alignItems: 'center', paddingVertical: 8 },
+  clearRouteBtn: { borderTopWidth: 1, paddingTop: 12, marginTop: 8 },
 });

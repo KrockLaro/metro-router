@@ -69,12 +69,26 @@ class Route:
 
     def to_dict(self) -> dict:
         label = _VARIANT_LABELS.get(self.tags[0], "Маршрут") if self.tags else "Маршрут"
+        
+        # Считаем пересадки: пешие переходы + смены линий
+        transfers_count = 0
+        prev_line_id = None
+        for s in self.segments:
+            if s.kind == "transfer":
+                transfers_count += 1
+                prev_line_id = None
+            elif s.line:
+                if prev_line_id is not None and prev_line_id != s.line.id:
+                    transfers_count += 1
+                prev_line_id = s.line.id
+
         return {
             "total_minutes": round(self.total_minutes, 1),
-            "transfers": self.transfers,
+            "transfers": transfers_count, # <--- ИСПОЛЬЗУЕМ НОВОЕ ЗНАЧЕНИЕ
             "tags": list(self.tags),
             "label": label,
             "segments": [
+                # ...
                 {
                     "kind": s.kind,
                     "line": s.line.name if s.line else None,
