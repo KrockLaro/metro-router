@@ -1,23 +1,31 @@
 {
   "expo": {
     "name": "Маршрутизатор",
-    "slug": "marshrutizator",
-    "scheme": "marshrutizator",
+    "slug": "metro-router",
     "version": "1.0.0",
     "orientation": "portrait",
+    "icon": "./assets/icon.png",
     "userInterfaceStyle": "automatic",
+    "splash": {
+      "resizeMode": "contain",
+      "backgroundColor": "#1A73E8"
+    },
+    "assetBundlePatterns": [
+      "**/*"
+    ],
     "ios": {
       "supportsTablet": true,
-      "bundleIdentifier": "com.example.marshrutizator"
+      "bundleIdentifier": "com.krocklaro.metrorouter"
     },
     "android": {
-      "package": "com.example.marshrutizator"
+      "adaptiveIcon": {
+        "foregroundImage": "./assets/icon.png",
+        "backgroundColor": "#1A73E8"
+      },
+      "package": "com.krocklaro.metrorouter"
     },
-    "extra": {
-      "apiUrl": "http://10.0.2.2:8000"
-    },
-    "plugins": [
-      "@react-native-community/datetimepicker"
-    ]
+      "web": {
+      "favicon": "./assets/icon.png"
+    }
   }
 }
