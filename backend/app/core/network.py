@@ -764,7 +764,7 @@ _STATIONS = [
 
 
 _VOKZAL_TRANSFERS = [
-    # Комсомольская площадь (Ярославский + Ленинградский + Казанский)
+    # ─── ТПУ Комсомольская площадь (внутренние переходы) ───
     ("m_yar",  "m_len",   5),
     ("m_yar",  "m_kaz",   5),
     ("m_len",  "m_kaz",   5),
@@ -772,35 +772,10 @@ _VOKZAL_TRANSFERS = [
     ("m_len",  "ploshchad_trekh_vokzalov", 5),
     ("m_kaz",  "ploshchad_trekh_vokzalov", 5),
 
-    # Курский вокзал (отдельно, но связан с Комсомольской)
-    ("m_kursk", "ploshchad_trekh_vokzalov", 10),
-    ("m_kursk", "m_yar",   20),
-    ("m_kursk", "m_len",   15),
-    ("m_kursk", "m_kaz",   10),
-    ("m_kursk", "m_pav",   20),
-    ("m_kursk", "m_kiev",  25),
-    ("m_kursk", "m_bel",   20),
+    # ─── Рижская и Рижский вокзал ───
+    ("rizhskaya", "m_riga", 5),
 
-    # Остальные вокзалы
-    ("m_bel",  "m_sav",   15),
-    ("m_bel",  "m_yar",   25),
-    ("m_pav",  "m_yar",   25),
-    ("m_pav",  "m_kiev",  20),
-    ("m_pav",  "m_bel",   30),
-    ("m_sav",  "m_bel",   15),
-    ("m_sav",  "m_len",   10),
-    ("m_kiev", "m_bel",   25),
-    ("m_kiev", "m_kursk", 25),
-    ("m_kiev", "m_pav",   25),
-
-    # Рижская и Дмитровская
-    ("rizhskaya",    "ploshchad_trekh_vokzalov", 10),
-    ("rizhskaya",    "dmitrovskaya",              5),
-    ("rizhskaya",    "m_riga",                    5),
-    ("dmitrovskaya", "m_sav",                     5),
-    ("dmitrovskaya", "marya_roshcha",             5),
-
-    # Горьковское ↔ Казанское (Чухлинка - Перово)
+    # ─── Горьковское ↔ Казанское (Чухлинка - Перово) ───
     ("chukhlinka", "perovo", 5),
 ]
 
@@ -850,6 +825,12 @@ def build_moscow_network() -> RailNetwork:
     gorky_balashikha = Line("gorky_balashikha", "Ветка в Балашиху", "#1bc7e5", "cppk", headway=60)
     gorky_zakharovo = Line("gorky_zakharovo", "Ветка в Захарово", "#1bc7e5", "cppk", headway=60)
     gorky_elektrogorsk = Line("gorky_elektrogorsk", "Ветка в Электрогорск", "#1bc7e5", "cppk", headway=60)
+
+    # МЦК (Московское центральное кольцо)
+    mcc = Line("mcc", "МЦК", "#FFD700", "mcc", headway=4)
+
+    # Кольцевая линия метро (виртуальная для пересадок)
+    metro_kol = Line("metro_kol", "Кольцевая линия", "#8B4513", "metro", headway=3)
 
     # ─── МЦД (overlay поверх радиальных направлений) ───
     mcd1 = Line("mcd1", "МЦД-1", "#F5A623", "mcd", headway=6)
@@ -1157,6 +1138,23 @@ def build_moscow_network() -> RailNetwork:
         "lenskaya", "kovrigino", "km14_gorky", "elektrogorsk"
     ], times=4, kind="local")
 
+    # ─── МЦК (виртуальная линия для пересадок) ───
+    net.add_segment(mcc, [
+        "okruzhnaya", "rostokino", "andronovka", "nizhegorodskaya",
+        "novokhokhlovskaya", "verhnie_kotly", "kutuzovskaya_4",
+        "testovskaya", "streshnevo", "likhobory", "okruzhnaya"
+    ], [
+        9, 19, 5, 3, 12, 13, 2, 13, 9, 3
+    ], kind="local")
+
+    # ─── Кольцевая линия метро ───
+    # Замыкаем круг: Комсомольская -> Белорусская -> Киевская -> Павелецкая -> Курская -> Комсомольская
+    net.add_segment(metro_kol, [
+        "ploshchad_trekh_vokzalov", "m_bel", "m_kiev", "m_pav", "m_kursk", "ploshchad_trekh_vokzalov"
+    ], [
+        8, 5, 9, 5, 3
+    ], kind="local")
+
     # ─── Пересадки между вокзалами ───
     for a, b, m in _VOKZAL_TRANSFERS:
         net.add_transfer(a, b, m)
@@ -1174,25 +1172,21 @@ AVOID_LINE_PENALTY = 10_000
 def find_route(net: RailNetwork, start_id: str, end_id: str,
                transfer_penalty: int = 5,
                tags: list[str] | None = None,
-               avoid_kinds: frozenset[str] | None = None) -> Route | None:
+               avoid_kinds: frozenset[str] | None = None,
+               avoid_stations: frozenset[str] = frozenset()) -> Route | None:
     if start_id not in net.stations or end_id not in net.stations:
         return None
 
     avoid_kinds = avoid_kinds or frozenset()
 
     if start_id == end_id:
-        return Route(segments=[], total_minutes=0.0, transfers=0,
-                     tags=list(tags or []))
+        return Route(segments=[], total_minutes=0.0, transfers=0, tags=list(tags or []))
 
     start_state = (start_id, None)
-    dist: dict[tuple[str, str | None], float] = {start_state: 0.0}
-    prev: dict[tuple[str, str | None], tuple] = {}
-
-    # tiebreaker для heapq: убирает сравнение line_id (str vs None)
+    dist = {start_state: 0.0}
+    prev = {}
     counter = itertools.count()
-    pq: list[tuple[float, int, str, str | None]] = [
-        (0.0, next(counter), start_id, None)
-    ]
+    pq = [(0.0, next(counter), start_id, None)]
 
     while pq:
         cur_time, _, sid, line_id = heapq.heappop(pq)
@@ -1200,8 +1194,15 @@ def find_route(net: RailNetwork, start_id: str, end_id: str,
         if cur_time > dist.get(state, float("inf")):
             continue
 
+        # Если станция в черном списке, мы не идем дальше
+        if sid in avoid_stations:
+            continue
+
         for nid, edge_list in net.edges[sid].items():
+            if nid in avoid_stations:  # <--- Пропускаем запрещенные станции
+                continue
             for edge in edge_list:
+                # ... (остальной код расчета штрафов и push остается без изменений)
                 penalty = 0.0
                 entering_line = line_id is None or line_id != edge.line.id
                 if line_id is None:
@@ -1280,7 +1281,7 @@ _STRATEGIES: list[tuple[str, int, frozenset[str]]] = [
 
 
 def find_routes(net: RailNetwork, start_id: str, end_id: str,
-                k: int = 3) -> list[Route]:
+                k: int = 3, avoid_stations: frozenset[str] = frozenset()) -> list[Route]:
     if start_id not in net.stations or end_id not in net.stations:
         return []
 
@@ -1291,7 +1292,8 @@ def find_routes(net: RailNetwork, start_id: str, end_id: str,
         r = find_route(net, start_id, end_id,
                        transfer_penalty=penalty,
                        tags=[tag],
-                       avoid_kinds=avoid)
+                       avoid_kinds=avoid,
+                       avoid_stations=avoid_stations) # <--- Передаем сюда
         if r is None:
             continue
 

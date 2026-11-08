@@ -5,23 +5,53 @@ import {
 import { SearchIcon, CloseIcon } from '../icons';
 import { STATIONS, SchemaStation } from '../map/schemaStations';
 import { useTheme } from '../theme/ThemeProvider';
+import { useStationsStore } from '../store/useStationsStore';
 
 interface Props {
   onPick: (station: SchemaStation) => void;
 }
 
+// Тип для элементов списка (заголовки и сами станции)
+type ListItem =
+  | { type: 'header'; title: string; key: string }
+  | { type: 'station'; station: SchemaStation; key: string };
+
 export default function SearchBar({ onPick }: Props) {
   const { theme } = useTheme();
+  const { favorites, recents } = useStationsStore();
   const [query, setQuery] = useState('');
   const [focused, setFocused] = useState(false);
 
-  const results = useMemo(() => {
-    if (query.length < 2) return [];
-    const q = query.toLowerCase();
-    return Object.values(STATIONS)
-      .filter((s) => s.name.toLowerCase().includes(q))
-      .slice(0, 12);
-  }, [query]);
+  // Собираем единый список для FlatList
+  const displayData = useMemo<ListItem[]>(() => {
+    const data: ListItem[] = [];
+
+    if (query.length >= 2) {
+      // РЕЖИМ ПОИСКА
+      const q = query.toLowerCase();
+      const results = Object.values(STATIONS)
+        .filter((s) => s.name.toLowerCase().includes(q))
+        .slice(0, 12);
+      
+      if (results.length > 0) {
+        data.push({ type: 'header', title: 'Результаты поиска', key: 'h_search' });
+        results.forEach(s => data.push({ type: 'station', station: s, key: s.id }));
+      }
+    } else {
+      // РЕЖИМ ИЗБРАННОГО И НЕДАВНИХ (если строка пустая или 1 символ)
+      if (favorites.length > 0) {
+        data.push({ type: 'header', title: '★ Избранное', key: 'h_favs' });
+        favorites.forEach(s => data.push({ type: 'station', station: s, key: 'fav_' + s.id }));
+      }
+      
+      if (recents.length > 0) {
+        data.push({ type: 'header', title: '🕒 Недавние', key: 'h_recents' });
+        recents.forEach(s => data.push({ type: 'station', station: s, key: 'rec_' + s.id }));
+      }
+    }
+
+    return data;
+  }, [query, favorites, recents]);
 
   const handlePick = (s: SchemaStation) => {
     setQuery('');
@@ -50,20 +80,42 @@ export default function SearchBar({ onPick }: Props) {
         )}
       </View>
 
-      {focused && results.length > 0 && (
+      {focused && displayData.length > 0 && (
         <View style={[styles.dropdown, { backgroundColor: theme.card, borderColor: theme.border }]}>
           <FlatList
             keyboardShouldPersistTaps="handled"
-            data={results}
-            keyExtractor={(s) => s.id}
-            renderItem={({ item }) => (
-              <TouchableOpacity style={styles.item} onPress={() => handlePick(item)}>
-                <Text style={[styles.itemText, { color: theme.text }]}>{item.name}</Text>
-                <Text style={[styles.itemMeta, { color: theme.textMuted }]}>
-                  {item.lines.join(' • ')}
-                </Text>
-              </TouchableOpacity>
-            )}
+            data={displayData}
+            keyExtractor={(item) => item.key}
+            renderItem={({ item }) => {
+              // Рендер заголовка секции
+              if (item.type === 'header') {
+                return (
+                  <View style={[styles.headerRow, { backgroundColor: theme.bg }]}>
+                    <Text style={[styles.headerTitle, { color: theme.textMuted }]}>
+                      {item.title}
+                    </Text>
+                  </View>
+                );
+              }
+
+              // Рендер самой станции
+              const s = item.station;
+              const isFav = favorites.some((f) => f.id === s.id);
+
+              return (
+                <TouchableOpacity style={styles.item} onPress={() => handlePick(s)}>
+                  <View style={{ flex: 1 }}>
+                    <Text style={[styles.itemText, { color: theme.text }]}>
+                      {s.name}
+                    </Text>
+                    <Text style={[styles.itemMeta, { color: theme.textMuted }]}>
+                      {s.lines.join(' • ')}
+                    </Text>
+                  </View>
+                  {isFav && <Text style={styles.starIcon}>★</Text>}
+                </TouchableOpacity>
+              );
+            }}
           />
         </View>
       )}
@@ -89,10 +141,22 @@ const styles = StyleSheet.create({
     shadowRadius: 16, shadowOffset: { width: 0, height: 6 },
     elevation: 6,
   },
+  // Стили для заголовков
+  headerRow: {
+    paddingHorizontal: 16, paddingVertical: 8,
+    borderTopWidth: 1, borderBottomWidth: 1,
+    borderColor: 'rgba(0,0,0,0.05)',
+  },
+  headerTitle: {
+    fontSize: 12, fontWeight: '700', textTransform: 'uppercase',
+  },
+  // Стили для элементов
   item: {
+    flexDirection: 'row', alignItems: 'center',
     paddingHorizontal: 16, paddingVertical: 12,
     borderBottomWidth: 1, borderBottomColor: 'rgba(0,0,0,0.06)',
   },
   itemText: { fontSize: 15, fontWeight: '600' },
   itemMeta: { fontSize: 12, marginTop: 2 },
+  starIcon: { color: '#FFD700', fontSize: 18, marginLeft: 8 },
 });

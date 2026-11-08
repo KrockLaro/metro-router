@@ -1,5 +1,6 @@
 export type Accessibility = 'full' | 'partial' | 'none';
 export type StationOrientation = 'right' | 'left' | 'bottom' | 'top';
+import { osmFacilities } from './osmFacilities';
 
 export interface StationFacilities {
   wheelchair: Accessibility;
@@ -86,6 +87,46 @@ const expressStations = [
 
 const aeroexpressStations = ['m_pav', 'verhnie_kotly', 'aeroport_domodedovo'];
 
+  /** Мягко применяет данные OSM: только то, что реально нашлось. */
+function mergeOsmFacilities(
+  base: StationFacilities,
+  osm: Partial<StationFacilities> | undefined,
+): StationFacilities {
+  if (!osm) return base;
+
+  const merged: StationFacilities = { ...base };
+
+  // Доступность: если OSM говорит, что есть лифты — станция считается полностью доступной
+  if (typeof osm.lifts === 'number' && osm.lifts > 0) {
+    merged.wheelchair = 'full';
+  } else if (osm.wheelchair && osm.wheelchair !== 'none') {
+    // Иначе доверяем мнению OSM (partial / full)
+    merged.wheelchair = osm.wheelchair;
+  }
+
+  // Булевы флаги: применяем только если OSM говорит true
+  if (osm.ticketOffice === true) merged.ticketOffice = true;
+  if (osm.ticketMachines === true) merged.ticketMachines = true;
+  if (osm.turnstiles === true) merged.turnstiles = true;
+  if (osm.wc === true) merged.wc = true;
+  if (osm.waitingRoom === true) merged.waitingRoom = true;
+  if (osm.wifi === true) merged.wifi = true;
+  if (osm.parking === true) merged.parking = true;
+  if (osm.bikeRacks === true) merged.bikeRacks = true;
+  if (osm.luggageStorage === true) merged.luggageStorage = true;
+  if (osm.helpDesk === true) merged.helpDesk = true;
+
+  // Счётчики: применяем только если OSM нашёл хотя бы один
+  if (typeof osm.lifts === 'number' && osm.lifts > 0) {
+    merged.lifts = osm.lifts;
+  }
+  if (typeof osm.escalators === 'number' && osm.escalators > 0) {
+    merged.escalators = osm.escalators;
+  }
+
+  return merged;
+}
+
 const S = (
   id: string,
   name: string,
@@ -96,10 +137,15 @@ const S = (
   options: Partial<SchemaStation> = {},
 ): SchemaStation => {
   const lines = Array.isArray(lineId) ? lineId : [lineId];
+
+  // Смешиваем базовые удобства с реальными из OSM
+  const facilities = mergeOsmFacilities(baseStation.facilities, osmFacilities[id]);
+
   const base: SchemaStation = {
     ...baseStation,
     id, name, x, y, lines, zone,
     lat: 0, lon: 0,
+    facilities,
     expressStop: expressStations.includes(id),
     aeroexpress: aeroexpressStations.includes(id),
   };
@@ -740,7 +786,7 @@ export const STATIONS: Record<string, SchemaStation> = {
   aeroport_staraya: S('aeroport_staraya', 'Аэропорт (Старая платф.)', -160, 285, 'kiev_aero', 4, { orientation: 'right', isBranch: true, branchId: 'vnukovo', facilities: { ...baseStation.facilities, troikaPayment: false } }),
   vnukovo_airport: S('vnukovo_airport', 'Аэропорт Внуково', -160, 320, 'kiev_aero', 4, { expressStop: true, orientation: 'right', isBranch: true, branchId: 'vnukovo', facilities: { ...baseStation.facilities, troikaPayment: false } }),
 
-    // ══════════════════════════════════════════════════════════════
+  // ══════════════════════════════════════════════════════════════
   // ГОРЬКОВСКОЕ НАПРАВЛЕНИЕ
   // ══════════════════════════════════════════════════════════════
   nizhegorodskaya: S('nizhegorodskaya', 'Нижегородская', 37, 29, 'gorky', 2, { orientation: 'right' }),
@@ -752,7 +798,7 @@ export const STATIONS: Record<string, SchemaStation> = {
   saltykovskaya: S('saltykovskaya', 'Салтыковская', 254, 43, 'gorky', 3, { orientation: 'bottom' }),
   kuchino: S('kuchino', 'Кучино', 277, 36, 'gorky', 3, { orientation: 'bottom' }),
   olgino: S('olgino', 'Ольгино', 300, 29, 'gorky', 3, { orientation: 'bottom' }),
-  zheleznodorozhnaya: S('zheleznodorozhnaya', 'Железнодорожная', 323, 22, 'gorky', 3, { expressStop: true, orientation: 'bottom' }),
+  zheleznodorozhnaya: S('zheleznodorozhnaya', 'Железнодорожная', 323, 22, ['gorky', 'mcd4'], 3, { expressStop: true, orientation: 'bottom' }),
   chernoye: S('chernoye', 'Чёрное', 346, 15, 'gorky', 4, { orientation: 'bottom' }),
   zarya: S('zarya', 'Заря', 369, 8, 'gorky', 4, { orientation: 'bottom' }),
   kupavna: S('kupavna', 'Купавна', 392, 1, 'gorky', 4, { orientation: 'bottom' }),

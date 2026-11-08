@@ -1,39 +1,53 @@
-import React, { useState, useCallback, useRef } from 'react';
+import React, { useState, useCallback, useRef, useMemo } from 'react';
 import {
-  View,
-  StyleSheet,
-  TouchableOpacity,
-  Text,
-  Alert,
-  ActivityIndicator,
+  View, StyleSheet, TouchableOpacity, Text, Alert,
+  ActivityIndicator, Platform,
 } from 'react-native';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
+import DateTimePicker from '@react-native-community/datetimepicker';
 
 import SchematicMap, { SchematicMapHandle } from '../map/SchematicMap';
 import StationInfoSheet from './StationInfoSheet';
 import SearchBar from './SearchBar';
 import RouteScreen from './RouteScreen';
 import { SchemaStation } from '../map/schemaStations';
+import { osmFacilities } from '../map/osmFacilities';
 import { useTheme } from '../theme/ThemeProvider';
-import { SunIcon, MoonIcon } from '../icons';
+import { useSettings } from '../store/SettingsContext';
 import { buildRoute, RouteResult } from '../api/client';
 
 export default function MapScreen() {
-  const { theme, toggle } = useTheme();
+  const { theme } = useTheme();
+  const { mapFilter, avoidAeroexpress, wheelchairOnly } = useSettings();
   const mapApiRef = useRef<SchematicMapHandle | null>(null);
 
   const [selected, setSelected] = useState<SchemaStation | null>(null);
   const [from, setFrom] = useState<SchemaStation | null>(null);
   const [to, setTo] = useState<SchemaStation | null>(null);
 
-  // Массив вариантов маршрута (или null, если маршрут не построен)
   const [routeVariants, setRouteVariants] = useState<RouteResult[] | null>(null);
   const [routeLoading, setRouteLoading] = useState(false);
   const [routeDeparture, setRouteDeparture] = useState(new Date());
 
-  // ------------------------------------------------------------------
-  // Обработчики карты
-  // ------------------------------------------------------------------
+  // ВЫБОР ВРЕМЕНИ
+  const [useNow, setUseNow] = useState(true);
+  const [customTime, setCustomTime] = useState(new Date());
+  const [showTimePicker, setShowTimePicker] = useState(false);
+
+  // Формируем черный список станций, если включен фильтр доступности
+  const avoidStationsList = useMemo(() => {
+    if (!wheelchairOnly) return [];
+    const badStations: string[] = [];
+    
+    // Проходим по всем станциям из OSM
+    for (const [id, facs] of Object.entries(osmFacilities)) {
+      // Если нет полной доступности (т.е. нет лифтов или не отмечено), кидаем в черный список
+      if (facs.wheelchair !== 'full') {
+        badStations.push(id);
+      }
+    }
+    return badStations;
+  }, [wheelchairOnly]);
 
   const handleStationPress = useCallback((s: SchemaStation) => {
     setSelected(s);
@@ -42,16 +56,12 @@ export default function MapScreen() {
 
   const handleSearchPick = useCallback((s: SchemaStation) => {
     setSelected(s);
-    mapApiRef.current?.focusStation(s.id);
+    mapApiRef.current?.focusStation(s.id, 1.6);
   }, []);
 
   const handleMapReady = useCallback((api: SchematicMapHandle) => {
     mapApiRef.current = api;
   }, []);
-
-  // ------------------------------------------------------------------
-  // Обработчики маршрута
-  // ------------------------------------------------------------------
 
   const handleSetFrom = useCallback(() => {
     if (selected) {
@@ -87,36 +97,41 @@ export default function MapScreen() {
 
     setRouteLoading(true);
     try {
-      // Формируем текущее МСК-время как "HH:MM" для depart_at
-      const now = new Date();
-      const msk = new Date(now.getTime() + 3 * 60 * 60 * 1000);
-      const hh = msk.getUTCHours().toString().padStart(2, '0');
-      const mm = msk.getUTCMinutes().toString().padStart(2, '0');
+      let depTimeStr: string;
+      let depDate: Date;
+
+      if (useNow) {
+        const now = new Date();
+        const msk = new Date(now.getTime() + 3 * 60 * 60 * 1000);
+        const hh = msk.getUTCHours().toString().padStart(2, '0');
+        const mm = msk.getUTCMinutes().toString().padStart(2, '0');
+        depTimeStr = `${hh}:${mm}`;
+        depDate = now;
+      } else {
+        const hh = customTime.getHours().toString().padStart(2, '0');
+        const mm = customTime.getMinutes().toString().padStart(2, '0');
+        depTimeStr = `${hh}:${mm}`;
+        depDate = customTime;
+      }
 
       const res = await buildRoute({
         from_id: from.id,
         to_id: to.id,
-        depart_at: `${hh}:${mm}`,
+        depart_at: depTimeStr,
         max_variants: 3,
+        avoid_aeroexpress: avoidAeroexpress,
+        avoid_stations: avoidStationsList,
       });
 
-      setRouteDeparture(now);
+      setRouteDeparture(depDate);
       setRouteVariants(res.variants ?? []);
     } catch (e: any) {
-      const details =
-        e?.response?.data?.detail || e?.message || 'Неизвестная ошибка';
-      Alert.alert(
-        'Не удалось построить маршрут',
-        `${details}\n\nПроверь:\n1. Бэкенд запущен (uvicorn)\n2. http://localhost:8000/docs открывается\n3. В .env указан правильный IP`,
-      );
+      const details = e?.response?.data?.detail || e?.message || 'Неизвестная ошибка';
+      Alert.alert('Не удалось построить маршрут', details);
     } finally {
       setRouteLoading(false);
     }
-  }, [from, to]);
-
-  // ------------------------------------------------------------------
-  // Экран маршрута
-  // ------------------------------------------------------------------
+  }, [from, to, useNow, customTime, avoidAeroexpress, avoidStationsList]);
 
   if (routeVariants && routeVariants.length > 0 && from && to) {
     return (
@@ -133,9 +148,11 @@ export default function MapScreen() {
   const highlighted = [from?.id, to?.id].filter(Boolean) as string[];
   const routeReady = Boolean(from && to);
 
-  // ------------------------------------------------------------------
-  // Основной экран
-  // ------------------------------------------------------------------
+  const formatTime = (d: Date) => {
+    const hh = d.getHours().toString().padStart(2, '0');
+    const mm = d.getMinutes().toString().padStart(2, '0');
+    return `${hh}:${mm}`;
+  };
 
   return (
     <GestureHandlerRootView style={[styles.root, { backgroundColor: theme.bg }]}>
@@ -145,100 +162,64 @@ export default function MapScreen() {
           onMapReady={handleMapReady}
           highlightedStationIds={highlighted}
           activeStationId={selected?.id ?? null}
+          mapFilter={mapFilter}
         />
 
         <SearchBar onPick={handleSearchPick} />
 
-        {/* Кнопка темы */}
         <TouchableOpacity
-          testID="theme-toggle"
-          style={[
-            styles.themeBtn,
-            { backgroundColor: theme.card, borderColor: theme.border },
-          ]}
-          onPress={toggle}
-        >
-          {theme.name === 'dark' ? (
-            <SunIcon size={22} color={theme.icon} />
-          ) : (
-            <MoonIcon size={22} color={theme.icon} />
-          )}
-        </TouchableOpacity>
-
-        {/* Кнопка "Сброс вида" */}
-        <TouchableOpacity
-          style={[
-            styles.resetBtn,
-            { backgroundColor: theme.card, borderColor: theme.border },
-          ]}
+          style={[styles.resetBtn, { backgroundColor: theme.card, borderColor: theme.border }]}
           onPress={() => mapApiRef.current?.resetView()}
         >
           <Text style={[styles.resetText, { color: theme.icon }]}>⌂</Text>
         </TouchableOpacity>
 
-        {/* Панель "Откуда / Куда" */}
         {(from || to) && (
-          <View
-            style={[
-              styles.routePanel,
-              { backgroundColor: theme.card, borderColor: theme.border },
-            ]}
-          >
+          <View style={[styles.routePanel, { backgroundColor: theme.card, borderColor: theme.border }]}>
             <View style={styles.routeRow}>
               <View style={[styles.routeDot, { backgroundColor: '#34C759' }]} />
-              <Text
-                style={[styles.routeText, { color: theme.text }]}
-                numberOfLines={1}
-              >
+              <Text style={[styles.routeText, { color: theme.text }]} numberOfLines={1}>
                 {from ? from.name : 'Выберите станцию отправления'}
               </Text>
             </View>
-
             <View style={styles.routeRow}>
               <View style={[styles.routeDot, { backgroundColor: '#FF3B30' }]} />
-              <Text
-                style={[styles.routeText, { color: theme.text }]}
-                numberOfLines={1}
-              >
+              <Text style={[styles.routeText, { color: theme.text }]} numberOfLines={1}>
                 {to ? to.name : 'Выберите станцию назначения'}
               </Text>
             </View>
 
-            <View
-              style={[styles.routeActions, { borderTopColor: theme.border }]}
-            >
-              <TouchableOpacity onPress={handleSwap} disabled={!from || !to}>
-                <Text
-                  style={[
-                    styles.actionText,
-                    { color: from && to ? theme.accent : theme.iconMuted },
-                  ]}
-                >
-                  Поменять
-                </Text>
+            {/* Блок выбора времени */}
+            <View style={[styles.timeSelector, { borderTopColor: theme.border }]}>
+              <TouchableOpacity style={styles.timeOption} onPress={() => setUseNow(true)}>
+                <Text style={[styles.timeLabel, { color: useNow ? theme.accent : theme.textMuted }]}>Сейчас</Text>
               </TouchableOpacity>
-
-              <TouchableOpacity onPress={handleClear}>
-                <Text style={[styles.actionText, { color: theme.danger }]}>
-                  Сбросить
-                </Text>
-              </TouchableOpacity>
-
+              
               <TouchableOpacity
-                disabled={!routeReady || routeLoading}
-                onPress={handleBuildRoute}
+                style={styles.timeOption}
+                onPress={() => {
+                  setUseNow(false);
+                  setShowTimePicker(true);
+                }}
               >
+                <Text style={[styles.timeLabel, { color: !useNow ? theme.accent : theme.textMuted }]}>
+                  {!useNow ? `В ${formatTime(customTime)}` : 'Выбрать время'}
+                </Text>
+              </TouchableOpacity>
+            </View>
+
+            <View style={[styles.routeActions, { borderTopColor: theme.border }]}>
+              <TouchableOpacity onPress={handleSwap} disabled={!from || !to}>
+                <Text style={[styles.actionText, { color: from && to ? theme.accent : theme.iconMuted }]}>Поменять</Text>
+              </TouchableOpacity>
+              <TouchableOpacity onPress={handleClear}>
+                <Text style={[styles.actionText, { color: theme.danger }]}>Сбросить</Text>
+              </TouchableOpacity>
+              <TouchableOpacity disabled={!routeReady || routeLoading} onPress={handleBuildRoute}>
                 {routeLoading ? (
                   <ActivityIndicator size="small" color={theme.accent} />
                 ) : (
-                  <Text
-                    style={[
-                      styles.actionText,
-                      { color: routeReady ? theme.accent : theme.iconMuted },
-                    ]}
-                  >
-                    Построить
-                  </Text>
+                  <Text style={[styles.actionText, { color: routeReady ? theme.accent : theme.iconMuted }]}>Построить</Text>
                 )}
               </TouchableOpacity>
             </View>
@@ -247,12 +228,23 @@ export default function MapScreen() {
 
         <StationInfoSheet
           station={selected}
-          onClose={() => {
-            setSelected(null);
-          }}
+          onClose={() => setSelected(null)}
           onFrom={handleSetFrom}
           onTo={handleSetTo}
         />
+
+        {showTimePicker && (
+          <DateTimePicker
+            value={customTime}
+            mode="time"
+            display={Platform.OS === 'ios' ? 'spinner' : 'default'}
+            onChange={(event, date) => {
+              setShowTimePicker(false);
+              if (date) setCustomTime(date);
+            }}
+            themeVariant={theme.name === 'dark' ? 'dark' : 'light'}
+          />
+        )}
       </View>
     </GestureHandlerRootView>
   );
@@ -261,76 +253,23 @@ export default function MapScreen() {
 const styles = StyleSheet.create({
   root: { flex: 1 },
   container: { flex: 1 },
+  
+  resetBtn: { 
+    position: 'absolute', top: 116, right: 16, 
+    width: 44, height: 44, borderRadius: 22, 
+    justifyContent: 'center', alignItems: 'center', borderWidth: 1, zIndex: 20 
+  },
+  resetText: { fontSize: 22, fontWeight: '400' },
 
-  themeBtn: {
-    position: 'absolute',
-    top: 116,
-    right: 16,
-    width: 44,
-    height: 44,
-    borderRadius: 22,
-    justifyContent: 'center',
-    alignItems: 'center',
-    borderWidth: 1,
-    shadowColor: '#000',
-    shadowOpacity: 0.1,
-    shadowRadius: 8,
-    shadowOffset: { width: 0, height: 3 },
-    elevation: 3,
-    zIndex: 20,
-  },
-
-  resetBtn: {
-    position: 'absolute',
-    top: 172,
-    right: 16,
-    width: 44,
-    height: 44,
-    borderRadius: 22,
-    justifyContent: 'center',
-    alignItems: 'center',
-    borderWidth: 1,
-    shadowColor: '#000',
-    shadowOpacity: 0.1,
-    shadowRadius: 8,
-    shadowOffset: { width: 0, height: 3 },
-    elevation: 3,
-    zIndex: 20,
-  },
-  resetText: {
-    fontSize: 22,
-    fontWeight: '400',
-  },
-
-  routePanel: {
-    position: 'absolute',
-    left: 16,
-    right: 16,
-    bottom: 24,
-    padding: 12,
-    borderRadius: 16,
-    borderWidth: 1,
-    shadowColor: '#000',
-    shadowOpacity: 0.15,
-    shadowRadius: 12,
-    shadowOffset: { width: 0, height: 4 },
-    elevation: 5,
-    zIndex: 15,
-  },
-  routeRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    paddingVertical: 6,
-    gap: 10,
-  },
+  routePanel: { position: 'absolute', left: 16, right: 16, bottom: 24, padding: 12, borderRadius: 16, borderWidth: 1, zIndex: 15 },
+  routeRow: { flexDirection: 'row', alignItems: 'center', paddingVertical: 6, gap: 10 },
   routeDot: { width: 12, height: 12, borderRadius: 6 },
   routeText: { flex: 1, fontSize: 15, fontWeight: '500' },
-  routeActions: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    marginTop: 8,
-    paddingTop: 8,
-    borderTopWidth: 1,
-  },
+  
+  timeSelector: { flexDirection: 'row', marginTop: 8, paddingTop: 8, borderTopWidth: 1, gap: 16 },
+  timeOption: { paddingVertical: 4 },
+  timeLabel: { fontSize: 14, fontWeight: '600' },
+
+  routeActions: { flexDirection: 'row', justifyContent: 'space-between', marginTop: 8, paddingTop: 8, borderTopWidth: 1 },
   actionText: { fontSize: 14, fontWeight: '600' },
 });

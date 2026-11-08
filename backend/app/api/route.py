@@ -38,6 +38,8 @@ class RouteRequest(BaseModel):
     to_id: str
     depart_at: str | None = None      # "HH:MM" МСК; если нет — берём now
     max_variants: int | None = None
+    avoid_aeroexpress: bool = False   # <--- НОВОЕ
+    avoid_stations: list[str] | None = None # <--- НОВОЕ
 
 
 def _parse_depart_at(s: str | None) -> time_t:
@@ -70,7 +72,9 @@ def _same_trains(a: dict, b: dict) -> bool:
 
 async def _build_response(from_id: str, to_id: str,
                           max_variants: int | None = None,
-                          depart_at: str | None = None) -> dict:
+                          depart_at: str | None = None,
+                          avoid_aeroexpress: bool = False,
+                          avoid_stations: list[str] | None = None) -> dict:
     if from_id not in net.stations:
         raise HTTPException(404, f"Станция '{from_id}' не найдена")
     if to_id not in net.stations:
@@ -78,8 +82,12 @@ async def _build_response(from_id: str, to_id: str,
 
     dep_time = _parse_depart_at(depart_at)
     k = max(1, min(max_variants or 3, 5))
+    
+    # Превращаем список запрещенных станций в frozenset для быстрого поиска
+    avoid_set = frozenset(avoid_stations or [])
 
-    routes = find_routes(net, from_id, to_id, k=k)
+    # Ищем маршруты, исключая запрещенные станции
+    routes = find_routes(net, from_id, to_id, k=k, avoid_stations=avoid_set)
 
     # 1. Базовые варианты — явно на обычной электричке (local).
     #    Иначе enrich может сам найти экспресс, и второй вариант
@@ -91,7 +99,9 @@ async def _build_response(from_id: str, to_id: str,
         variants.append(d)
 
     # 2. Пробуем построить вариант «с экспрессом» от первого (быстрейшего) пути.
-    if routes:
+    #    НО: если пользователь включил настройку "Избегать Аэроэкспрессов",
+    #    мы не предлагаем экспресс-вариант, чтобы не путать его.
+    if routes and not avoid_aeroexpress:
         d_exp = routes[0].to_dict()
         d_exp = await enrich_route(d_exp, dep_time, prefer_express=True)
         if variants and not _same_trains(variants[0], d_exp):
@@ -107,22 +117,37 @@ async def _build_response(from_id: str, to_id: str,
 @router.post("/route")
 async def route_main(req: RouteRequest):
     """Основной эндпоинт, который вызывает frontend."""
-    return await _build_response(req.from_id, req.to_id,
-                                 req.max_variants, req.depart_at)
+    return await _build_response(
+        req.from_id, req.to_id,
+        max_variants=req.max_variants,
+        depart_at=req.depart_at,
+        avoid_aeroexpress=req.avoid_aeroexpress,
+        avoid_stations=req.avoid_stations
+    )
 
 
 @router.post("/route/plan")
 async def route_plan(req: RouteRequest):
     """Алиас — некоторые старые версии фронта стучатся сюда."""
-    return await _build_response(req.from_id, req.to_id,
-                                 req.max_variants, req.depart_at)
+    return await _build_response(
+        req.from_id, req.to_id,
+        max_variants=req.max_variants,
+        depart_at=req.depart_at,
+        avoid_aeroexpress=req.avoid_aeroexpress,
+        avoid_stations=req.avoid_stations
+    )
 
 
 @router.post("/api/route/simple")
 async def route_simple(req: RouteRequest):
     """Старый путь. Оставлен на случай, если что-то ещё сюда стучится."""
-    return await _build_response(req.from_id, req.to_id,
-                                 req.max_variants, req.depart_at)
+    return await _build_response(
+        req.from_id, req.to_id,
+        max_variants=req.max_variants,
+        depart_at=req.depart_at,
+        avoid_aeroexpress=req.avoid_aeroexpress,
+        avoid_stations=req.avoid_stations
+    )
 
 
 # ── Отладка ───────────────────────────────────────────────
@@ -149,6 +174,7 @@ async def debug_route(from_id: str, to_id: str,
         }
 
     dep_time = _parse_depart_at(depart_at)
+    # В дебаге не передаем фильтры (показываем все маршруты)
     routes = find_routes(net, from_id, to_id, k=3)
     if not routes:
         return {

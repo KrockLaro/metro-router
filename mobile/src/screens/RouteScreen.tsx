@@ -78,11 +78,10 @@ function getRouteColors(theme: Theme): RouteColors {
 }
 
 // ------------------------------------------------------------
-// Компонент метки метро
+// Компонент метки метро (в пересадках)
 // ------------------------------------------------------------
 
 function MetroBadge({ stationIds, theme, isDark }: { stationIds: (string | undefined)[]; theme: any; isDark: boolean }) {
-  // Собираем уникальные линии со всех станций (например, при переходе с Ярославского на Казанский)
   const metroLinesMap = new Map();
   for (const id of stationIds) {
     if (!id) continue;
@@ -106,9 +105,7 @@ function MetroBadge({ stationIds, theme, isDark }: { stationIds: (string | undef
         <View style={stylesMetro.icon}>
           <Text style={stylesMetro.iconText}>М</Text>
         </View>
-        <Text style={[stylesMetro.title, { color: theme.text }]}>
-          Переход на:
-        </Text>
+        <Text style={[stylesMetro.title, { color: theme.text }]}>Переход на:</Text>
       </View>
       <View style={stylesMetro.list}>
         {lines.map((line) => (
@@ -130,6 +127,7 @@ interface MergedLeg {
   kind: 'ride' | 'transfer';
   line: string | null;
   line_color: string | null;
+  line_kind: 'cppk' | 'mcd' | 'mcc' | 'metro' | null;
   from: { id: string; name: string };
   to: { id: string; name: string };
   minutes: number;
@@ -147,7 +145,7 @@ function mergeLegs(segments: RouteSegment[]): MergedLeg[] {
   for (const seg of segments) {
     if (seg.kind === 'transfer') {
       result.push({
-        kind: 'transfer', line: null, line_color: null,
+        kind: 'transfer', line: null, line_color: null, line_kind: null,
         from: seg.from, to: seg.to, minutes: seg.minutes, isExpress: false,
       });
       continue;
@@ -169,6 +167,7 @@ function mergeLegs(segments: RouteSegment[]): MergedLeg[] {
         kind: 'ride',
         line: seg.line,
         line_color: seg.line_color,
+        line_kind: seg.line_kind,
         from: seg.from,
         to: seg.to,
         minutes: seg.minutes,
@@ -288,14 +287,38 @@ export default function RouteScreen({
   );
 
   const fare: Fare | null = useMemo(() => {
-    const rides = legs.filter((l) => l.kind === 'ride');
-    if (rides.length === 0) return null;
-    const first = rides[0];
-    const last = rides[rides.length - 1];
-    const isExpress = rides.some((l) => l.isExpress);
-    const isAeroexpress = rides.some((l) => l.line === 'Аэроэкспресс');
+    // Исключаем метро из расчёта ж/д тарифа, чтобы функция calculateFare не сломалась
+    const railLegs = legs.filter((l) => l.kind === 'ride' && l.line_kind !== 'metro' && l.line_kind !== 'mcc');
+    if (railLegs.length === 0) return null;
+    
+    const first = railLegs[0];
+    const last = railLegs[railLegs.length - 1];
+    const isExpress = railLegs.some((l) => l.isExpress);
+    const isAeroexpress = railLegs.some((l) => l.line === 'Аэроэкспресс');
     return calculateFare(first.from.id, last.to.id, isExpress, isAeroexpress);
   }, [legs]);
+
+  // Считаем количество "входов" в метро (непрерывный участок метро = 1 вход)
+  const metroCount = useMemo(() => {
+    let count = 0;
+    let inMetro = false;
+    for (const leg of legs) {
+      if (leg.kind === 'ride' && (leg.line_kind === 'metro' || leg.line_kind === 'mcc')) {
+        if (!inMetro) {
+          count++;
+          inMetro = true;
+        }
+      } else if (leg.kind === 'transfer') {
+        // Пересадка внутри метро не сбрасывает счетчик
+        continue;
+      } else {
+        inMetro = false;
+      }
+    }
+    return count;
+  }, [legs]);
+
+  const totalRubles = (fare?.rubles || 0) + (metroCount * 73);
 
   const troikaStatus = useMemo(() => {
     if (!currentRoute) {
@@ -425,15 +448,25 @@ export default function RouteScreen({
             {Math.round(currentRoute.total_minutes)} мин
           </Text>
         </View>
-        <Text style={styles.subtitle}>
-          Сегодня · Отправление {displayDeparture} · Электричка
+          <Text style={styles.subtitle}>
+          {currentDeparture.toDateString() === new Date().toDateString() 
+            ? 'Сегодня' 
+            : currentDeparture.toLocaleDateString('ru-RU', { day: 'numeric', month: 'long' })} 
+          {' · '}Отправление {displayDeparture}
         </Text>
 
         {/* Сводка */}
         <View style={styles.summaryCard}>
-          <Text style={styles.summaryItem}>
-            {fare ? `${fare.rubles} ₽` : '— ₽'}
-          </Text>
+          <View style={{ flexDirection: 'column' }}>
+            <Text style={styles.summaryItem}>
+              {totalRubles > 0 ? `${totalRubles} ₽` : '— ₽'}
+            </Text>
+            {metroCount > 0 && (
+              <Text style={{ fontSize: 10, color: c.textMuted, marginTop: 2 }}>
+                включая метро (Тройка)
+              </Text>
+            )}
+          </View>
           <Text style={styles.summaryItem}>
             {currentRoute.transfers}{' '}
             {plural(currentRoute.transfers, [
@@ -515,12 +548,10 @@ export default function RouteScreen({
                     <Text style={styles.transferSub}>
                       {Math.round(leg.minutes)} мин
                     </Text>
-                    {/* Метки метро для пересадки */}
                     <MetroBadge stationIds={[leg.from.id, leg.to.id]} theme={theme} isDark={isDark} />
                   </View>
                 </View>
 
-                {/* Если пересадка последняя — дорисовываем конечную станцию */}
                 {isLast && (
                   <View style={styles.rideRow}>
                     <View style={styles.timeCol}>
@@ -542,16 +573,20 @@ export default function RouteScreen({
           const color = leg.line_color || c.accent;
           const km = estimateKm(leg.minutes);
 
+          // Определяем, является ли это виртуальной линией метро/МЦК
+          const isMetro = leg.line_kind === 'metro' || leg.line_kind === 'mcc';
+          
           const trainType = leg.trainType ?? (leg.isExpress ? 'express' : 'local');
           const isExpressTrain = trainType === 'express';
 
-          const allIntermediates = getIntermediateStations(leg.from.id, leg.to.id);
+          // Для метро мы не запрашиваем промежуточные станции
+          const allIntermediates = isMetro ? [] : getIntermediateStations(leg.from.id, leg.to.id);
           const intermediates = isExpressTrain
             ? allIntermediates.filter((st) => st.expressStop)
             : allIntermediates;
 
           const isExpanded = expandedIndex === i;
-          const direction = getDirectionInfo(leg.from.id, leg.to.id);
+          const direction = isMetro ? null : getDirectionInfo(leg.from.id, leg.to.id);
 
           const approx = leg.scheduleFound === false && !leg.trainNumber ? '~ ' : '';
           const segDep = leg.departureTime
@@ -597,7 +632,22 @@ export default function RouteScreen({
                     <Text style={styles.lineName}>
                       {leg.line || 'Маршрут'}
                     </Text>
-                    {leg.isExpress && (
+                    {/* Бейджик Метро / МЦК */}
+                    {isMetro && (
+                      <View style={[
+                        styles.metroLineBadge, 
+                        { backgroundColor: leg.line_kind === 'mcc' ? '#FFD700' : '#8B4513' }
+                      ]}>
+                        <Text style={[
+                          styles.metroLineBadgeText, 
+                          { color: leg.line_kind === 'mcc' ? '#1C1C1E' : '#FFF' }
+                        ]}>
+                          {leg.line_kind === 'mcc' ? 'МЦК' : 'Метро'}
+                        </Text>
+                      </View>
+                    )}
+                    
+                    {!isMetro && leg.isExpress && (
                       <View style={styles.expressBadge}>
                         <Text style={styles.expressBadgeText}>Э</Text>
                       </View>
@@ -622,34 +672,37 @@ export default function RouteScreen({
                     style={styles.lineRow}
                     onPress={() => toggleExpand(i)}
                     activeOpacity={intermediates.length > 0 ? 0.7 : 1}
-                    disabled={intermediates.length === 0}
+                    disabled={isMetro || intermediates.length === 0}
                   >
                     <View style={{ flex: 1 }}>
                       <Text style={styles.directionLabel}>
-                        {direction
-                          ? direction.label
-                          : `В сторону: ${leg.to.name}`}
+                        {isMetro ? 'Поездка по городу' : (direction ? direction.label : `В сторону: ${leg.to.name}`)}
                       </Text>
                       <Text style={styles.lineMeta}>
                         {Math.round(leg.minutes)} мин
-                        {isExpressTrain
-                          ? intermediates.length > 0
-                            ? ` · ${intermediates.length} ${plural(
-                                intermediates.length,
-                                ['остановка', 'остановки', 'остановок'],
-                              )} экспресса`
-                            : ' · без остановок'
-                          : intermediates.length > 0
-                            ? ` · ${intermediates.length} ${plural(
-                                intermediates.length,
-                                ['ост.', 'ост.', 'ост.'],
-                              )}`
-                            : ' · без остановок'}
+                        {!isMetro && (
+                          <>
+                            {isExpressTrain
+                              ? intermediates.length > 0
+                                ? ` · ${intermediates.length} ${plural(intermediates.length, ['остановка', 'остановки', 'остановок'])} экспресса`
+                                : ' · без остановок'
+                              : intermediates.length > 0
+                                ? ` · ${intermediates.length} ${plural(intermediates.length, ['ост.', 'ост.', 'ост.'])}`
+                                : ' · без остановок'}
+                          </>
+                        )}
                         {' · '}
                         {km} км
                       </Text>
+                      
+                      {/* Информация о стоимости проезда */}
+                      {isMetro && (
+                        <Text style={{ marginTop: 4, fontSize: 12, color: c.textMuted, fontStyle: 'italic' }}>
+                          Вход в метро: 73 ₽ (Тройка) / 83 ₽ (Банк. карта)
+                        </Text>
+                      )}
                     </View>
-                    {intermediates.length > 0 && (
+                    {!isMetro && intermediates.length > 0 && (
                       <View
                         style={{
                           transform: [
@@ -662,7 +715,7 @@ export default function RouteScreen({
                     )}
                   </TouchableOpacity>
 
-                  {isExpanded && intermediates.length > 0 && (
+                  {isExpanded && !isMetro && intermediates.length > 0 && (
                     <View style={styles.intermediateList}>
                       <View
                         style={[
@@ -836,11 +889,18 @@ const makeStyles = (c: RouteColors) =>
       marginBottom: 6, gap: 8,
     },
     lineName: { fontSize: 15, fontWeight: '600', color: c.text },
+    
+    // Бейджики
     expressBadge: {
       backgroundColor: '#E5231B',
       paddingHorizontal: 6, paddingVertical: 2, borderRadius: 4,
     },
     expressBadgeText: { color: '#FFFFFF', fontSize: 10, fontWeight: '700' },
+    metroLineBadge: {
+      paddingHorizontal: 6, paddingVertical: 2, borderRadius: 4,
+    },
+    metroLineBadgeText: { fontSize: 10, fontWeight: '700' },
+
     directionLabel: {
       fontSize: 14, fontWeight: '600',
       color: c.text, marginBottom: 2,

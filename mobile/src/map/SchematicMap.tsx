@@ -13,6 +13,7 @@ import {
 import { STATIONS, SchemaStation, StationOrientation } from './schemaStations';
 import { LINES } from './schemaLines';
 import { useTheme } from '../theme/ThemeProvider';
+import { MapFilterType } from '../store/SettingsContext';
 
 const { width: SCREEN_W, height: SCREEN_H } = Dimensions.get('window');
 
@@ -40,8 +41,6 @@ const BW = _bounds.w;
 const BH = _bounds.h;
 
 const TAP_RADIUS = 30;
-const PAN_OVERSCROLL = 0.1; // Небольшой запас при перетаскивании
-
 const STATION_R_HUB = 10;
 const STATION_R_REG = 6;
 const STATION_STROKE = 2;
@@ -74,6 +73,7 @@ interface Props {
   onMapReady?: (api: SchematicMapHandle) => void;
   highlightedStationIds?: string[];
   activeStationId?: string | null;
+  mapFilter?: MapFilterType; // <-- ДОБАВЛЕНО
 }
 
 function getStationPriority(s: SchemaStation): 1 | 2 | 3 {
@@ -84,6 +84,14 @@ function getStationPriority(s: SchemaStation): 1 | 2 | 3 {
   return 1;
 }
 
+// Проверка, подходит ли станция под фильтр
+// Проверка, подходит ли станция под фильтр
+function matchesFilter(s: SchemaStation, filter: MapFilterType | undefined): boolean {
+  if (!filter) return true;
+  if (filter === 'wheelchair') return s.facilities.wheelchair === 'full';
+  return !!s.facilities[filter];
+}
+
 interface LabelLayout {
   tx: number;
   ty: number;
@@ -92,14 +100,8 @@ interface LabelLayout {
 }
 
 function computeLabelLayout(
-  cx: number,
-  cy: number,
-  hasBadge: boolean,
-  size: number,
-  textW: number,
-  r: number,
-  orientation: StationOrientation,
-  fontScale: number,
+  cx: number, cy: number, hasBadge: boolean, size: number,
+  textW: number, r: number, orientation: StationOrientation, fontScale: number,
 ): LabelLayout {
   const badgeW = BADGE_W * fontScale;
   const badgeH = BADGE_H * fontScale;
@@ -108,34 +110,14 @@ function computeLabelLayout(
 
   switch (orientation) {
     case 'left':
-      return {
-        tx: cx - off - (hasBadge ? badgeW + gap : 0) - textW,
-        ty: cy + size / 3,
-        badgeX: cx - off - badgeW,
-        badgeY: cy - badgeH / 2,
-      };
+      return { tx: cx - off - (hasBadge ? badgeW + gap : 0) - textW, ty: cy + size / 3, badgeX: cx - off - badgeW, badgeY: cy - badgeH / 2 };
     case 'top':
-      return {
-        tx: cx - textW / 2,
-        ty: cy - off - (hasBadge ? badgeH + gap : 0),
-        badgeX: cx - badgeW / 2,
-        badgeY: cy - off - badgeH,
-      };
+      return { tx: cx - textW / 2, ty: cy - off - (hasBadge ? badgeH + gap : 0), badgeX: cx - badgeW / 2, badgeY: cy - off - badgeH };
     case 'bottom':
-      return {
-        tx: cx - textW / 2,
-        ty: cy + off + (hasBadge ? badgeH + gap : 0) + size,
-        badgeX: cx - badgeW / 2,
-        badgeY: cy + off,
-      };
+      return { tx: cx - textW / 2, ty: cy + off + (hasBadge ? badgeH + gap : 0) + size, badgeX: cx - badgeW / 2, badgeY: cy + off };
     case 'right':
     default:
-      return {
-        tx: cx + off + (hasBadge ? badgeW + gap : 0),
-        ty: cy + size / 3,
-        badgeX: cx + off,
-        badgeY: cy - badgeH / 2,
-      };
+      return { tx: cx + off + (hasBadge ? badgeW + gap : 0), ty: cy + size / 3, badgeX: cx + off, badgeY: cy - badgeH / 2 };
   }
 }
 
@@ -159,24 +141,27 @@ const SchematicMap: React.FC<Props> = ({
   onMapReady,
   highlightedStationIds,
   activeStationId,
+  mapFilter,
 }) => {
   const { theme } = useTheme();
 
   const viewW = useSharedValue(SCREEN_W);
   const viewH = useSharedValue(SCREEN_H);
 
-  // Инициализация параметров масштабирования и положения
-  const initZoom = Math.min(SCREEN_W / BW, SCREEN_H / BH);
-  const minZoom = useSharedValue(initZoom);
-  const maxZoom = useSharedValue(initZoom * 5);
+  const isInitialized = useSharedValue(false);
+  const minZoom = useSharedValue(1);
+  const maxZoom = useSharedValue(5);
 
-  const zoom = useSharedValue(initZoom);
+  const zoom = useSharedValue(1);
   const centerX = useSharedValue(BX + BW / 2);
   const centerY = useSharedValue(BY + BH / 2);
 
   const savedCenterX = useSharedValue(0);
   const savedCenterY = useSharedValue(0);
   const savedZoom = useSharedValue(1);
+
+  const pinchStartWorldX = useSharedValue(0);
+  const pinchStartWorldY = useSharedValue(0);
 
   const [lodLevel, setLodLevel] = useState<LodLevel>(2);
   const lodShared = useSharedValue<number>(2);
@@ -186,18 +171,19 @@ const SchematicMap: React.FC<Props> = ({
 
   const handleLayout = (e: any) => {
     const { width, height } = e.nativeEvent.layout;
-    const fitZoom = Math.min(width / BW, height / BH);
+    if (width === 0 || height === 0) return;
 
-    if (viewW.value !== width || viewH.value !== height) {
-      viewW.value = width;
-      viewH.value = height;
-      minZoom.value = fitZoom;
-      maxZoom.value = fitZoom * 5;
-      
-      // Если карта была в минимальном зуме, обновляем её под новые размеры
-      if (Math.abs(zoom.value - minZoom.value) < 0.01) {
-        zoom.value = fitZoom;
-      }
+    const fitZoom = Math.min(width / BW, height / BH);
+    viewW.value = width;
+    viewH.value = height;
+    minZoom.value = fitZoom;
+    maxZoom.value = fitZoom * 5;
+
+    if (!isInitialized.value || Math.abs(zoom.value - minZoom.value) < 0.05) {
+      isInitialized.value = true;
+      zoom.value = fitZoom;
+      centerX.value = BX + BW / 2;
+      centerY.value = BY + BH / 2;
     }
   };
 
@@ -211,7 +197,6 @@ const SchematicMap: React.FC<Props> = ({
     ];
   });
 
-  // LOD (Level of Detail) - зависит от зума
   useAnimatedReaction(
     () => zoom.value,
     (z) => {
@@ -227,7 +212,6 @@ const SchematicMap: React.FC<Props> = ({
     },
   );
 
-  // Масштабирование шрифта (чтобы при сильном зуме текст не становился гигантским)
   useAnimatedReaction(
     () => zoom.value,
     (z) => {
@@ -307,7 +291,6 @@ const SchematicMap: React.FC<Props> = ({
 
   const stationOffsets = useMemo(() => {
     const offsets = new Map<string, { dx: number; dy: number }>();
-
     const sorted = [...stationEntries].sort((a, b) => {
       const pa = getStationPriority(a);
       const pb = getStationPriority(b);
@@ -321,7 +304,6 @@ const SchematicMap: React.FC<Props> = ({
       const r = s.lines.length > 1 ? STATION_R_HUB : STATION_R_REG;
       let x = s.x;
       let y = s.y;
-
       for (let iter = 0; iter < 30; iter++) {
         let moved = false;
         for (const p of placed) {
@@ -339,7 +321,6 @@ const SchematicMap: React.FC<Props> = ({
         }
         if (!moved) break;
       }
-
       const totalDx = x - s.x;
       const totalDy = y - s.y;
       const totalDist = Math.hypot(totalDx, totalDy);
@@ -349,11 +330,9 @@ const SchematicMap: React.FC<Props> = ({
         x = s.x + totalDx * k;
         y = s.y + totalDy * k;
       }
-
       offsets.set(s.id, { dx: x - s.x, dy: y - s.y });
       placed.push({ x, y, r });
     }
-
     return offsets;
   }, [stationEntries]);
 
@@ -364,10 +343,8 @@ const SchematicMap: React.FC<Props> = ({
 
   const labels = useMemo(() => {
     if (!labelFont) return [];
-
     const DENSITY_RADIUS = 45;
     const DENSITY_THRESHOLD = 3;
-
     const densityMap = new Map<string, number>();
     for (const s of stationEntries) {
       let count = 0;
@@ -379,7 +356,6 @@ const SchematicMap: React.FC<Props> = ({
       }
       densityMap.set(s.id, count);
     }
-
     const isDense = (s: SchemaStation) => (densityMap.get(s.id) ?? 0) >= DENSITY_THRESHOLD;
 
     const visible = stationEntries.filter((s) => {
@@ -400,21 +376,14 @@ const SchematicMap: React.FC<Props> = ({
     });
 
     const obstacles: Rect[] = [];
-
     for (const s of stationEntries) {
       const off = getOffset(s.id);
       const r = s.lines.length > 1 ? STATION_R_HUB : STATION_R_REG;
-      obstacles.push({
-        x: s.x + off.dx - r - 2,
-        y: s.y + off.dy - r - 2,
-        w: r * 2 + 4,
-        h: r * 2 + 4,
-      });
+      obstacles.push({ x: s.x + off.dx - r - 2, y: s.y + off.dy - r - 2, w: r * 2 + 4, h: r * 2 + 4 });
     }
 
     const badgeW = BADGE_W * fontScale;
     const badgeH = BADGE_H * fontScale;
-
     for (const s of visible) {
       if (!s.expressStop) continue;
       const off = getOffset(s.id);
@@ -427,59 +396,39 @@ const SchematicMap: React.FC<Props> = ({
       obstacles.push({ x: bx, y: by, w: badgeW, h: badgeH });
     }
 
-    const placed: Array<{
-      s: SchemaStation;
-      tx: number;
-      ty: number;
-      font: SkFont;
-      ori: StationOrientation;
-    }> = [];
+    const placed: Array<{ s: SchemaStation; tx: number; ty: number; font: SkFont; ori: StationOrientation; }> = [];
 
     for (const s of sorted) {
       const off = getOffset(s.id);
       const cx = s.x + off.dx;
       const cy = s.y + off.dy;
-
       const isHub = s.lines.length > 1;
       const r = isHub ? STATION_R_HUB : STATION_R_REG;
       const hasBadge = !!s.expressStop;
-
       const allowFallback = !hasBadge && isDense(s);
       const scales = allowFallback ? [1.0, FALLBACK_SIZE_SCALE] : [1.0];
-
       let placedOk = false;
 
       for (const sizeScale of scales) {
         if (placedOk) break;
-
         const size = (isHub ? FONT_SIZE_HUB : FONT_SIZE_REG) * fontScale * sizeScale;
-
         let font: SkFont;
         if (sizeScale === 1.0) {
           font = isHub && labelFontBold ? labelFontBold : labelFont;
         } else {
           font = (isHub && labelFontBoldSmall) ? labelFontBoldSmall : (labelFontSmall ?? labelFont);
         }
-
         const textW = font.measureText(s.name).width;
         const lineHeight = size * 1.1;
-
         const orients = candidateOrientations(s.orientation);
         for (const ori of orients) {
           const layout = computeLabelLayout(cx, cy, hasBadge, size, textW, r, ori, fontScale);
-          const bbox: Rect = {
-            x: layout.tx - 1,
-            y: layout.ty - lineHeight + 2,
-            w: textW + 2,
-            h: lineHeight,
-          };
-
+          const bbox: Rect = { x: layout.tx - 1, y: layout.ty - lineHeight + 2, w: textW + 2, h: lineHeight };
           let hit = false;
           for (const o of obstacles) {
             if (overlaps(bbox, o)) { hit = true; break; }
           }
           if (hit) continue;
-
           placed.push({ s, tx: layout.tx, ty: layout.ty, font, ori });
           obstacles.push(bbox);
           placedOk = true;
@@ -487,24 +436,10 @@ const SchematicMap: React.FC<Props> = ({
         }
       }
     }
-
     return placed;
-  }, [
-    lodLevel,
-    stationEntries,
-    labelFont,
-    labelFontBold,
-    labelFontSmall,
-    labelFontBoldSmall,
-    fontScale,
-    getOffset,
-  ]);
+  }, [lodLevel, stationEntries, labelFont, labelFontBold, labelFontSmall, labelFontBoldSmall, fontScale, getOffset]);
 
-  const placedIds = useMemo(
-    () => new Set(labels.map((l) => l.s.id)),
-    [labels],
-  );
-
+  const placedIds = useMemo(() => new Set(labels.map((l) => l.s.id)), [labels]);
   const usedOrientation = useMemo(() => {
     const m = new Map<string, StationOrientation>();
     for (const l of labels) m.set(l.s.id, l.ori);
@@ -518,19 +453,13 @@ const SchematicMap: React.FC<Props> = ({
       const off = getOffset(stationId);
       const targetX = s.x + off.dx;
       const targetY = s.y + off.dy;
-      
-      // Если targetScale задан, берем его от минимального зума.
-      // Но не отдаляем карту, если ты уже приблизил её сильнее.
-      const targetZ = Math.max(
-        zoom.value, 
-        minZoom.value * (targetScale ?? 1.5)
-      );
-      
+      const targetZ = Math.max(zoom.value, minZoom.value * (targetScale ?? 1.5));
+      const sheetYOffset = viewH.value * 0.3 / targetZ;
       zoom.value = withTiming(targetZ, { duration: 400 });
       centerX.value = withTiming(targetX, { duration: 400 });
-      centerY.value = withTiming(targetY, { duration: 400 });
+      centerY.value = withTiming(targetY + sheetYOffset, { duration: 400 });
     },
-    [zoom, minZoom, centerX, centerY, getOffset],
+    [zoom, minZoom, centerX, centerY, getOffset, viewH],
   );
 
   const resetView = useCallback(() => {
@@ -552,46 +481,32 @@ const SchematicMap: React.FC<Props> = ({
     .onUpdate((e) => {
       const dx = e.translationX / zoom.value;
       const dy = e.translationY / zoom.value;
-      
       let nx = savedCenterX.value - dx;
       let ny = savedCenterY.value - dy;
-      
       const halfVW = viewW.value / 2 / zoom.value;
       const halfVH = viewH.value / 2 / zoom.value;
-      
       const minX = BX + halfVW;
       const maxX = BX + BW - halfVW;
       const minY = BY + halfVH;
       const maxY = BY + BH - halfVH;
-      
-      // Если карта меньше экрана, центрируем её. Иначе — не даём выехать за края.
       if (minX > maxX) nx = BX + BW / 2;
       else nx = Math.max(minX, Math.min(maxX, nx));
-      
       if (minY > maxY) ny = BY + BH / 2;
       else ny = Math.max(minY, Math.min(maxY, ny));
-      
       centerX.value = nx;
       centerY.value = ny;
     })
     .onEnd((e) => {
       const vx = e.velocityX / zoom.value;
       const vy = e.velocityY / zoom.value;
-      
       const halfVW = viewW.value / 2 / zoom.value;
       const halfVH = viewH.value / 2 / zoom.value;
-      
       const minX = BX + halfVW;
       const maxX = BX + BW - halfVW;
       const minY = BY + halfVH;
       const maxY = BY + BH - halfVH;
-
-      if (minX <= maxX) {
-        centerX.value = withDecay({ velocity: -vx, deceleration: 0.997, clamp: [minX, maxX] });
-      }
-      if (minY <= maxY) {
-        centerY.value = withDecay({ velocity: -vy, deceleration: 0.997, clamp: [minY, maxY] });
-      }
+      if (minX <= maxX) centerX.value = withDecay({ velocity: -vx, deceleration: 0.997, clamp: [minX, maxX] });
+      if (minY <= maxY) centerY.value = withDecay({ velocity: -vy, deceleration: 0.997, clamp: [minY, maxY] });
     });
 
   const pinch = Gesture.Pinch()
@@ -599,31 +514,22 @@ const SchematicMap: React.FC<Props> = ({
       savedCenterX.value = centerX.value;
       savedCenterY.value = centerY.value;
       savedZoom.value = zoom.value;
+      pinchStartWorldX.value = (e.focalX - viewW.value / 2) / savedZoom.value + savedCenterX.value;
+      pinchStartWorldY.value = (e.focalY - viewH.value / 2) / savedZoom.value + savedCenterY.value;
     })
     .onUpdate((e) => {
       const newZoom = Math.max(minZoom.value, Math.min(maxZoom.value, savedZoom.value * e.scale));
-      
-      // Точка, на которую мы нацелились пальцами, должна остаться на месте
-      const focalWorldX = (e.focalX - viewW.value / 2) / savedZoom.value + savedCenterX.value;
-      const focalWorldY = (e.focalY - viewH.value / 2) / savedZoom.value + savedCenterY.value;
-      
-      const newCenterX = focalWorldX - (e.focalX - viewW.value / 2) / newZoom;
-      const newCenterY = focalWorldY - (e.focalY - viewH.value / 2) / newZoom;
-      
+      const newCenterX = pinchStartWorldX.value - (e.focalX - viewW.value / 2) / newZoom;
+      const newCenterY = pinchStartWorldY.value - (e.focalY - viewH.value / 2) / newZoom;
       zoom.value = newZoom;
-      
-      // Ограничиваем перемещение
       const halfVW = viewW.value / 2 / newZoom;
       const halfVH = viewH.value / 2 / newZoom;
-      
       const minX = BX + halfVW;
       const maxX = BX + BW - halfVW;
       const minY = BY + halfVH;
       const maxY = BY + BH - halfVH;
-      
       if (minX > maxX) centerX.value = BX + BW / 2;
       else centerX.value = Math.max(minX, Math.min(maxX, newCenterX));
-      
       if (minY > maxY) centerY.value = BY + BH / 2;
       else centerY.value = Math.max(minY, Math.min(maxY, newCenterY));
     });
@@ -633,13 +539,10 @@ const SchematicMap: React.FC<Props> = ({
       if (!success) return;
       const isZoomedIn = zoom.value > minZoom.value * 1.5;
       const targetZ = isZoomedIn ? minZoom.value : minZoom.value * 2.5;
-      
       const focalWorldX = (e.x - viewW.value / 2) / zoom.value + centerX.value;
       const focalWorldY = (e.y - viewH.value / 2) / zoom.value + centerY.value;
-      
       const newCenterX = focalWorldX - (e.x - viewW.value / 2) / targetZ;
       const newCenterY = focalWorldY - (e.y - viewH.value / 2) / targetZ;
-      
       zoom.value = withTiming(targetZ, { duration: 300 });
       centerX.value = withTiming(newCenterX, { duration: 300 });
       centerY.value = withTiming(newCenterY, { duration: 300 });
@@ -657,10 +560,7 @@ const SchematicMap: React.FC<Props> = ({
       if (!success) return;
       const worldX = (e.x - viewW.value / 2) / zoom.value + centerX.value;
       const worldY = (e.y - viewH.value / 2) / zoom.value + centerY.value;
-      
-      // Радиус нажатия переводим из экранных пикселей в мировые единицы
       const worldRadius = TAP_RADIUS / zoom.value;
-      
       const offs = offsetsRef.value;
       let closest: SchemaStation | null = null;
       let minDist = Infinity;
@@ -673,7 +573,6 @@ const SchematicMap: React.FC<Props> = ({
         const weighted = d * bonus;
         if (weighted < minDist) { minDist = weighted; closest = s; }
       }
-      
       if (closest && minDist < worldRadius) {
         runOnJS(onStationPress)(closest);
       }
@@ -682,36 +581,37 @@ const SchematicMap: React.FC<Props> = ({
   const taps = Gesture.Exclusive(doubleTap, singleTap);
   const gesture = Gesture.Simultaneous(pan, pinch, taps);
 
-  const highlightSet = useMemo(
-    () => new Set(highlightedStationIds ?? []),
-    [highlightedStationIds],
-  );
-
+  const highlightSet = useMemo(() => new Set(highlightedStationIds ?? []), [highlightedStationIds]);
   const scaledBadgeW = BADGE_W * fontScale;
   const scaledBadgeH = BADGE_H * fontScale;
 
+  // Цвета для фильтра (когда включен)
+  const dimmedLineColor = theme.name === 'dark' ? '#2C2C2E' : '#E5E5EA';
+  const dimmedStationColor = theme.name === 'dark' ? '#3A3A3C' : '#D1D1D6';
+
   return (
-    <View
-      style={[styles.container, { backgroundColor: theme.mapBg }]}
-      onLayout={handleLayout}
-    >
+    <View style={[styles.container, { backgroundColor: theme.mapBg }]} onLayout={handleLayout}>
       <GestureDetector gesture={gesture}>
         <Canvas style={StyleSheet.absoluteFill}>
           <Group transform={transform}>
+            
+            {/* ЛИНИИ */}
             {linePaths.map((item) =>
               item.path ? (
                 <Path
                   key={item.id}
                   path={item.path}
-                  color={item.color}
+                  color={mapFilter ? dimmedLineColor : item.color}
                   style="stroke"
                   strokeWidth={item.strokeWidth}
                   strokeCap="round"
                   strokeJoin="round"
+                  opacity={mapFilter ? 0.5 : 1}
                 />
               ) : null,
             )}
 
+            {/* СТАНЦИИ (КРУЖКИ) */}
             {stationEntries.map((s) => {
               const off = getOffset(s.id);
               const cx = s.x + off.dx;
@@ -720,33 +620,44 @@ const SchematicMap: React.FC<Props> = ({
               const isHighlighted = highlightSet.has(s.id);
               const isActive = s.id === activeStationId;
               const r = isHub ? STATION_R_HUB : STATION_R_REG;
+              
+              const isMatch = matchesFilter(s, mapFilter);
+
+              let fillColor = isHighlighted ? theme.accent : theme.stationFill;
+              if (mapFilter) {
+                fillColor = isMatch ? theme.accent : dimmedStationColor;
+              }
+
               return (
                 <React.Fragment key={s.id}>
                   {isActive && <Circle cx={cx} cy={cy} r={ACTIVE_GLOW_R} color={theme.accent} opacity={0.2} />}
-                  <Circle cx={cx} cy={cy} r={r} color={isHighlighted ? theme.accent : theme.stationFill} />
-                  <Circle cx={cx} cy={cy} r={r} color={theme.stationStroke} style="stroke" strokeWidth={STATION_STROKE} />
+                  
+                  <Circle 
+                    cx={cx} cy={cy} r={r} 
+                    color={fillColor} 
+                    opacity={mapFilter && !isMatch ? 0.3 : 1} 
+                  />
+                  <Circle 
+                    cx={cx} cy={cy} r={r} 
+                    color={theme.stationStroke} 
+                    style="stroke" 
+                    strokeWidth={STATION_STROKE} 
+                    opacity={mapFilter && !isMatch ? 0.3 : 1} 
+                  />
                 </React.Fragment>
               );
             })}
 
-            {stationEntries.map((s) => {
-              if (s.facilities.wheelchair !== 'full') return null;
-              const p = getStationPriority(s);
-              if (lodLevel < 2 && p < 3) return null;
-              const off = getOffset(s.id);
-              const cx = s.x + off.dx + 10;
-              const cy = s.y + off.dy - 10;
-              return (
-                <React.Fragment key={`acc-${s.id}`}>
-                  <Circle cx={cx} cy={cy} r={6} color="#0A84FF" />
-                  <Circle cx={cx} cy={cy} r={2} color="#FFFFFF" />
-                </React.Fragment>
-              );
-            })}
+            
 
+            {/* БЕЙДЖИКИ "Э" (для экспрессов) */}
             {stationEntries.map((s) => {
               if (!s.expressStop) return null;
               if (!placedIds.has(s.id)) return null;
+              
+              const isMatch = matchesFilter(s, mapFilter);
+              if (mapFilter && !isMatch) return null; // Скрываем "Э" у неподходящих
+
               const off = getOffset(s.id);
               const cx = s.x + off.dx;
               const cy = s.y + off.dy;
@@ -769,9 +680,13 @@ const SchematicMap: React.FC<Props> = ({
               );
             })}
 
+            {/* ТЕКСТ "Э" ВНУТРИ БЕЙДЖИКА */}
             {expressFont && stationEntries.map((s) => {
               if (!s.expressStop) return null;
               if (!placedIds.has(s.id)) return null;
+              
+              if (mapFilter && !matchesFilter(s, mapFilter)) return null;
+
               const off = getOffset(s.id);
               const cx = s.x + off.dx;
               const cy = s.y + off.dy;
@@ -793,9 +708,22 @@ const SchematicMap: React.FC<Props> = ({
               );
             })}
 
-            {labels.map(({ s, tx, ty, font }) => (
-              <SkiaText key={`lbl-${s.id}`} x={tx} y={ty} text={s.name} font={font} color={theme.text} />
-            ))}
+            {/* ПОДПИСИ СТАНЦИЙ */}
+            {labels.map(({ s, tx, ty, font }) => {
+              // Если фильтр включен — скрываем подписи неподходящих станций
+              if (mapFilter && !matchesFilter(s, mapFilter)) return null;
+
+              return (
+                <SkiaText 
+                  key={`lbl-${s.id}`} 
+                  x={tx} 
+                  y={ty} 
+                  text={s.name} 
+                  font={font} 
+                  color={theme.text} 
+                />
+              );
+            })}
           </Group>
         </Canvas>
       </GestureDetector>

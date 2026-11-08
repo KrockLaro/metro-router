@@ -8,7 +8,10 @@ import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 
 import { ThemeProvider, useTheme } from './src/theme/ThemeProvider';
 import MapScreen from './src/screens/MapScreen';
+import SettingsScreen from './src/screens/SettingsScreen';
 import AboutScreen from './src/screens/AboutScreen';
+import { MapIcon, SettingsIcon, InfoIcon } from './src/icons/NavIcons';
+import { SettingsProvider } from './src/store/SettingsContext';
 
 const Tab = createBottomTabNavigator();
 
@@ -28,10 +31,35 @@ function Inner() {
           },
           tabBarActiveTintColor: theme.accent,
           tabBarInactiveTintColor: theme.iconMuted,
+          tabBarLabelStyle: { fontSize: 11, fontWeight: '600' },
         }}
       >
-        <Tab.Screen name="Map" component={MapScreen} options={{ title: 'Карта' }} />
-        <Tab.Screen name="About" component={AboutScreen} options={{ title: 'О приложении' }} />
+        <Tab.Screen
+          name="Map"
+          component={MapScreen}
+          options={{
+            title: 'Карта',
+            tabBarIcon: ({ color, size }) => <MapIcon size={size} color={color} />,
+          }}
+        />
+        
+        <Tab.Screen
+          name="Settings"
+          component={SettingsScreen}
+          options={{
+            title: 'Настройки',
+            tabBarIcon: ({ color, size }) => <SettingsIcon size={size} color={color} />,
+          }}
+        />
+
+        <Tab.Screen
+          name="About"
+          component={AboutScreen}
+          options={{
+            title: 'О приложении',
+            tabBarIcon: ({ color, size }) => <InfoIcon size={size} color={color} />,
+          }}
+        />
       </Tab.Navigator>
     </NavigationContainer>
   );
@@ -40,7 +68,9 @@ function Inner() {
 export default function App() {
   return (
     <ThemeProvider>
-      <Inner />
+      <SettingsProvider>
+        <Inner />
+      </SettingsProvider>
     </ThemeProvider>
   );
 }

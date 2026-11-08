@@ -142,6 +142,8 @@ export interface RouteRequest {
   to_id: string;
   depart_at?: string;
   max_variants?: number;
+  avoid_aeroexpress?: boolean;
+  avoid_stations?: string[];
 }
 
 export interface RouteResponse {
