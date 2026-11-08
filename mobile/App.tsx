@@ -5,19 +5,36 @@ import React from 'react';
 import { StatusBar } from 'expo-status-bar';
 import { NavigationContainer, DefaultTheme, DarkTheme } from '@react-navigation/native';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
+import { ActivityIndicator, View } from 'react-native';
 
 import { ThemeProvider, useTheme } from './src/theme/ThemeProvider';
+import { SettingsProvider, useSettings } from './src/store/SettingsContext';
 import MapScreen from './src/screens/MapScreen';
 import SettingsScreen from './src/screens/SettingsScreen';
 import AboutScreen from './src/screens/AboutScreen';
+import TutorialScreen from './src/screens/TutorialScreen';
 import { MapIcon, SettingsIcon, InfoIcon } from './src/icons/NavIcons';
-import { SettingsProvider } from './src/store/SettingsContext';
 
 const Tab = createBottomTabNavigator();
 
 function Inner() {
   const { theme } = useTheme();
+  const { hasSeenTutorial, setHasSeenTutorial, isLoaded } = useSettings();
   const navTheme = theme.name === 'dark' ? DarkTheme : DefaultTheme;
+
+  // Ждем, пока загрузятся настройки (чтобы не мигало)
+  if (!isLoaded) {
+    return (
+      <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center', backgroundColor: theme.bg }}>
+        <ActivityIndicator size="large" color={theme.accent} />
+      </View>
+    );
+  }
+
+  // Если туториал не пройден - показываем его вместо навигации
+  if (!hasSeenTutorial) {
+    return <TutorialScreen onFinish={() => setHasSeenTutorial(true)} />;
+  }
 
   return (
     <NavigationContainer theme={navTheme}>
@@ -42,7 +59,6 @@ function Inner() {
             tabBarIcon: ({ color, size }) => <MapIcon size={size} color={color} />,
           }}
         />
-        
         <Tab.Screen
           name="Settings"
           component={SettingsScreen}
@@ -51,7 +67,6 @@ function Inner() {
             tabBarIcon: ({ color, size }) => <SettingsIcon size={size} color={color} />,
           }}
         />
-
         <Tab.Screen
           name="About"
           component={AboutScreen}

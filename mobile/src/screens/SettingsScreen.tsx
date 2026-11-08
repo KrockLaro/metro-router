@@ -20,7 +20,8 @@ export default function SettingsScreen() {
   const { 
     avoidAeroexpress, setAvoidAeroexpress,
     wheelchairOnly, setWheelchairOnly,
-    mapFilter, setMapFilter
+    mapFilter, setMapFilter,
+    setHasSeenTutorial // <-- Достаем метод для запуска туториала
   } = useSettings();
   
   const isDark = theme.name === 'dark';
@@ -55,10 +56,20 @@ export default function SettingsScreen() {
         {FILTERS.map((f, i) => (
           <TouchableOpacity 
             key={f.label} 
-            style={[styles.row, { paddingHorizontal: 16, paddingVertical: 14, borderBottomWidth: i < FILTERS.length - 1 ? 1 : 0, borderBottomColor: theme.border }]}
+            style={[
+              styles.row, 
+              { 
+                paddingHorizontal: 16, 
+                paddingVertical: 14, 
+                borderBottomWidth: i < FILTERS.length - 1 ? 1 : 0, 
+                borderBottomColor: theme.border 
+              }
+            ]}
             onPress={() => setMapFilter(f.id)}
           >
-            <Text style={[styles.rowLabel, { color: mapFilter === f.id ? theme.accent : theme.text }]}>{f.label}</Text>
+            <Text style={[styles.rowLabel, { color: mapFilter === f.id ? theme.accent : theme.text }]}>
+              {f.label}
+            </Text>
             {mapFilter === f.id && <Text style={{ color: theme.accent, fontSize: 18 }}>✓</Text>}
           </TouchableOpacity>
         ))}
@@ -88,6 +99,20 @@ export default function SettingsScreen() {
           Не предлагать более дорогие билеты Аэроэкспресса.
         </Text>
       </View>
+
+      {/* КНОПКА ОБУЧЕНИЯ */}
+      <Text style={[styles.sectionTitle, { color: theme.textMuted }]}>ПОМОЩЬ</Text>
+      <TouchableOpacity
+        style={[styles.card, { backgroundColor: theme.card, borderColor: theme.border, alignItems: 'center', paddingVertical: 16 }]}
+        onPress={() => setHasSeenTutorial(false)}
+        activeOpacity={0.7}
+      >
+        <Text style={{ color: theme.accent, fontWeight: '600', fontSize: 15 }}>
+          Посмотреть обучение еще раз
+        </Text>
+      </TouchableOpacity>
+
+      <View style={{ height: 40 }} />
     </ScrollView>
   );
 }

@@ -7,12 +7,15 @@ interface SettingsData {
   avoidAeroexpress: boolean;
   wheelchairOnly: boolean;
   mapFilter: MapFilterType;
+  hasSeenTutorial: boolean; // <-- Добавлено
 }
 
 interface SettingsContextType extends SettingsData {
   setAvoidAeroexpress: (v: boolean) => void;
   setWheelchairOnly: (v: boolean) => void;
   setMapFilter: (v: MapFilterType) => void;
+  setHasSeenTutorial: (v: boolean) => void; // <-- Добавлено
+  isLoaded: boolean; // <-- Добавлено (полезно знать, загрузились ли настройки)
 }
 
 const SettingsContext = createContext<SettingsContextType | undefined>(undefined);
@@ -24,10 +27,10 @@ export function SettingsProvider({ children }: { children: React.ReactNode }) {
     avoidAeroexpress: false,
     wheelchairOnly: false,
     mapFilter: null,
+    hasSeenTutorial: false,
   });
   const [isLoaded, setIsLoaded] = useState(false);
 
-  // Загрузка при старте
   useEffect(() => {
     AsyncStorage.getItem(STORAGE_KEY).then((json) => {
       if (json) {
@@ -37,7 +40,6 @@ export function SettingsProvider({ children }: { children: React.ReactNode }) {
     });
   }, []);
 
-  // Сохранение при любом изменении
   useEffect(() => {
     if (isLoaded) {
       AsyncStorage.setItem(STORAGE_KEY, JSON.stringify(settings));
@@ -47,9 +49,17 @@ export function SettingsProvider({ children }: { children: React.ReactNode }) {
   const setAvoidAeroexpress = (v: boolean) => setSettings((p) => ({ ...p, avoidAeroexpress: v }));
   const setWheelchairOnly = (v: boolean) => setSettings((p) => ({ ...p, wheelchairOnly: v }));
   const setMapFilter = (v: MapFilterType) => setSettings((p) => ({ ...p, mapFilter: v }));
+  const setHasSeenTutorial = (v: boolean) => setSettings((p) => ({ ...p, hasSeenTutorial: v }));
 
   return (
-    <SettingsContext.Provider value={{ ...settings, setAvoidAeroexpress, setWheelchairOnly, setMapFilter }}>
+    <SettingsContext.Provider value={{ 
+      ...settings, 
+      setAvoidAeroexpress, 
+      setWheelchairOnly, 
+      setMapFilter, 
+      setHasSeenTutorial,
+      isLoaded
+    }}>
       {children}
     </SettingsContext.Provider>
   );
