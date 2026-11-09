@@ -1,6 +1,6 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useEffect } from 'react';
 import {
-  View, TextInput, StyleSheet, FlatList, TouchableOpacity, Text,
+  View, TextInput, StyleSheet, FlatList, TouchableOpacity, Text, Keyboard,
 } from 'react-native';
 import { SearchIcon, CloseIcon } from '../icons';
 import { STATIONS, SchemaStation } from '../map/schemaStations';
@@ -11,7 +11,6 @@ interface Props {
   onPick: (station: SchemaStation) => void;
 }
 
-// Тип для элементов списка (заголовки и сами станции)
 type ListItem =
   | { type: 'header'; title: string; key: string }
   | { type: 'station'; station: SchemaStation; key: string };
@@ -22,12 +21,24 @@ export default function SearchBar({ onPick }: Props) {
   const [query, setQuery] = useState('');
   const [focused, setFocused] = useState(false);
 
-  // Собираем единый список для FlatList
+  // Следим за скрытием клавиатуры, чтобы закрыть выпадающий список
+  useEffect(() => {
+    const keyboardDidHideListener = Keyboard.addListener(
+      'keyboardDidHide',
+      () => {
+        setFocused(false);
+      }
+    );
+
+    return () => {
+      keyboardDidHideListener.remove();
+    };
+  }, []);
+
   const displayData = useMemo<ListItem[]>(() => {
     const data: ListItem[] = [];
 
     if (query.length >= 2) {
-      // РЕЖИМ ПОИСКА
       const q = query.toLowerCase();
       const results = Object.values(STATIONS)
         .filter((s) => s.name.toLowerCase().includes(q))
@@ -38,7 +49,6 @@ export default function SearchBar({ onPick }: Props) {
         results.forEach(s => data.push({ type: 'station', station: s, key: s.id }));
       }
     } else {
-      // РЕЖИМ ИЗБРАННОГО И НЕДАВНИХ (если строка пустая или 1 символ)
       if (favorites.length > 0) {
         data.push({ type: 'header', title: '★ Избранное', key: 'h_favs' });
         favorites.forEach(s => data.push({ type: 'station', station: s, key: 'fav_' + s.id }));
@@ -54,6 +64,7 @@ export default function SearchBar({ onPick }: Props) {
   }, [query, favorites, recents]);
 
   const handlePick = (s: SchemaStation) => {
+    Keyboard.dismiss(); // Принудительно скрываем клавиатуру
     setQuery('');
     setFocused(false);
     onPick(s);
@@ -72,6 +83,7 @@ export default function SearchBar({ onPick }: Props) {
           onChangeText={setQuery}
           onFocus={() => setFocused(true)}
           onBlur={() => setTimeout(() => setFocused(false), 150)}
+          returnKeyType="search"
         />
         {query.length > 0 && (
           <TouchableOpacity onPress={() => setQuery('')}>
@@ -87,7 +99,6 @@ export default function SearchBar({ onPick }: Props) {
             data={displayData}
             keyExtractor={(item) => item.key}
             renderItem={({ item }) => {
-              // Рендер заголовка секции
               if (item.type === 'header') {
                 return (
                   <View style={[styles.headerRow, { backgroundColor: theme.bg }]}>
@@ -98,7 +109,6 @@ export default function SearchBar({ onPick }: Props) {
                 );
               }
 
-              // Рендер самой станции
               const s = item.station;
               const isFav = favorites.some((f) => f.id === s.id);
 
@@ -141,7 +151,6 @@ const styles = StyleSheet.create({
     shadowRadius: 16, shadowOffset: { width: 0, height: 6 },
     elevation: 6,
   },
-  // Стили для заголовков
   headerRow: {
     paddingHorizontal: 16, paddingVertical: 8,
     borderTopWidth: 1, borderBottomWidth: 1,
@@ -150,7 +159,6 @@ const styles = StyleSheet.create({
   headerTitle: {
     fontSize: 12, fontWeight: '700', textTransform: 'uppercase',
   },
-  // Стили для элементов
   item: {
     flexDirection: 'row', alignItems: 'center',
     paddingHorizontal: 16, paddingVertical: 12,

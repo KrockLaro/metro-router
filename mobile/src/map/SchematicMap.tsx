@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useCallback, useState } from 'react';
+import React, { useEffect, useMemo, useCallback, useState, useRef } from 'react';
 import { StyleSheet, View, Dimensions } from 'react-native';
 import {
   Canvas, Group, Path, Circle, RoundedRect,
@@ -153,13 +153,22 @@ const SchematicMap: React.FC<Props> = ({
   const [fontScale, setFontScale] = useState(1.0);
   const fontScaleShared = useSharedValue<number>(1.0);
 
+  // Защита от повторного срабатывания авто-зума на тот же маршрут
+  const lastRouteKey = useRef('');
+
   const handleLayout = (e: any) => {
     const { width, height } = e.nativeEvent.layout;
     if (width === 0 || height === 0) return;
+    
+    // Если размеры не изменились, ничего не делаем (чтобы не сбрасывать карту)
+    if (viewW.value === width && viewH.value === height) return;
+
     const fitZoom = Math.min(width / BW, height / BH);
     viewW.value = width; viewH.value = height;
     minZoom.value = fitZoom; maxZoom.value = fitZoom * 5;
-    if (!isInitialized.value || Math.abs(zoom.value - minZoom.value) < 0.05) {
+    
+    // Центрируем только при самом первом запуске
+    if (!isInitialized.value) {
       isInitialized.value = true;
       zoom.value = fitZoom;
       centerX.value = BX + BW / 2;
@@ -215,10 +224,11 @@ const SchematicMap: React.FC<Props> = ({
       const stations = line.path.map((id) => STATIONS[id]).filter(Boolean);
       let path: SkPath | null = null;
       if (stations.length > 0) {
-        const builder = Skia.PathBuilder.Make();
-        builder.moveTo(stations[0].x, stations[0].y);
-        for (let i = 1; i < stations.length; i++) builder.lineTo(stations[i].x, stations[i].y);
-        path = builder.build();
+        // ИСПОЛЬЗУЕМ СТАРЫЙ API SKIA 1.x
+        const newPath = Skia.Path.Make(); 
+        newPath.moveTo(stations[0].x, stations[0].y);
+        for (let i = 1; i < stations.length; i++) newPath.lineTo(stations[i].x, stations[i].y);
+        path = newPath;
       }
       return { id: line.id, path, color: line.color, strokeWidth: line.kind === 'mcd' ? 3 : 6 };
     });
@@ -354,12 +364,18 @@ const SchematicMap: React.FC<Props> = ({
 
   // --- АВТОМАТИЧЕСКИЙ ЗУМ НА МАРШРУТ ---
   useEffect(() => {
-    if (!activeRouteStations || activeRouteStations.length === 0) {
+    const routeKey = activeRouteStations?.join(',') || '';
+    if (!routeKey) {
+      lastRouteKey.current = '';
       return;
     }
 
+    // Защита: если маршрут не изменился, не сбрасываем вид
+    if (lastRouteKey.current === routeKey) return;
+    lastRouteKey.current = routeKey;
+
     let minX = Infinity, maxX = -Infinity, minY = Infinity, maxY = -Infinity;
-    for (const id of activeRouteStations) {
+    for (const id of activeRouteStations!) {
       const s = STATIONS[id];
       if (!s) continue;
       const off = getOffset(id);
@@ -374,13 +390,12 @@ const SchematicMap: React.FC<Props> = ({
     if (minX !== Infinity) {
       const PADDING_X = 100;
       const PADDING_Y = 150; 
-      const BOTTOM_UI_SPACE = 200; // Место под нижнюю плашку маршрута
+      const BOTTOM_UI_SPACE = 200;
 
       const routeWidth = maxX - minX + PADDING_X * 2;
       const routeHeight = maxY - minY + PADDING_Y + BOTTOM_UI_SPACE;
 
       const targetCX = (minX + maxX) / 2;
-      // Смещаем центр немного вверх, чтобы освободить место под плашку
       const targetCY = (minY + maxY) / 2 + (BOTTOM_UI_SPACE - PADDING_Y) / 2;
 
       const fitZoom = Math.min(viewW.value / routeWidth, viewH.value / routeHeight);
@@ -390,7 +405,7 @@ const SchematicMap: React.FC<Props> = ({
       centerX.value = withTiming(targetCX, { duration: 600 });
       centerY.value = withTiming(targetCY, { duration: 600 });
     }
-  }, [activeRouteStations?.join(','), viewW.value, viewH.value, getOffset, zoom, centerX, centerY, minZoom, maxZoom]);
+  }, [activeRouteStations?.join(','), getOffset, zoom, centerX, centerY, minZoom, maxZoom]);
 
   const pan = Gesture.Pan().maxPointers(1).averageTouches(true).minDistance(4)
     .onStart(() => { savedCenterX.value = centerX.value; savedCenterY.value = centerY.value; })
@@ -520,7 +535,7 @@ const SchematicMap: React.FC<Props> = ({
 
               if (isRouteActive) {
                 if (isRouteStation) {
-                  fillColor = '#FFD700'; // Золотой для станций маршрута
+                  fillColor = '#FFD700';
                   strokeCol = '#DAA520';
                 } else {
                   fillColor = dimmedStationColor;
@@ -596,7 +611,6 @@ const SchematicMap: React.FC<Props> = ({
             {/* ПОДПИСИ СТАНЦИЙ */}
             {labels.map(({ s, tx, ty, font }) => {
               if (mapFilter && !matchesFilter(s, mapFilter)) return null;
-              
               if (isRouteActive && !routeStationsSet.has(s.id)) return null;
 
               return (
