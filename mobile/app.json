@@ -24,8 +24,14 @@
       },
       "package": "com.krocklaro.metrorouter"
     },
-      "web": {
+    "web": {
       "favicon": "./assets/icon.png"
-    }
+    },
+    "extra": {
+      "eas": {
+        "projectId": "0f913b68-cad3-4e18-a97a-4a64692098f8"
+      }
+    },
+    "owner": "fivegstudio"
   }
 }
