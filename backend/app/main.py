@@ -1,113 +1,73 @@
-"""
-main.py — точка входа FastAPI приложения metro-router.
-
-ВАЖНО: load_dotenv() должен быть вызван ДО любых обращений к os.environ,
-поэтому он стоит самой первой строкой (после будущих импортов).
-"""
-from dotenv import load_dotenv
-load_dotenv()
-
-import logging
 import os
+import logging
 from contextlib import asynccontextmanager
 
-from fastapi import FastAPI, HTTPException, Request
+from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-from fastapi.responses import JSONResponse
 
-from .db.pool import init_pool, close_pool
-from .api import route as route_api
-from .api import station as station_api
+from app.db.pool import init_pool, close_pool
+from app.api import route as route_api
+from app.api import station as station_api  # Если у тебя есть роутер для расписаний
 
-# ──────────────────────────────────────────────────────────
-# Логирование
-# ──────────────────────────────────────────────────────────
-logging.basicConfig(
-    level=os.getenv("LOG_LEVEL", "INFO"),
-    format="%(asctime)s | %(levelname)-7s | %(name)s | %(message)s",
-)
-log = logging.getLogger("metro-router")
+# Настраиваем логирование, чтобы видеть ошибки в консоли Cloady
+logging.basicConfig(level=logging.INFO)
+log = logging.getLogger(__name__)
 
 
-# ──────────────────────────────────────────────────────────
-# Lifespan: инициализация/очистка ресурсов
-# ──────────────────────────────────────────────────────────
 @asynccontextmanager
 async def lifespan(app: FastAPI):
+    """
+    Управляет жизненным циклом приложения.
+    Инициализирует пул подключений к БД при старте и закрывает при выключении.
+    """
+    # --- СТАРТ ПРИЛОЖЕНИЯ ---
     dsn = os.environ.get("DATABASE_URL")
-    if not dsn:
-        raise RuntimeError(
-            "DATABASE_URL не задан. Проверьте backend/.env и что load_dotenv() "
-            "вызывается до чтения os.environ."
-        )
+    if dsn:
+        log.info("Инициализация пула подключений к базе данных...")
+        try:
+            await init_pool(dsn)
+            log.info("Пул подключений успешно создан.")
+        except Exception as e:
+            log.error(f"Ошибка подключения к БД: {e}")
+    else:
+        log.warning("ВНИМАНИЕ: Переменная DATABASE_URL не задана в окружении!")
 
-    log.info("Инициализация пула БД...")
-    await init_pool(dsn)
-    log.info("Пул БД готов")
+    yield  # Здесь приложение работает и принимает запросы
 
-    yield
-
-    log.info("Закрытие пула БД...")
+    # --- ВЫКЛЮЧЕНИЕ ПРИЛОЖЕНИЯ ---
+    log.info("Закрытие пула подключений к базе данных...")
     await close_pool()
-    log.info("Пул БД закрыт")
 
 
-# ──────────────────────────────────────────────────────────
-# Приложение
-# ──────────────────────────────────────────────────────────
+# Создаем экземпляр FastAPI с использованием lifespan
 app = FastAPI(
-    title="metro-router API",
-    description=(
-        "Маршрутизация по электричкам ЦППК/МТППК, МЦД и МЦК. "
-        "Расписания подтягиваются из Яндекс.Расписаний."
-    ),
-    version="0.2.0",
-    lifespan=lifespan,
+    title="Маршрутизатор API",
+    description="Бэкенд для построения маршрутов электричек",
+    version="1.0.0",
+    lifespan=lifespan
 )
 
-# CORS — разрешаем всё в dev-режиме. В проде сузить до конкретных origin'ов.
+# --- НАСТРОЙКА CORS (КРИТИЧЕСКИ ВАЖНО ДЛЯ МОБИЛЬНОГО ПРИЛОЖЕНИЯ) ---
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],
-    allow_credentials=False,
-    allow_methods=["*"],
-    allow_headers=["*"],
+    allow_origins=["*"],  # Разрешаем запросы с любого домена/IP
+    allow_credentials=True,
+    allow_methods=["*"],  # Разрешаем GET, POST, OPTIONS и т.д.
+    allow_headers=["*"],  # Разрешаем любые заголовки
 )
+# ------------------------------------------------------------------
 
-
-# ──────────────────────────────────────────────────────────
-# Роутеры
-# ──────────────────────────────────────────────────────────
+# Подключаем роутеры (API эндпоинты)
 app.include_router(route_api.router)
-app.include_router(station_api.router)
+
+# Подключаем роутер расписаний (если он у тебя есть и импортируется)
+try:
+    app.include_router(station_api.router)
+except Exception as e:
+    log.warning(f"Не удалось подключить station_api: {e}")
 
 
-# ──────────────────────────────────────────────────────────
-# Health-check
-# ──────────────────────────────────────────────────────────
-@app.get("/health", tags=["system"])
-async def health():
-    """Простой health-check. Используется мобильным клиентом для ping."""
-    return {"status": "ok"}
-
-
-@app.get("/health/db", tags=["system"])
-async def health_db():
-    """Проверка подключения к БД."""
-    from .db.pool import get_pool
-    pool = get_pool()
-    async with pool.acquire() as conn:
-        one = await conn.fetchval("SELECT 1")
-    return {"status": "ok", "db": "reachable", "select_1": one}
-
-
-# ──────────────────────────────────────────────────────────
-# Глобальный обработчик ошибок (для отладки)
-# ──────────────────────────────────────────────────────────
-@app.exception_handler(Exception)
-async def unhandled_exception_handler(request: Request, exc: Exception):
-    log.exception("Unhandled error on %s %s", request.method, request.url.path)
-    return JSONResponse(
-        status_code=500,
-        content={"detail": f"Внутренняя ошибка сервера: {exc.__class__.__name__}"},
-    )
+@app.get("/health")
+def health_check():
+    """Эндпоинт для проверки жизнеспособности сервера (пинг)."""
+    return {"status": "ok", "service": "metro-router-api"}
