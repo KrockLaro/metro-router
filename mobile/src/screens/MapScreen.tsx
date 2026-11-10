@@ -1,4 +1,4 @@
-import React, { useState, useCallback, useRef, useMemo } from 'react';
+import React, { useState, useCallback, useRef, useMemo, useEffect } from 'react';
 import {
   View, StyleSheet, TouchableOpacity, Text, Alert,
   Platform,
@@ -16,10 +16,10 @@ import { SchemaStation } from '../map/schemaStations';
 import { osmFacilities } from '../map/osmFacilities';
 import { useTheme } from '../theme/ThemeProvider';
 import { useSettings } from '../store/SettingsContext';
+import { useNetworkStatus } from '../utils/useNetworkStatus';
 import { buildRoute, RouteResult } from '../api/client';
 import { ChevronRightIcon } from '../icons';
 
-// Вспомогательная функция для склонения слов
 function plural(n: number, forms: [string, string, string]): string {
   const mod10 = n % 10;
   const mod100 = n % 100;
@@ -31,6 +31,7 @@ function plural(n: number, forms: [string, string, string]): string {
 export default function MapScreen() {
   const { theme } = useTheme();
   const { mapFilter, avoidAeroexpress, wheelchairOnly } = useSettings();
+  const { isConnected } = useNetworkStatus();
   const mapApiRef = useRef<SchematicMapHandle | null>(null);
 
   const [selected, setSelected] = useState<SchemaStation | null>(null);
@@ -41,8 +42,6 @@ export default function MapScreen() {
   const [routeLoading, setRouteLoading] = useState(false);
   const [routeError, setRouteError] = useState<string | null>(null);
   const [routeDeparture, setRouteDeparture] = useState(new Date());
-  
-  // Показывать ли детальный экран маршрута поверх карты
   const [showDetails, setShowDetails] = useState(false);
 
   const [useNow, setUseNow] = useState(true);
@@ -58,7 +57,6 @@ export default function MapScreen() {
     return badStations;
   }, [wheelchairOnly]);
 
-  // Вычисляем активные линии и станции для подсветки на карте
   const activeRouteStations = useMemo(() => {
     if (!routeVariants || routeVariants.length === 0) return [];
     const stations = new Set<string>();
@@ -75,7 +73,6 @@ export default function MapScreen() {
     routeVariants[0].segments.forEach(s => {
       if (s.line) lines.add(s.line); 
     });
-    // Простой маппинг названий в ID для подсветки линий на карте
     return Array.from(lines).map(name => {
       if (name.includes('Ярославское')) return 'yar';
       if (name.includes('Курское')) return 'kursk';
@@ -97,7 +94,6 @@ export default function MapScreen() {
     }).filter(Boolean) as string[];
   }, [routeVariants]);
 
-  // Правильный подсчет пересадок (включая смену электрички на метро/МЦК)
   const transfersCount = useMemo(() => {
     if (!routeVariants || routeVariants.length === 0) return 0;
     let count = 0;
@@ -105,9 +101,8 @@ export default function MapScreen() {
     for (const seg of routeVariants[0].segments) {
       if (seg.kind === 'transfer') {
         count++;
-        prevLine = null; // Сбрасываем линию после пешего перехода
+        prevLine = null;
       } else if (seg.line) {
-        // Если едем на новом транспорте (сменили линию) — это пересадка
         if (prevLine !== null && prevLine !== seg.line) {
           count++;
         }
@@ -116,6 +111,13 @@ export default function MapScreen() {
     }
     return count;
   }, [routeVariants]);
+
+  // Если сеть восстановилась, а у нас была ошибка сети — пробуем построить маршрут заново
+  useEffect(() => {
+    if (isConnected && routeError === 'Нет подключения к интернету' && from && to) {
+      handleBuildRoute();
+    }
+  }, [isConnected]);
 
   const handleStationPress = useCallback((s: SchemaStation) => {
     setSelected(s);
@@ -165,6 +167,11 @@ export default function MapScreen() {
       return;
     }
 
+    if (!isConnected) {
+      setRouteError('Нет подключения к интернету');
+      return;
+    }
+
     setRouteLoading(true);
     setRouteError(null);
 
@@ -203,14 +210,26 @@ export default function MapScreen() {
       }
     } catch (e: any) {
       const details = e?.response?.data?.detail || e?.message || 'Неизвестная ошибка';
-      setRouteError(e?.response?.status === 404 ? 'Одна из станций не найдена в базе данных.' : details);
+      if (details === 'Network Error') {
+         setRouteError('Нет подключения к серверу. Проверьте интернет.');
+      } else {
+         setRouteError(e?.response?.status === 404 ? 'Одна из станций не найдена в базе данных.' : details);
+      }
     } finally {
       setRouteLoading(false);
     }
-  }, [from, to, useNow, customTime, avoidAeroexpress, avoidStationsList]);
+  }, [from, to, useNow, customTime, avoidAeroexpress, avoidStationsList, isConnected]);
 
   if (routeLoading) return <RouteSkeleton onBack={() => setRouteLoading(false)} />;
-  if (routeError) return <RouteErrorScreen message={routeError} onBack={() => setRouteError(null)} />;
+  
+  if (routeError) {
+    return (
+      <RouteErrorScreen 
+        message={routeError} 
+        onBack={() => setRouteError(null)} 
+      />
+    );
+  }
 
   if (showDetails && routeVariants && routeVariants.length > 0 && from && to) {
     return (
@@ -237,6 +256,14 @@ export default function MapScreen() {
   return (
     <GestureHandlerRootView style={[styles.root, { backgroundColor: theme.bg }]}>
       <View style={styles.container}>
+        
+        {/* Баннер отсутствия интернета */}
+        {!isConnected && (
+          <View style={{ backgroundColor: theme.danger, paddingTop: 50, paddingBottom: 10, alignItems: 'center' }}>
+             <Text style={{ color: '#FFF', fontWeight: '600' }}>Нет подключения к интернету</Text>
+          </View>
+        )}
+
         <SchematicMap
           onStationPress={handleStationPress}
           onMapReady={handleMapReady}
@@ -250,7 +277,7 @@ export default function MapScreen() {
         <SearchBar onPick={handleSearchPick} />
 
         <TouchableOpacity
-          style={[styles.resetBtn, { backgroundColor: theme.card, borderColor: theme.border }]}
+          style={[styles.resetBtn, { backgroundColor: theme.card, borderColor: theme.border, top: isConnected ? 116 : 150 }]}
           onPress={() => mapApiRef.current?.resetView()}
         >
           <Text style={[styles.resetText, { color: theme.icon }]}>⌂</Text>
@@ -260,7 +287,6 @@ export default function MapScreen() {
           <View style={[styles.routePanel, { backgroundColor: theme.card, borderColor: theme.border }]}>
             
             {hasActiveRoute ? (
-              /* КОМПАКТНАЯ ПЛАШКА, КОГДА МАРШРУТ ПОСТРОЕН */
               <TouchableOpacity style={styles.activeRouteSummary} onPress={() => setShowDetails(true)}>
                 <View style={{ flex: 1 }}>
                   <Text style={[styles.routeText, { color: theme.text, fontSize: 18 }]}>
@@ -273,7 +299,6 @@ export default function MapScreen() {
                 <ChevronRightIcon size={24} color={theme.accent} />
               </TouchableOpacity>
             ) : (
-              /* ПАНЕЛЬ ВЫБОРА, КОГДА МАРШРУТА ЕЩЕ НЕТ */
               <>
                 <View style={styles.routeRow}>
                   <View style={[styles.routeDot, { backgroundColor: '#34C759' }]} />
@@ -355,19 +380,17 @@ export default function MapScreen() {
 const styles = StyleSheet.create({
   root: { flex: 1 },
   container: { flex: 1 },
-  resetBtn: { position: 'absolute', top: 116, right: 16, width: 44, height: 44, borderRadius: 22, justifyContent: 'center', alignItems: 'center', borderWidth: 1, zIndex: 20 },
+  resetBtn: { position: 'absolute', right: 16, width: 44, height: 44, borderRadius: 22, justifyContent: 'center', alignItems: 'center', borderWidth: 1, zIndex: 20 },
   resetText: { fontSize: 22, fontWeight: '400' },
   routePanel: { position: 'absolute', left: 16, right: 16, bottom: 24, padding: 12, borderRadius: 16, borderWidth: 1, zIndex: 15 },
   routeRow: { flexDirection: 'row', alignItems: 'center', paddingVertical: 6, gap: 10 },
   routeDot: { width: 12, height: 12, borderRadius: 6 },
   routeText: { flex: 1, fontSize: 15, fontWeight: '500' },
-  
   timeSelector: { flexDirection: 'row', marginTop: 8, paddingTop: 8, borderTopWidth: 1, gap: 16 },
   timeOption: { paddingVertical: 4 },
   timeLabel: { fontSize: 14, fontWeight: '600' },
   routeActions: { flexDirection: 'row', justifyContent: 'space-between', marginTop: 8, paddingTop: 8, borderTopWidth: 1 },
   actionText: { fontSize: 14, fontWeight: '600' },
-
   activeRouteSummary: { flexDirection: 'row', alignItems: 'center', paddingVertical: 8 },
   clearRouteBtn: { borderTopWidth: 1, paddingTop: 12, marginTop: 8 },
 });

@@ -153,21 +153,17 @@ const SchematicMap: React.FC<Props> = ({
   const [fontScale, setFontScale] = useState(1.0);
   const fontScaleShared = useSharedValue<number>(1.0);
 
-  // Защита от повторного срабатывания авто-зума на тот же маршрут
   const lastRouteKey = useRef('');
 
   const handleLayout = (e: any) => {
     const { width, height } = e.nativeEvent.layout;
     if (width === 0 || height === 0) return;
-    
-    // Если размеры не изменились, ничего не делаем (чтобы не сбрасывать карту)
     if (viewW.value === width && viewH.value === height) return;
 
     const fitZoom = Math.min(width / BW, height / BH);
     viewW.value = width; viewH.value = height;
     minZoom.value = fitZoom; maxZoom.value = fitZoom * 5;
-    
-    // Центрируем только при самом первом запуске
+
     if (!isInitialized.value) {
       isInitialized.value = true;
       zoom.value = fitZoom;
@@ -224,7 +220,6 @@ const SchematicMap: React.FC<Props> = ({
       const stations = line.path.map((id) => STATIONS[id]).filter(Boolean);
       let path: SkPath | null = null;
       if (stations.length > 0) {
-        // ИСПОЛЬЗУЕМ СТАРЫЙ API SKIA 1.x
         const newPath = Skia.Path.Make(); 
         newPath.moveTo(stations[0].x, stations[0].y);
         for (let i = 1; i < stations.length; i++) newPath.lineTo(stations[i].x, stations[i].y);
@@ -362,15 +357,12 @@ const SchematicMap: React.FC<Props> = ({
 
   useEffect(() => { if (onMapReady) onMapReady({ focusStation, resetView }); }, [onMapReady, focusStation, resetView]);
 
-  // --- АВТОМАТИЧЕСКИЙ ЗУМ НА МАРШРУТ ---
   useEffect(() => {
     const routeKey = activeRouteStations?.join(',') || '';
     if (!routeKey) {
       lastRouteKey.current = '';
       return;
     }
-
-    // Защита: если маршрут не изменился, не сбрасываем вид
     if (lastRouteKey.current === routeKey) return;
     lastRouteKey.current = routeKey;
 
@@ -391,13 +383,10 @@ const SchematicMap: React.FC<Props> = ({
       const PADDING_X = 100;
       const PADDING_Y = 150; 
       const BOTTOM_UI_SPACE = 200;
-
       const routeWidth = maxX - minX + PADDING_X * 2;
       const routeHeight = maxY - minY + PADDING_Y + BOTTOM_UI_SPACE;
-
       const targetCX = (minX + maxX) / 2;
       const targetCY = (minY + maxY) / 2 + (BOTTOM_UI_SPACE - PADDING_Y) / 2;
-
       const fitZoom = Math.min(viewW.value / routeWidth, viewH.value / routeHeight);
       const targetZ = Math.max(minZoom.value, Math.min(maxZoom.value * 0.8, fitZoom));
 
@@ -441,18 +430,23 @@ const SchematicMap: React.FC<Props> = ({
     if (minY > maxY) centerY.value = BY + BH / 2; else centerY.value = Math.max(minY, Math.min(maxY, newCenterY));
   });
 
-  const doubleTap = Gesture.Tap().numberOfTaps(2).maxDelay(300).onEnd((e, success) => {
-    if (!success) return;
-    const isZoomedIn = zoom.value > minZoom.value * 1.5;
-    const targetZ = isZoomedIn ? minZoom.value : minZoom.value * 2.5;
-    const focalWorldX = (e.x - viewW.value / 2) / zoom.value + centerX.value;
-    const focalWorldY = (e.y - viewH.value / 2) / zoom.value + centerY.value;
-    const newCenterX = focalWorldX - (e.x - viewW.value / 2) / targetZ;
-    const newCenterY = focalWorldY - (e.y - viewH.value / 2) / targetZ;
-    zoom.value = withTiming(targetZ, { duration: 300 });
-    centerX.value = withTiming(newCenterX, { duration: 300 });
-    centerY.value = withTiming(newCenterY, { duration: 300 });
-  });
+  // ЗАЩИТА ОТ СЛУЧАЙНЫХ НАЖАТИЙ: maxDistance не даст сработать тапу, если палец сдвинулся
+  const doubleTap = Gesture.Tap()
+    .numberOfTaps(2)
+    .maxDelay(300)
+    .maxDistance(20)
+    .onEnd((e, success) => {
+      if (!success) return;
+      const isZoomedIn = zoom.value > minZoom.value * 1.5;
+      const targetZ = isZoomedIn ? minZoom.value : minZoom.value * 2.5;
+      const focalWorldX = (e.x - viewW.value / 2) / zoom.value + centerX.value;
+      const focalWorldY = (e.y - viewH.value / 2) / zoom.value + centerY.value;
+      const newCenterX = focalWorldX - (e.x - viewW.value / 2) / targetZ;
+      const newCenterY = focalWorldY - (e.y - viewH.value / 2) / targetZ;
+      zoom.value = withTiming(targetZ, { duration: 300 });
+      centerX.value = withTiming(newCenterX, { duration: 300 });
+      centerY.value = withTiming(newCenterY, { duration: 300 });
+    });
 
   const offsetsRef = useSharedValue<Record<string, { dx: number; dy: number }>>({});
   useEffect(() => {
@@ -461,21 +455,25 @@ const SchematicMap: React.FC<Props> = ({
     offsetsRef.value = obj;
   }, [stationOffsets, offsetsRef]);
 
-  const singleTap = Gesture.Tap().numberOfTaps(1).maxDelay(300).onEnd((e, success) => {
-    if (!success) return;
-    const worldX = (e.x - viewW.value / 2) / zoom.value + centerX.value;
-    const worldY = (e.y - viewH.value / 2) / zoom.value + centerY.value;
-    const worldRadius = TAP_RADIUS / zoom.value;
-    const offs = offsetsRef.value;
-    let closest: SchemaStation | null = null; let minDist = Infinity;
-    for (const s of stationEntries) {
-      const o = offs[s.id] ?? { dx: 0, dy: 0 };
-      const dx = s.x + o.dx - worldX; const dy = s.y + o.dy - worldY;
-      const d = Math.sqrt(dx * dx + dy * dy); const bonus = s.lines.length > 1 ? 0.6 : 1;
-      const weighted = d * bonus; if (weighted < minDist) { minDist = weighted; closest = s; }
-    }
-    if (closest && minDist < worldRadius) runOnJS(onStationPress)(closest);
-  });
+  const singleTap = Gesture.Tap()
+    .numberOfTaps(1)
+    .maxDelay(300)
+    .maxDistance(10) // ЗАЩИТА ОТ СЛУЧАЙНЫХ НАЖАТИЙ
+    .onEnd((e, success) => {
+      if (!success) return;
+      const worldX = (e.x - viewW.value / 2) / zoom.value + centerX.value;
+      const worldY = (e.y - viewH.value / 2) / zoom.value + centerY.value;
+      const worldRadius = TAP_RADIUS / zoom.value;
+      const offs = offsetsRef.value;
+      let closest: SchemaStation | null = null; let minDist = Infinity;
+      for (const s of stationEntries) {
+        const o = offs[s.id] ?? { dx: 0, dy: 0 };
+        const dx = s.x + o.dx - worldX; const dy = s.y + o.dy - worldY;
+        const d = Math.sqrt(dx * dx + dy * dy); const bonus = s.lines.length > 1 ? 0.6 : 1;
+        const weighted = d * bonus; if (weighted < minDist) { minDist = weighted; closest = s; }
+      }
+      if (closest && minDist < worldRadius) runOnJS(onStationPress)(closest);
+    });
 
   const taps = Gesture.Exclusive(doubleTap, singleTap);
   const gesture = Gesture.Simultaneous(pan, pinch, taps);
@@ -497,11 +495,9 @@ const SchematicMap: React.FC<Props> = ({
         <Canvas style={StyleSheet.absoluteFill}>
           <Group transform={transform}>
             
-            {/* ЛИНИИ */}
             {linePaths.map((item) => {
               const isRouteLine = isRouteActive && routeLinesSet.has(item.id);
               const isDimmed = (mapFilter || isRouteActive) && !isRouteLine;
-
               return item.path ? (
                 <Path
                   key={item.id}
@@ -516,7 +512,6 @@ const SchematicMap: React.FC<Props> = ({
               ) : null;
             })}
 
-            {/* СТАНЦИИ (КРУЖКИ) */}
             {stationEntries.map((s) => {
               const off = getOffset(s.id);
               const cx = s.x + off.dx;
@@ -561,7 +556,6 @@ const SchematicMap: React.FC<Props> = ({
               );
             })}
 
-            {/* БЕЙДЖИКИ "Э" */}
             {stationEntries.map((s) => {
               if (!s.expressStop) return null;
               if (!placedIds.has(s.id)) return null;
@@ -585,7 +579,6 @@ const SchematicMap: React.FC<Props> = ({
               );
             })}
 
-            {/* ТЕКСТ "Э" */}
             {expressFont && stationEntries.map((s) => {
               if (!s.expressStop) return null;
               if (!placedIds.has(s.id)) return null;
@@ -608,7 +601,6 @@ const SchematicMap: React.FC<Props> = ({
               );
             })}
 
-            {/* ПОДПИСИ СТАНЦИЙ */}
             {labels.map(({ s, tx, ty, font }) => {
               if (mapFilter && !matchesFilter(s, mapFilter)) return null;
               if (isRouteActive && !routeStationsSet.has(s.id)) return null;
