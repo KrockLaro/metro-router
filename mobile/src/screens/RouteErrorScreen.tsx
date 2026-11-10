@@ -3,6 +3,7 @@ import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
 import { useTheme } from '../theme/ThemeProvider';
 import { useSettings } from '../store/SettingsContext';
 import { BackIcon } from '../icons';
+import { API_BASE_URL } from '../api/client'; // <--- ИМПОРТ АДРЕСА СЕРВЕРА
 
 interface Props {
   message?: string;
@@ -37,6 +38,13 @@ export default function RouteErrorScreen({ message, onBack }: Props) {
         <Text style={[styles.subtitle, { color: theme.textMuted }]}>
           {message || 'Не удалось построить путь между этими станциями. Возможно, между ними нет прямого сообщения или в данный момент нет подходящих рейсов.'}
         </Text>
+
+        {/* ВЫВОД АДРЕСА СЕРВЕРА ДЛЯ ОТЛАДКИ */}
+        <View style={{ backgroundColor: theme.card, paddingHorizontal: 12, paddingVertical: 6, borderRadius: 8, marginBottom: 20 }}>
+          <Text style={{ color: theme.textMuted, fontSize: 11, fontFamily: 'monospace' }}>
+            API: {API_BASE_URL}
+          </Text>
+        </View>
 
         {hasActiveFilters && (
           <View style={[styles.filterWarning, { backgroundColor: 'rgba(255, 149, 0, 0.1)', borderColor: '#FF9500' }]}>
@@ -93,7 +101,7 @@ const styles = StyleSheet.create({
     fontSize: 15,
     textAlign: 'center',
     lineHeight: 22,
-    marginBottom: 30,
+    marginBottom: 20, // Уменьшил отступ, так как добавили плашку с API
   },
   filterWarning: {
     width: '100%',

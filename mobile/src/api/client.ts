@@ -25,9 +25,10 @@ export const API_BASE_URL = resolveBaseUrl();
 
 export const apiClient: AxiosInstance = axios.create({
   baseURL: API_BASE_URL,
-  timeout: 5000,
+  timeout: 60000,
   headers: {
     'Content-Type': 'application/json',
+    'User-Agent': 'MetroRouterMobile/1.0',
   },
 });
 
