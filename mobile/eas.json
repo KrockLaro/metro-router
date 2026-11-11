@@ -5,19 +5,18 @@
   "build": {
     "development": {
       "developmentClient": true,
-      "distribution": "internal",
-      "channel": "development"
+      "distribution": "internal"
     },
     "preview": {
       "distribution": "internal",
+      "env": {
+        "EXPO_PUBLIC_API_URL": "https://metro-router-jvph1z18-krocklaro.cloady.io"
+      },
       "android": {
         "buildType": "apk"
-      },
-      "channel": "preview"
+      }
     },
-    "production": {
-      "channel": "production"
-    }
+    "production": {}
   },
   "submit": {
     "production": {}
