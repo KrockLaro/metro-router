@@ -28,7 +28,7 @@ async def lifespan(app: FastAPI):
             await init_pool(dsn)
             log.info("Пул подключений успешно создан.")
         except Exception as e:
-            log.error(f"Ошибка подключения к БД: {e}")
+            log.exception("Ошибка подключения к БД:")
     else:
         log.warning("ВНИМАНИЕ: Переменная DATABASE_URL не задана в окружении!")
 

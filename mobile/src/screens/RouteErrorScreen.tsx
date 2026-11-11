@@ -3,7 +3,6 @@ import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
 import { useTheme } from '../theme/ThemeProvider';
 import { useSettings } from '../store/SettingsContext';
 import { BackIcon } from '../icons';
-import { API_BASE_URL } from '../api/client'; // <--- ИМПОРТ АДРЕСА СЕРВЕРА
 
 interface Props {
   message?: string;
@@ -38,13 +37,6 @@ export default function RouteErrorScreen({ message, onBack }: Props) {
         <Text style={[styles.subtitle, { color: theme.textMuted }]}>
           {message || 'Не удалось построить путь между этими станциями. Возможно, между ними нет прямого сообщения или в данный момент нет подходящих рейсов.'}
         </Text>
-
-        {/* ВЫВОД АДРЕСА СЕРВЕРА ДЛЯ ОТЛАДКИ */}
-        <View style={{ backgroundColor: theme.card, paddingHorizontal: 12, paddingVertical: 6, borderRadius: 8, marginBottom: 20 }}>
-          <Text style={{ color: theme.textMuted, fontSize: 11, fontFamily: 'monospace' }}>
-            API: {API_BASE_URL}
-          </Text>
-        </View>
 
         {hasActiveFilters && (
           <View style={[styles.filterWarning, { backgroundColor: 'rgba(255, 149, 0, 0.1)', borderColor: '#FF9500' }]}>
@@ -85,57 +77,18 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     paddingHorizontal: 30,
-    paddingBottom: 80, // Сдвиг чуть выше центра
+    paddingBottom: 80, 
   },
-  emoji: {
-    fontSize: 72,
-    marginBottom: 20,
-  },
-  title: {
-    fontSize: 24,
-    fontWeight: '800',
-    marginBottom: 12,
-    textAlign: 'center',
-  },
-  subtitle: {
-    fontSize: 15,
-    textAlign: 'center',
-    lineHeight: 22,
-    marginBottom: 20, // Уменьшил отступ, так как добавили плашку с API
-  },
+  emoji: { fontSize: 72, marginBottom: 20 },
+  title: { fontSize: 24, fontWeight: '800', marginBottom: 12, textAlign: 'center' },
+  subtitle: { fontSize: 15, textAlign: 'center', lineHeight: 22, marginBottom: 30 },
   filterWarning: {
-    width: '100%',
-    padding: 16,
-    borderRadius: 16,
-    borderWidth: 1,
-    marginBottom: 30,
-    alignItems: 'center',
+    width: '100%', padding: 16, borderRadius: 16, borderWidth: 1,
+    marginBottom: 30, alignItems: 'center',
   },
-  filterText: {
-    fontSize: 13,
-    textAlign: 'center',
-    marginBottom: 12,
-    fontWeight: '500',
-  },
-  resetFiltersBtn: {
-    paddingVertical: 10,
-    paddingHorizontal: 20,
-    borderRadius: 10,
-  },
-  resetFiltersText: {
-    color: '#FFF',
-    fontWeight: '700',
-    fontSize: 14,
-  },
-  backBtn: {
-    width: '100%',
-    paddingVertical: 16,
-    borderRadius: 16,
-    borderWidth: 1,
-    alignItems: 'center',
-  },
-  backBtnText: {
-    fontSize: 16,
-    fontWeight: '600',
-  },
+  filterText: { fontSize: 13, textAlign: 'center', marginBottom: 12, fontWeight: '500' },
+  resetFiltersBtn: { paddingVertical: 10, paddingHorizontal: 20, borderRadius: 10 },
+  resetFiltersText: { color: '#FFF', fontWeight: '700', fontSize: 14 },
+  backBtn: { width: '100%', paddingVertical: 16, borderRadius: 16, borderWidth: 1, alignItems: 'center' },
+  backBtnText: { fontSize: 16, fontWeight: '600' },
 });
