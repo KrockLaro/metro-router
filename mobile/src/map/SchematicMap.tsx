@@ -357,6 +357,7 @@ const SchematicMap: React.FC<Props> = ({
 
   useEffect(() => { if (onMapReady) onMapReady({ focusStation, resetView }); }, [onMapReady, focusStation, resetView]);
 
+  // --- АВТОМАТИЧЕСКИЙ ЗУМ НА МАРШРУТ ---
   useEffect(() => {
     const routeKey = activeRouteStations?.join(',') || '';
     if (!routeKey) {
@@ -380,15 +381,20 @@ const SchematicMap: React.FC<Props> = ({
     }
 
     if (minX !== Infinity) {
-      const PADDING_X = 100;
-      const PADDING_Y = 150; 
-      const BOTTOM_UI_SPACE = 200;
+      const PADDING_X = 120; 
+      const PADDING_Y = 120; 
+      const BOTTOM_UI_SPACE = 220; 
+
       const routeWidth = maxX - minX + PADDING_X * 2;
       const routeHeight = maxY - minY + PADDING_Y + BOTTOM_UI_SPACE;
-      const targetCX = (minX + maxX) / 2;
-      const targetCY = (minY + maxY) / 2 + (BOTTOM_UI_SPACE - PADDING_Y) / 2;
-      const fitZoom = Math.min(viewW.value / routeWidth, viewH.value / routeHeight);
+
+      const fitZoomX = viewW.value / routeWidth;
+      const fitZoomY = viewH.value / routeHeight;
+      const fitZoom = Math.min(fitZoomX, fitZoomY);
       const targetZ = Math.max(minZoom.value, Math.min(maxZoom.value * 0.8, fitZoom));
+
+      const targetCX = (minX + maxX) / 2;
+      const targetCY = (minY + maxY) / 2 + (BOTTOM_UI_SPACE - PADDING_Y) / (2 * targetZ);
 
       zoom.value = withTiming(targetZ, { duration: 600 });
       centerX.value = withTiming(targetCX, { duration: 600 });
@@ -430,23 +436,18 @@ const SchematicMap: React.FC<Props> = ({
     if (minY > maxY) centerY.value = BY + BH / 2; else centerY.value = Math.max(minY, Math.min(maxY, newCenterY));
   });
 
-  // ЗАЩИТА ОТ СЛУЧАЙНЫХ НАЖАТИЙ: maxDistance не даст сработать тапу, если палец сдвинулся
-  const doubleTap = Gesture.Tap()
-    .numberOfTaps(2)
-    .maxDelay(300)
-    .maxDistance(20)
-    .onEnd((e, success) => {
-      if (!success) return;
-      const isZoomedIn = zoom.value > minZoom.value * 1.5;
-      const targetZ = isZoomedIn ? minZoom.value : minZoom.value * 2.5;
-      const focalWorldX = (e.x - viewW.value / 2) / zoom.value + centerX.value;
-      const focalWorldY = (e.y - viewH.value / 2) / zoom.value + centerY.value;
-      const newCenterX = focalWorldX - (e.x - viewW.value / 2) / targetZ;
-      const newCenterY = focalWorldY - (e.y - viewH.value / 2) / targetZ;
-      zoom.value = withTiming(targetZ, { duration: 300 });
-      centerX.value = withTiming(newCenterX, { duration: 300 });
-      centerY.value = withTiming(newCenterY, { duration: 300 });
-    });
+  const doubleTap = Gesture.Tap().numberOfTaps(2).maxDelay(300).maxDistance(20).onEnd((e, success) => {
+    if (!success) return;
+    const isZoomedIn = zoom.value > minZoom.value * 1.5;
+    const targetZ = isZoomedIn ? minZoom.value : minZoom.value * 2.5;
+    const focalWorldX = (e.x - viewW.value / 2) / zoom.value + centerX.value;
+    const focalWorldY = (e.y - viewH.value / 2) / zoom.value + centerY.value;
+    const newCenterX = focalWorldX - (e.x - viewW.value / 2) / targetZ;
+    const newCenterY = focalWorldY - (e.y - viewH.value / 2) / targetZ;
+    zoom.value = withTiming(targetZ, { duration: 300 });
+    centerX.value = withTiming(newCenterX, { duration: 300 });
+    centerY.value = withTiming(newCenterY, { duration: 300 });
+  });
 
   const offsetsRef = useSharedValue<Record<string, { dx: number; dy: number }>>({});
   useEffect(() => {
@@ -455,25 +456,21 @@ const SchematicMap: React.FC<Props> = ({
     offsetsRef.value = obj;
   }, [stationOffsets, offsetsRef]);
 
-  const singleTap = Gesture.Tap()
-    .numberOfTaps(1)
-    .maxDelay(300)
-    .maxDistance(10) // ЗАЩИТА ОТ СЛУЧАЙНЫХ НАЖАТИЙ
-    .onEnd((e, success) => {
-      if (!success) return;
-      const worldX = (e.x - viewW.value / 2) / zoom.value + centerX.value;
-      const worldY = (e.y - viewH.value / 2) / zoom.value + centerY.value;
-      const worldRadius = TAP_RADIUS / zoom.value;
-      const offs = offsetsRef.value;
-      let closest: SchemaStation | null = null; let minDist = Infinity;
-      for (const s of stationEntries) {
-        const o = offs[s.id] ?? { dx: 0, dy: 0 };
-        const dx = s.x + o.dx - worldX; const dy = s.y + o.dy - worldY;
-        const d = Math.sqrt(dx * dx + dy * dy); const bonus = s.lines.length > 1 ? 0.6 : 1;
-        const weighted = d * bonus; if (weighted < minDist) { minDist = weighted; closest = s; }
-      }
-      if (closest && minDist < worldRadius) runOnJS(onStationPress)(closest);
-    });
+  const singleTap = Gesture.Tap().numberOfTaps(1).maxDelay(300).maxDistance(10).onEnd((e, success) => {
+    if (!success) return;
+    const worldX = (e.x - viewW.value / 2) / zoom.value + centerX.value;
+    const worldY = (e.y - viewH.value / 2) / zoom.value + centerY.value;
+    const worldRadius = TAP_RADIUS / zoom.value;
+    const offs = offsetsRef.value;
+    let closest: SchemaStation | null = null; let minDist = Infinity;
+    for (const s of stationEntries) {
+      const o = offs[s.id] ?? { dx: 0, dy: 0 };
+      const dx = s.x + o.dx - worldX; const dy = s.y + o.dy - worldY;
+      const d = Math.sqrt(dx * dx + dy * dy); const bonus = s.lines.length > 1 ? 0.6 : 1;
+      const weighted = d * bonus; if (weighted < minDist) { minDist = weighted; closest = s; }
+    }
+    if (closest && minDist < worldRadius) runOnJS(onStationPress)(closest);
+  });
 
   const taps = Gesture.Exclusive(doubleTap, singleTap);
   const gesture = Gesture.Simultaneous(pan, pinch, taps);
@@ -495,9 +492,15 @@ const SchematicMap: React.FC<Props> = ({
         <Canvas style={StyleSheet.absoluteFill}>
           <Group transform={transform}>
             
+            {/* ЛИНИИ */}
             {linePaths.map((item) => {
               const isRouteLine = isRouteActive && routeLinesSet.has(item.id);
-              const isDimmed = (mapFilter || isRouteActive) && !isRouteLine;
+              
+              // Если активен маршрут, скрываем все линии, кроме линий маршрута
+              if (isRouteActive && !isRouteLine) return null;
+
+              const isDimmed = mapFilter && !isRouteLine;
+
               return item.path ? (
                 <Path
                   key={item.id}
@@ -512,7 +515,13 @@ const SchematicMap: React.FC<Props> = ({
               ) : null;
             })}
 
+            {/* СТАНЦИИ (КРУЖКИ) */}
             {stationEntries.map((s) => {
+              const isRouteStation = isRouteActive && routeStationsSet.has(s.id);
+              
+              // Если активен маршрут, скрываем все станции, кроме тех, что на маршруте
+              if (isRouteActive && !isRouteStation) return null;
+
               const off = getOffset(s.id);
               const cx = s.x + off.dx;
               const cy = s.y + off.dy;
@@ -521,7 +530,6 @@ const SchematicMap: React.FC<Props> = ({
               const isActive = s.id === activeStationId;
               const r = isHub ? STATION_R_HUB : STATION_R_REG;
               
-              const isRouteStation = isRouteActive && routeStationsSet.has(s.id);
               const isFilterMatch = matchesFilter(s, mapFilter);
               
               let fillColor = isHighlighted ? theme.accent : theme.stationFill;
@@ -529,14 +537,9 @@ const SchematicMap: React.FC<Props> = ({
               let strokeCol = theme.stationStroke;
 
               if (isRouteActive) {
-                if (isRouteStation) {
-                  fillColor = '#FFD700';
-                  strokeCol = '#DAA520';
-                } else {
-                  fillColor = dimmedStationColor;
-                  strokeCol = dimmedStationColor;
-                  opacity = 0.2;
-                }
+                // Всё, что осталось (маршрутные станции) - красим в золотой
+                fillColor = '#FFD700';
+                strokeCol = '#DAA520';
               } else if (mapFilter) {
                 if (isFilterMatch) {
                   fillColor = theme.accent;
@@ -556,6 +559,7 @@ const SchematicMap: React.FC<Props> = ({
               );
             })}
 
+            {/* БЕЙДЖИКИ "Э" */}
             {stationEntries.map((s) => {
               if (!s.expressStop) return null;
               if (!placedIds.has(s.id)) return null;
@@ -579,6 +583,7 @@ const SchematicMap: React.FC<Props> = ({
               );
             })}
 
+            {/* ТЕКСТ "Э" */}
             {expressFont && stationEntries.map((s) => {
               if (!s.expressStop) return null;
               if (!placedIds.has(s.id)) return null;
@@ -601,6 +606,7 @@ const SchematicMap: React.FC<Props> = ({
               );
             })}
 
+            {/* ПОДПИСИ СТАНЦИЙ */}
             {labels.map(({ s, tx, ty, font }) => {
               if (mapFilter && !matchesFilter(s, mapFilter)) return null;
               if (isRouteActive && !routeStationsSet.has(s.id)) return null;

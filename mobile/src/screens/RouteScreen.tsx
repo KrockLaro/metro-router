@@ -17,10 +17,6 @@ import {
 import { STATIONS } from '../map/schemaStations';
 import { METRO_TRANSFERS } from '../map/metroData';
 
-// ------------------------------------------------------------
-// Вспомогательные функции
-// ------------------------------------------------------------
-
 const MSK_OFFSET_MS = 3 * 60 * 60 * 1000;
 
 function fmtTime(d: Date): string {
@@ -53,6 +49,15 @@ function plural(n: number, forms: [string, string, string]): string {
   return forms[2];
 }
 
+function formatDuration(minutes: number): string {
+  const rounded = Math.round(minutes);
+  if (rounded < 60) return `${rounded} мин`;
+  const h = Math.floor(rounded / 60);
+  const m = rounded % 60;
+  if (m === 0) return `${h} ч`;
+  return `${h} ч ${m} мин`;
+}
+
 interface RouteColors {
   bg: string;
   text: string;
@@ -77,10 +82,6 @@ function getRouteColors(theme: Theme): RouteColors {
     accent: theme.accent,
   };
 }
-
-// ------------------------------------------------------------
-// Компонент метки метро (в пересадках)
-// ------------------------------------------------------------
 
 function MetroBadge({ stationIds, theme, isDark }: { stationIds: (string | undefined)[]; theme: any; isDark: boolean }) {
   const metroLinesMap = new Map();
@@ -119,10 +120,6 @@ function MetroBadge({ stationIds, theme, isDark }: { stationIds: (string | undef
     </View>
   );
 }
-
-// ------------------------------------------------------------
-// Склейка сегментов
-// ------------------------------------------------------------
 
 interface MergedLeg {
   kind: 'ride' | 'transfer';
@@ -191,10 +188,6 @@ function extractEndpoints(route: RouteResult | undefined): { fromId?: string; to
   const last = route.segments[route.segments.length - 1];
   return { fromId: first.from.id, toId: last.to.id };
 }
-
-// ------------------------------------------------------------
-// Компонент экрана
-// ------------------------------------------------------------
 
 interface Props {
   route?: RouteResult;
@@ -298,7 +291,6 @@ export default function RouteScreen({
     return calculateFare(first.from.id, last.to.id, isExpress, isAeroexpress);
   }, [legs]);
 
-  // Считаем количество "входов" в метро (непрерывный участок метро = 1 вход)
   const metroCount = useMemo(() => {
     let count = 0;
     let inMetro = false;
@@ -360,7 +352,6 @@ export default function RouteScreen({
         setExpandedIndex(null);
       }
     } catch (e) {
-      // eslint-disable-next-line no-console
       console.warn('[RouteScreen] refresh failed', e);
     } finally {
       setIsRefreshing(false);
@@ -371,9 +362,9 @@ export default function RouteScreen({
     if (!currentRoute) return;
     try {
       await Share.share({
-        message: `Маршрут: ${fromName} → ${toName}, ${Math.round(
+        message: `Маршрут: ${fromName} → ${toName}, ${formatDuration(
           currentRoute.total_minutes,
-        )} мин`,
+        )}`,
       });
     } catch {}
   };
@@ -401,7 +392,6 @@ export default function RouteScreen({
 
   return (
     <View style={styles.container}>
-      {/* Шапка со стрелками */}
       <View style={styles.header}>
         <TouchableOpacity onPress={onBack} style={styles.headerBtn}>
           <BackIcon size={24} color={c.text} />
@@ -445,13 +435,12 @@ export default function RouteScreen({
           />
         }
       >
-        {/* Большое время */}
         <View style={styles.timeRow}>
           <Text style={styles.bigTime}>
             {displayDeparture} → {displayArrival}
           </Text>
           <Text style={styles.bigDuration}>
-            {Math.round(currentRoute.total_minutes)} мин
+            {formatDuration(currentRoute.total_minutes)}
           </Text>
         </View>
         <Text style={styles.subtitle}>
@@ -461,7 +450,6 @@ export default function RouteScreen({
           {' · '}Отправление {displayDeparture}
         </Text>
 
-        {/* Сводка */}
         <View style={styles.summaryCard}>
           <View style={{ flexDirection: 'column' }}>
             <Text style={styles.summaryItem}>
@@ -484,7 +472,6 @@ export default function RouteScreen({
           <Text style={styles.summaryItem}>{totalKm} км</Text>
         </View>
 
-        {/* Тройка */}
         <View
           style={[
             styles.troikaRow,
@@ -511,7 +498,6 @@ export default function RouteScreen({
           </Text>
         </View>
 
-        {/* Кнопка «Обновить» */}
         <TouchableOpacity
           onPress={handleRefresh}
           disabled={isRefreshing}
@@ -530,7 +516,6 @@ export default function RouteScreen({
           )}
         </TouchableOpacity>
 
-        {/* Таймлайн */}
         {items.map((item, i) => {
           const {
             leg, startTime, endTime, hideFromName,
@@ -756,9 +741,6 @@ export default function RouteScreen({
   );
 }
 
-// ------------------------------------------------------------
-// Стили для метро
-// ------------------------------------------------------------
 const stylesMetro = StyleSheet.create({
   container: {
     marginTop: 6,
@@ -798,10 +780,6 @@ const stylesMetro = StyleSheet.create({
     lineHeight: 18,
   },
 });
-
-// ------------------------------------------------------------
-// Основные стили
-// ------------------------------------------------------------
 
 const makeStyles = (c: RouteColors) =>
   StyleSheet.create({

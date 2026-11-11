@@ -28,6 +28,15 @@ function plural(n: number, forms: [string, string, string]): string {
   return forms[2];
 }
 
+function formatDuration(minutes: number): string {
+  const rounded = Math.round(minutes);
+  if (rounded < 60) return `${rounded} мин`;
+  const h = Math.floor(rounded / 60);
+  const m = rounded % 60;
+  if (m === 0) return `${h} ч`;
+  return `${h} ч ${m} мин`;
+}
+
 export default function MapScreen() {
   const { theme } = useTheme();
   const { mapFilter, avoidAeroexpress, wheelchairOnly } = useSettings();
@@ -112,7 +121,6 @@ export default function MapScreen() {
     return count;
   }, [routeVariants]);
 
-  // Если сеть восстановилась, а у нас была ошибка сети — пробуем построить маршрут заново
   useEffect(() => {
     if (isConnected && routeError === 'Нет подключения к интернету' && from && to) {
       handleBuildRoute();
@@ -257,7 +265,6 @@ export default function MapScreen() {
     <GestureHandlerRootView style={[styles.root, { backgroundColor: theme.bg }]}>
       <View style={styles.container}>
         
-        {/* Баннер отсутствия интернета */}
         {!isConnected && (
           <View style={{ backgroundColor: theme.danger, paddingTop: 50, paddingBottom: 10, alignItems: 'center' }}>
              <Text style={{ color: '#FFF', fontWeight: '600' }}>Нет подключения к интернету</Text>
@@ -290,7 +297,7 @@ export default function MapScreen() {
               <TouchableOpacity style={styles.activeRouteSummary} onPress={() => setShowDetails(true)}>
                 <View style={{ flex: 1 }}>
                   <Text style={[styles.routeText, { color: theme.text, fontSize: 18 }]}>
-                    Маршрут: {Math.round(routeVariants![0].total_minutes)} мин
+                    Маршрут: {formatDuration(routeVariants![0].total_minutes)}
                   </Text>
                   <Text style={{ color: theme.textMuted, fontSize: 13, marginTop: 4 }}>
                     {transfersCount} {plural(transfersCount, ['пересадка', 'пересадки', 'пересадок'])} · Нажмите для деталей
