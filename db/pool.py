@@ -21,6 +21,7 @@ async def init_pool(dsn: str) -> asyncpg.Pool:
             min_size=2,
             max_size=10,
             command_timeout=30,
+            ssl="require"
         )
         await _run_migrations(_pool)
     return _pool
