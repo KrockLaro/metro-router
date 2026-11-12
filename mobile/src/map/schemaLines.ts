@@ -519,4 +519,34 @@ export const LINES: SchemaLine[] = [
     kind: 'cppk',
     path: ['lesnoy_gorodok', 'vnukovo_junction', 'aeroport_staraya', 'vnukovo_airport'],
   },
+
+    // ══════════════════════════════════════════════════════════════
+  // МЦК — показываем только при активном маршруте
+  // Путь замкнут: первый id === последний id — это сигнал для buildSegmentsPath
+  // ══════════════════════════════════════════════════════════════
+  {
+    id: 'mcc',
+    name: 'МЦК',
+    color: '#FFD700',
+    kind: 'mcc',
+    path: [
+      'okruzhnaya', 'rostokino', 'andronovka', 'nizhegorodskaya',
+      'novokhokhlovskaya', 'verhnie_kotly', 'kutuzovskaya_4',
+      'testovskaya', 'streshnevo', 'likhobory', 'okruzhnaya',
+    ],
+  },
+
+  // ══════════════════════════════════════════════════════════════
+  // Кольцевая линия метро
+  // ══════════════════════════════════════════════════════════════
+  {
+    id: 'metro_kol',
+    name: 'Кольцевая линия',
+    color: '#8B4513',
+    kind: 'metro',
+    path: [
+      'ploshchad_trekh_vokzalov', 'm_bel', 'm_kiev', 'm_pav', 'm_kursk',
+      'ploshchad_trekh_vokzalov',
+    ],
+  },
 ];

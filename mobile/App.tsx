@@ -24,6 +24,7 @@ function Inner() {
   const navTheme = theme.name === 'dark' ? DarkTheme : DefaultTheme;
 
   const [showChangelog, setShowChangelog] = React.useState(false);
+  
 
   React.useEffect(() => {
     if (isLoaded && hasSeenTutorial) {

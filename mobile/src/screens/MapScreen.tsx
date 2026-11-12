@@ -6,7 +6,7 @@ import {
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import DateTimePicker from '@react-native-community/datetimepicker';
 
-import SchematicMap, { SchematicMapHandle } from '../map/SchematicMap';
+import SchematicMap, { SchematicMapHandle, RouteSegment } from '../map/SchematicMap';
 import StationInfoSheet from './StationInfoSheet';
 import SearchBar from './SearchBar';
 import RouteScreen from './RouteScreen';
@@ -76,37 +76,76 @@ export default function MapScreen() {
     return Array.from(stations);
   }, [routeVariants]);
 
-  const activeRouteLines = useMemo(() => {
+  const activeRouteSegments = useMemo(() => {
     if (!routeVariants || routeVariants.length === 0) return [];
-    const lines = new Set<string>();
-    routeVariants[0].segments.forEach(s => {
-      if (s.line) lines.add(s.line); 
+    const segs: RouteSegment[] = [];
+
+    routeVariants[0].segments.forEach(seg => {
+      if (seg.kind !== 'transfer' && seg.line) {
+        let lineId = '';
+        const lineStr = seg.line.toLowerCase();
+
+        if (lineStr.includes('ярославское')) lineId = 'yar';
+        else if (lineStr.includes('монинский')) lineId = 'yar_monino';
+        else if (lineStr.includes('фрязинский')) lineId = 'yar_fryazino';
+        else if (lineStr.includes('красноармейская')) lineId = 'yar_krasnoarmeysk';
+
+        else if (lineStr.includes('павелецкое')) lineId = 'pav';
+        else if (lineStr.includes('домодедово')) lineId = 'pav_aero_sub';
+
+        else if (lineStr.includes('белорусское')) lineId = 'bel';
+        else if (lineStr.includes('усовская')) lineId = 'bel_usovo';
+        else if (lineStr.includes('звенигородская')) lineId = 'bel_zven';
+
+        else if (lineStr.includes('савёловское')) lineId = 'sav';
+        else if (lineStr.includes('дубна')) lineId = 'sav_dubna';
+        else if (lineStr.includes('шереметьево')) lineId = 'sav_aero';
+
+        else if (lineStr.includes('курское')) lineId = 'kursk';
+
+        else if (lineStr.includes('рижское')) lineId = 'riga';
+        else if (lineStr.includes('рижский вокзал')) lineId = 'riga_m';
+
+        else if (lineStr.includes('ленинградское')) lineId = 'len';
+        else if (lineStr.includes('конаково')) lineId = 'len_konakovo';
+
+        else if (lineStr.includes('казанское')) lineId = 'kaz';
+        else if (lineStr.includes('рязанский')) lineId = 'kaz_rzan';
+        else if (lineStr.includes('казанский ход')) lineId = 'kaz_kaz';
+        else if (lineStr.includes('озёры')) lineId = 'kaz_ozery';
+        else if (lineStr.includes('рязановку')) lineId = 'kaz_ryazanovka';
+        else if (lineStr.includes('рязань-2')) lineId = 'kaz_ryazan2';
+
+        else if (lineStr.includes('киевское')) lineId = 'kiev';
+        else if (lineStr.includes('новопеределкино')) lineId = 'kiev_novoperedelkino';
+        else if (lineStr.includes('внуково')) lineId = 'kiev_aero';
+
+        else if (lineStr.includes('горьковское')) lineId = 'gorky';
+        else if (lineStr.includes('балашиху')) lineId = 'gorky_balashikha';
+        else if (lineStr.includes('захарово')) lineId = 'gorky_zakharovo';
+        else if (lineStr.includes('электрогорск')) lineId = 'gorky_elektrogorsk';
+
+        else if (lineStr.includes('мцд-1')) lineId = 'mcd1';
+        else if (lineStr.includes('мцд-2')) lineId = 'mcd2';
+        else if (lineStr.includes('мцд-3')) lineId = 'mcd3';
+        else if (lineStr.includes('мцд-4')) lineId = 'mcd4';
+        else if (lineStr.includes('мцк')) lineId = 'mcc';
+        else if (lineStr.includes('кольцевая')) lineId = 'metro_kol';
+
+        if (lineId) {
+          segs.push({ lineId, fromId: seg.from.id, toId: seg.to.id });
+        } else {
+          console.warn('Линия не распознана:', seg.line);
+        }
+      }
     });
-    return Array.from(lines).map(name => {
-      if (name.includes('Ярославское')) return 'yar';
-      if (name.includes('Курское')) return 'kursk';
-      if (name.includes('Горьковское')) return 'gorky';
-      if (name.includes('Рижское')) return 'riga';
-      if (name.includes('Белорусское')) return 'bel';
-      if (name.includes('Киевское')) return 'kiev';
-      if (name.includes('Павелецкое')) return 'pav';
-      if (name.includes('Савёловское')) return 'sav';
-      if (name.includes('Ленинградское')) return 'len';
-      if (name.includes('Казанское')) return 'kaz';
-      if (name.includes('МЦД-1')) return 'mcd1';
-      if (name.includes('МЦД-2')) return 'mcd2';
-      if (name.includes('МЦД-3')) return 'mcd3';
-      if (name.includes('МЦД-4')) return 'mcd4';
-      if (name.includes('МЦК')) return 'mcc';
-      if (name.includes('Кольцевая')) return 'metro_kol';
-      return null;
-    }).filter(Boolean) as string[];
+    return segs;
   }, [routeVariants]);
 
   const transfersCount = useMemo(() => {
     if (!routeVariants || routeVariants.length === 0) return 0;
     let count = 0;
-    let prevLine = null;
+    let prevLine: string | null = null;
     for (const seg of routeVariants[0].segments) {
       if (seg.kind === 'transfer') {
         count++;
@@ -166,6 +205,7 @@ export default function MapScreen() {
     setRouteVariants(null);
     setRouteError(null);
     setShowDetails(false);
+    mapApiRef.current?.resetView();
   }, []);
 
   const handleBuildRoute = useCallback(async () => {
@@ -219,9 +259,9 @@ export default function MapScreen() {
     } catch (e: any) {
       const details = e?.response?.data?.detail || e?.message || 'Неизвестная ошибка';
       if (details === 'Network Error') {
-         setRouteError('Нет подключения к серверу. Проверьте интернет.');
+        setRouteError('Нет подключения к серверу. Проверьте интернет.');
       } else {
-         setRouteError(e?.response?.status === 404 ? 'Одна из станций не найдена в базе данных.' : details);
+        setRouteError(e?.response?.status === 404 ? 'Одна из станций не найдена в базе данных.' : details);
       }
     } finally {
       setRouteLoading(false);
@@ -229,12 +269,12 @@ export default function MapScreen() {
   }, [from, to, useNow, customTime, avoidAeroexpress, avoidStationsList, isConnected]);
 
   if (routeLoading) return <RouteSkeleton onBack={() => setRouteLoading(false)} />;
-  
+
   if (routeError) {
     return (
-      <RouteErrorScreen 
-        message={routeError} 
-        onBack={() => setRouteError(null)} 
+      <RouteErrorScreen
+        message={routeError}
+        onBack={() => setRouteError(null)}
       />
     );
   }
@@ -264,10 +304,10 @@ export default function MapScreen() {
   return (
     <GestureHandlerRootView style={[styles.root, { backgroundColor: theme.bg }]}>
       <View style={styles.container}>
-        
+
         {!isConnected && (
           <View style={{ backgroundColor: theme.danger, paddingTop: 50, paddingBottom: 10, alignItems: 'center' }}>
-             <Text style={{ color: '#FFF', fontWeight: '600' }}>Нет подключения к интернету</Text>
+            <Text style={{ color: '#FFF', fontWeight: '600' }}>Нет подключения к интернету</Text>
           </View>
         )}
 
@@ -278,7 +318,7 @@ export default function MapScreen() {
           activeStationId={selected?.id ?? null}
           mapFilter={mapFilter}
           activeRouteStations={activeRouteStations}
-          activeRouteLines={activeRouteLines}
+          activeRouteSegments={activeRouteSegments}
         />
 
         <SearchBar onPick={handleSearchPick} />
@@ -292,7 +332,7 @@ export default function MapScreen() {
 
         {(from || to) && (
           <View style={[styles.routePanel, { backgroundColor: theme.card, borderColor: theme.border }]}>
-            
+
             {hasActiveRoute ? (
               <TouchableOpacity style={styles.activeRouteSummary} onPress={() => setShowDetails(true)}>
                 <View style={{ flex: 1 }}>
@@ -324,7 +364,7 @@ export default function MapScreen() {
                   <TouchableOpacity style={styles.timeOption} onPress={() => setUseNow(true)}>
                     <Text style={[styles.timeLabel, { color: useNow ? theme.accent : theme.textMuted }]}>Сейчас</Text>
                   </TouchableOpacity>
-                  
+
                   <TouchableOpacity
                     style={styles.timeOption}
                     onPress={() => {
@@ -351,7 +391,7 @@ export default function MapScreen() {
                 </View>
               </>
             )}
-            
+
             {hasActiveRoute && (
               <TouchableOpacity onPress={handleClear} style={[styles.clearRouteBtn, { borderTopColor: theme.border }]}>
                 <Text style={{ color: theme.danger, textAlign: 'center', fontWeight: '600', fontSize: 14 }}>Сбросить маршрут</Text>

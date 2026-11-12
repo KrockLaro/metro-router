@@ -55,7 +55,7 @@ const FONT_SIZE_BADGE = 10;
 const FONT_SCALE_MIN = 0.7;
 const FONT_SCALE_MAX = 1.4;
 const FONT_SCALE_POW = 0.6;
-const FONT_SCALE_BUCKET = 0.05;
+const FONT_SCALE_BUCKET = 0.1;
 const FALLBACK_SIZE_SCALE = 0.75;
 
 type LodLevel = 0 | 1 | 2;
@@ -65,6 +65,12 @@ export interface SchematicMapHandle {
   resetView: () => void;
 }
 
+export interface RouteSegment {
+  lineId: string;
+  fromId: string;
+  toId: string;
+}
+
 interface Props {
   onStationPress: (station: SchemaStation) => void;
   onMapReady?: (api: SchematicMapHandle) => void;
@@ -72,7 +78,7 @@ interface Props {
   activeStationId?: string | null;
   mapFilter?: MapFilterType;
   activeRouteStations?: string[];
-  activeRouteLines?: string[];
+  activeRouteSegments?: RouteSegment[];
 }
 
 function getStationPriority(s: SchemaStation): 1 | 2 | 3 {
@@ -126,9 +132,87 @@ function overlaps(a: Rect, b: Rect): boolean {
   return a.x < b.x + b.w && a.x + a.w > b.x && a.y < b.y + b.h && a.y + a.h > b.y;
 }
 
+// ── ОБНОВЛЕННАЯ ФУНКЦИЯ ПОСТРОЕНИЯ ПУТИ (ПОДДЕРЖКА КОЛЕЦ) ──
+function buildSegmentsPath(
+  linePath: string[],
+  segs: Array<{ fromId: string; toId: string }>,
+): SkPath | null {
+  const isLoop = linePath.length > 2 && linePath[0] === linePath[linePath.length - 1];
+  const nodes = isLoop ? linePath.slice(0, -1) : linePath;
+  const N = nodes.length;
+
+  const stationIndex: Record<string, number[]> = {};
+  nodes.forEach((id, i) => {
+    if (!stationIndex[id]) stationIndex[id] = [];
+    stationIndex[id].push(i);
+  });
+
+  const path = Skia.Path.Make();
+  let hasAny = false;
+  let lastEndIdx = -1;
+
+  const sorted = [...segs].sort((a, b) => {
+    const ai = Math.min(...(stationIndex[a.fromId] ?? [99999]), ...(stationIndex[a.toId] ?? [99999]));
+    const bi = Math.min(...(stationIndex[b.fromId] ?? [99999]), ...(stationIndex[b.toId] ?? [99999]));
+    return ai - bi;
+  });
+
+  for (const seg of sorted) {
+    const fromIdxs = stationIndex[seg.fromId];
+    const toIdxs = stationIndex[seg.toId];
+    if (!fromIdxs || !toIdxs) continue;
+
+    let best: { seq: number[]; len: number } | null = null;
+
+    for (const fi of fromIdxs) {
+      for (const ti of toIdxs) {
+        if (fi === ti) continue;
+        let seq: number[] = [];
+        
+        if (isLoop) {
+          const fwd: number[] = [];
+          let i = fi;
+          while (i !== ti) { fwd.push(i); i = (i + 1) % N; }
+          fwd.push(ti);
+
+          const bwd: number[] = [];
+          i = fi;
+          while (i !== ti) { bwd.push(i); i = (i - 1 + N) % N; }
+          bwd.push(ti);
+
+          seq = fwd.length <= bwd.length ? fwd : bwd;
+        } else {
+          const [lo, hi] = fi <= ti ? [fi, ti] : [ti, fi];
+          for (let i = lo; i <= hi; i++) seq.push(i);
+        }
+
+        if (!best || seq.length < best.len) {
+          best = { seq, len: seq.length };
+        }
+      }
+    }
+
+    if (!best) continue;
+
+    const firstIdx = best.seq[0];
+    if (lastEndIdx !== firstIdx) {
+      const st = STATIONS[nodes[firstIdx]];
+      if (st) path.moveTo(st.x, st.y);
+    }
+    for (let k = 1; k < best.seq.length; k++) {
+      const st = STATIONS[nodes[best.seq[k]]];
+      if (st) path.lineTo(st.x, st.y);
+    }
+    lastEndIdx = best.seq[best.seq.length - 1];
+    hasAny = true;
+  }
+
+  return hasAny ? path : null;
+}
+
 const SchematicMap: React.FC<Props> = ({
   onStationPress, onMapReady, highlightedStationIds,
-  activeStationId, mapFilter, activeRouteStations, activeRouteLines,
+  activeStationId, mapFilter, activeRouteStations, activeRouteSegments,
 }) => {
   const { theme } = useTheme();
 
@@ -153,29 +237,39 @@ const SchematicMap: React.FC<Props> = ({
   const [fontScale, setFontScale] = useState(1.0);
   const fontScaleShared = useSharedValue<number>(1.0);
 
+  const [layoutReady, setLayoutReady] = useState(false);
   const lastRouteKey = useRef('');
 
   const handleLayout = (e: any) => {
     const { width, height } = e.nativeEvent.layout;
     if (width === 0 || height === 0) return;
-    if (viewW.value === width && viewH.value === height) return;
+
+    const firstTime = !isInitialized.value;
+    if (!firstTime && viewW.value === width && viewH.value === height) return;
 
     const fitZoom = Math.min(width / BW, height / BH);
-    viewW.value = width; viewH.value = height;
-    minZoom.value = fitZoom; maxZoom.value = fitZoom * 5;
+    viewW.value = width;
+    viewH.value = height;
+    minZoom.value = fitZoom;
+    maxZoom.value = Math.max(fitZoom * 12, 2);
 
-    if (!isInitialized.value) {
+    if (firstTime) {
       isInitialized.value = true;
       zoom.value = fitZoom;
       centerX.value = BX + BW / 2;
       centerY.value = BY + BH / 2;
+      setLayoutReady(true);
     }
   };
 
-  const transform = useDerivedValue(() => [
-    { translateX: viewW.value / 2 }, { translateY: viewH.value / 2 },
-    { scale: zoom.value }, { translateX: -centerX.value }, { translateY: -centerY.value },
-  ]);
+  const matrix = useDerivedValue(() => {
+    const s = zoom.value;
+    const m = Skia.Matrix();
+    m.translate(viewW.value / 2, viewH.value / 2);
+    m.scale(s, s);
+    m.translate(-centerX.value, -centerY.value);
+    return m;
+  });
 
   useAnimatedReaction(() => zoom.value, (z) => {
     const ratio = z / minZoom.value;
@@ -220,7 +314,7 @@ const SchematicMap: React.FC<Props> = ({
       const stations = line.path.map((id) => STATIONS[id]).filter(Boolean);
       let path: SkPath | null = null;
       if (stations.length > 0) {
-        const newPath = Skia.Path.Make(); 
+        const newPath = Skia.Path.Make();
         newPath.moveTo(stations[0].x, stations[0].y);
         for (let i = 1; i < stations.length; i++) newPath.lineTo(stations[i].x, stations[i].y);
         path = newPath;
@@ -228,6 +322,20 @@ const SchematicMap: React.FC<Props> = ({
       return { id: line.id, path, color: line.color, strokeWidth: line.kind === 'mcd' ? 3 : 6 };
     });
   }, []);
+
+  const routeLinePaths = useMemo(() => {
+    const result = new Map<string, SkPath>();
+    if (!activeRouteSegments || activeRouteSegments.length === 0) return result;
+    for (const line of LINES) {
+      const segs = activeRouteSegments
+        .filter((s) => s.lineId === line.id)
+        .map((s) => ({ fromId: s.fromId, toId: s.toId }));
+      if (segs.length === 0) continue;
+      const p = buildSegmentsPath(line.path, segs);
+      if (p) result.set(line.id, p);
+    }
+    return result;
+  }, [activeRouteSegments]);
 
   const stationEntries = useMemo(() => Object.values(STATIONS).filter((s) => !s.isJunction), []);
 
@@ -343,11 +451,12 @@ const SchematicMap: React.FC<Props> = ({
     const s = STATIONS[stationId]; if (!s) return;
     const off = getOffset(stationId);
     const targetZ = Math.max(zoom.value, minZoom.value * (targetScale ?? 1.5));
-    const sheetYOffset = viewH.value * 0.3 / targetZ;
-    zoom.value = withTiming(targetZ, { duration: 400 });
+    const clampedTargetZ = Math.min(maxZoom.value, targetZ);
+    const sheetYOffset = viewH.value * 0.3 / clampedTargetZ;
+    zoom.value = withTiming(clampedTargetZ, { duration: 400 });
     centerX.value = withTiming(s.x + off.dx, { duration: 400 });
     centerY.value = withTiming(s.y + off.dy + sheetYOffset, { duration: 400 });
-  }, [zoom, minZoom, centerX, centerY, getOffset, viewH]);
+  }, [zoom, minZoom, maxZoom, centerX, centerY, getOffset, viewH]);
 
   const resetView = useCallback(() => {
     zoom.value = withTiming(minZoom.value, { duration: 350 });
@@ -357,9 +466,13 @@ const SchematicMap: React.FC<Props> = ({
 
   useEffect(() => { if (onMapReady) onMapReady({ focusStation, resetView }); }, [onMapReady, focusStation, resetView]);
 
-  // --- ИСПРАВЛЕННЫЙ АВТОМАТИЧЕСКИЙ ЗУМ НА МАРШРУТ ---
+  // --- АВТОМАТИЧЕСКИЙ ЗУМ ---
   useEffect(() => {
-    const routeKey = activeRouteStations?.join(',') || '';
+    if (!layoutReady) return;
+
+    const routeKey =
+      activeRouteSegments?.map((s) => `${s.fromId}-${s.toId}`).join('|') || '';
+
     if (!routeKey) {
       lastRouteKey.current = '';
       return;
@@ -368,7 +481,16 @@ const SchematicMap: React.FC<Props> = ({
     lastRouteKey.current = routeKey;
 
     let minX = Infinity, maxX = -Infinity, minY = Infinity, maxY = -Infinity;
-    for (const id of activeRouteStations!) {
+    const ids = new Set<string>();
+    if (activeRouteStations) activeRouteStations.forEach((id) => ids.add(id));
+    if (activeRouteSegments) {
+      activeRouteSegments.forEach((s) => {
+        ids.add(s.fromId);
+        ids.add(s.toId);
+      });
+    }
+
+    for (const id of ids) {
       const s = STATIONS[id];
       if (!s) continue;
       const off = getOffset(id);
@@ -381,34 +503,31 @@ const SchematicMap: React.FC<Props> = ({
     }
 
     if (minX !== Infinity) {
-      // 1. Ширина и высота маршрута в координатах карты
       const routeW = Math.max(maxX - minX, 10);
       const routeH = Math.max(maxY - minY, 10);
 
-      // 2. Доступная ширина и высота экрана (в пикселях)
-      const availW = viewW.value * 0.8; // 80% ширины (отступы по бокам)
-      const availH = viewH.value * 0.4; // 40% высоты (т.к. остальное закрывает плашка)
+      const availW = viewW.value * 0.85;
+      const availH = viewH.value * 0.45;
 
-      // 3. Вычисляем зум, чтобы маршрут влез в эту область
       const scaleX = availW / routeW;
       const scaleY = availH / routeH;
-      
-      // 4. Берем минимальный (чтобы всё влезло) и ограничиваем пределами
       const fitZoom = Math.min(scaleX, scaleY);
       const targetZ = Math.max(minZoom.value, Math.min(maxZoom.value, fitZoom));
 
-      // 5. Центр маршрута
       const targetCX = (minX + maxX) / 2;
-      
-      // 6. Смещаем центр по Y, чтобы маршрут был визуально в верхней половине
-      // (availH/2) / targetZ переводит пиксели в единицы карты
       const targetCY = (minY + maxY) / 2 + (availH / 2) / targetZ;
 
       zoom.value = withTiming(targetZ, { duration: 600 });
       centerX.value = withTiming(targetCX, { duration: 600 });
       centerY.value = withTiming(targetCY, { duration: 600 });
     }
-  }, [activeRouteStations?.join(','), getOffset, zoom, centerX, centerY, minZoom, maxZoom, viewW, viewH]);
+  }, [
+    layoutReady,
+    activeRouteSegments,
+    activeRouteStations,
+    getOffset,
+    zoom, centerX, centerY, minZoom, maxZoom, viewW, viewH,
+  ]);
 
   const pan = Gesture.Pan().maxPointers(1).averageTouches(true).minDistance(4)
     .onStart(() => { savedCenterX.value = centerX.value; savedCenterY.value = centerY.value; })
@@ -447,7 +566,7 @@ const SchematicMap: React.FC<Props> = ({
   const doubleTap = Gesture.Tap().numberOfTaps(2).maxDelay(300).maxDistance(20).onEnd((e, success) => {
     if (!success) return;
     const isZoomedIn = zoom.value > minZoom.value * 1.5;
-    const targetZ = isZoomedIn ? minZoom.value : minZoom.value * 2.5;
+    const targetZ = isZoomedIn ? minZoom.value : Math.min(maxZoom.value, minZoom.value * 2.5);
     const focalWorldX = (e.x - viewW.value / 2) / zoom.value + centerX.value;
     const focalWorldY = (e.y - viewH.value / 2) / zoom.value + centerY.value;
     const newCenterX = focalWorldX - (e.x - viewW.value / 2) / targetZ;
@@ -489,30 +608,43 @@ const SchematicMap: React.FC<Props> = ({
 
   const dimmedLineColor = theme.name === 'dark' ? '#2C2C2E' : '#E5E5EA';
   const dimmedStationColor = theme.name === 'dark' ? '#3A3A3C' : '#D1D1D6';
-  
-  const isRouteActive = !!activeRouteStations && activeRouteStations.length > 0;
-  const routeStationsSet = useMemo(() => new Set(activeRouteStations || []), [activeRouteStations]);
-  const routeLinesSet = useMemo(() => new Set(activeRouteLines || []), [activeRouteLines]);
+
+  const hasRouteSegments = !!activeRouteSegments && activeRouteSegments.length > 0;
+
+  const routeStationsSet = useMemo(() => {
+    const set = new Set<string>(activeRouteStations || []);
+    if (activeRouteSegments) {
+      activeRouteSegments.forEach(s => {
+        set.add(s.fromId);
+        set.add(s.toId);
+      });
+    }
+    return set;
+  }, [activeRouteStations, activeRouteSegments]);
+
+  const isRouteActive = hasRouteSegments || routeStationsSet.size > 0;
 
   return (
     <View style={[styles.container, { backgroundColor: theme.mapBg }]} onLayout={handleLayout}>
       <GestureDetector gesture={gesture}>
         <Canvas style={StyleSheet.absoluteFill}>
-          <Group transform={transform}>
-            
+          <Group matrix={matrix}>
+
             {/* ЛИНИИ */}
             {linePaths.map((item) => {
-              const isRouteLine = isRouteActive && routeLinesSet.has(item.id);
-              
-              // Если активен маршрут, скрываем все линии, кроме линий маршрута
-              if (isRouteActive && !isRouteLine) return null;
+              const routePath = routeLinePaths.get(item.id);
+              const isRouteLine = hasRouteSegments && !!routePath;
 
+              if (hasRouteSegments && !isRouteLine) return null;
+              if (!hasRouteSegments && (item.id === 'mcc' || item.id === 'metro_kol')) return null;
+
+              const pathToDraw = isRouteLine ? routePath! : item.path;
               const isDimmed = mapFilter && !isRouteLine;
 
-              return item.path ? (
+              return pathToDraw ? (
                 <Path
                   key={item.id}
-                  path={item.path}
+                  path={pathToDraw}
                   color={isDimmed ? dimmedLineColor : item.color}
                   style="stroke"
                   strokeWidth={isRouteLine ? item.strokeWidth + 2 : item.strokeWidth}
@@ -526,8 +658,6 @@ const SchematicMap: React.FC<Props> = ({
             {/* СТАНЦИИ (КРУЖКИ) */}
             {stationEntries.map((s) => {
               const isRouteStation = isRouteActive && routeStationsSet.has(s.id);
-              
-              // Если активен маршрут, скрываем все станции, кроме тех, что на маршруте
               if (isRouteActive && !isRouteStation) return null;
 
               const off = getOffset(s.id);
@@ -537,9 +667,8 @@ const SchematicMap: React.FC<Props> = ({
               const isHighlighted = highlightSet.has(s.id);
               const isActive = s.id === activeStationId;
               const r = isHub ? STATION_R_HUB : STATION_R_REG;
-              
               const isFilterMatch = matchesFilter(s, mapFilter);
-              
+
               let fillColor = isHighlighted ? theme.accent : theme.stationFill;
               let opacity = 1;
               let strokeCol = theme.stationStroke;
@@ -548,13 +677,8 @@ const SchematicMap: React.FC<Props> = ({
                 fillColor = '#FFD700';
                 strokeCol = '#DAA520';
               } else if (mapFilter) {
-                if (isFilterMatch) {
-                  fillColor = theme.accent;
-                } else {
-                  fillColor = dimmedStationColor;
-                  strokeCol = dimmedStationColor;
-                  opacity = 0.3;
-                }
+                if (isFilterMatch) fillColor = theme.accent;
+                else { fillColor = dimmedStationColor; strokeCol = dimmedStationColor; opacity = 0.3; }
               }
 
               return (
@@ -580,7 +704,7 @@ const SchematicMap: React.FC<Props> = ({
               const w = (isHub && labelFontBold ? labelFontBold : labelFont)!.measureText(s.name).width;
               const ori = usedOrientation.get(s.id) ?? (s.orientation ?? 'right');
               const { badgeX, badgeY } = computeLabelLayout(cx, cy, true, size, w, r, ori, fontScale);
-              
+
               return (
                 <RoundedRect
                   key={`ex-${s.id}`}
@@ -604,6 +728,7 @@ const SchematicMap: React.FC<Props> = ({
               const w = (isHub && labelFontBold ? labelFontBold : labelFont)!.measureText(s.name).width;
               const ori = usedOrientation.get(s.id) ?? (s.orientation ?? 'right');
               const { badgeX, badgeY } = computeLabelLayout(cx, cy, true, size, w, r, ori, fontScale);
+
               return (
                 <SkiaText
                   key={`ext-${s.id}`}
@@ -619,12 +744,12 @@ const SchematicMap: React.FC<Props> = ({
               if (isRouteActive && !routeStationsSet.has(s.id)) return null;
 
               return (
-                <SkiaText 
-                  key={`lbl-${s.id}`} 
-                  x={tx} y={ty} 
-                  text={s.name} 
-                  font={font} 
-                  color={isRouteActive ? '#FFD700' : theme.text} 
+                <SkiaText
+                  key={`lbl-${s.id}`}
+                  x={tx} y={ty}
+                  text={s.name}
+                  font={font}
+                  color={isRouteActive ? '#FFD700' : theme.text}
                 />
               );
             })}
