@@ -33,12 +33,13 @@ async def dump_schedules_to_sql(output_path: Path) -> int:
         """Экранирует значения для SQL."""
         if val is None:
             return "NULL"
-        if isinstance(val, str):
-            safe_str = val.replace("'", "''")
+        # Оборачиваем в кавычки не только строки, но и даты/время
+        if isinstance(val, (str, datetime.time, datetime.datetime, datetime.date)):
+            safe_str = str(val).replace("'", "''")
             return "'" + safe_str + "'"
         return str(val)
 
-    # SQL для создания таблицы. Используем конкатенацию, чтобы избежать проблем с отступами
+    # SQL для создания таблицы
     create_table_sql = (
         "CREATE TABLE IF NOT EXISTS schedules (\n"
         "    id              BIGSERIAL PRIMARY KEY,\n"
@@ -81,7 +82,6 @@ async def dump_schedules_to_sql(output_path: Path) -> int:
             )
             f.write(insert_sql)
             
-        # Восстанавливаем sequence (автоинкремент), чтобы новые записи не конфликтовали
         f.write("\nSELECT setval(pg_get_serial_sequence('schedules', 'id'), coalesce(max(id), 1), max(id) IS NOT NULL) FROM schedules;\n")
     
     return len(rows)
@@ -113,10 +113,7 @@ async def main(directions: list[str]):
     # Пушим в Git
     print("\n=== Отправляем в GitHub ===")
     try:
-        # Находим корень проекта (поднимаемся из scripts -> backend -> metro-router)
         repo_root = Path(__file__).parent.parent.parent
-        
-        # Используем флаг -C, чтобы Git работал из корня репозитория
         subprocess.run(["git", "-C", str(repo_root), "add", "backend/init.sql"], check=True)
         subprocess.run(["git", "-C", str(repo_root), "commit", "-m", f"feat: update schedule dump ({', '.join(directions)})"], check=True)
         subprocess.run(["git", "-C", str(repo_root), "push", "origin", "main"], check=True)
@@ -129,7 +126,6 @@ if __name__ == "__main__":
     args = sys.argv[1:]
     
     if not args:
-        # Если аргументы не переданы, смотрим, какой сегодня день недели
         from app.schedule.directions import WEEKLY_ROTATION
         weekday = datetime.datetime.now().weekday()
         directions = WEEKLY_ROTATION.get(weekday, [])
