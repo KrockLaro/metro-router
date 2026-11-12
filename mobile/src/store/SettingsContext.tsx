@@ -8,6 +8,7 @@ interface SettingsData {
   wheelchairOnly: boolean;
   mapFilter: MapFilterType;
   hasSeenTutorial: boolean;
+  lastSeenChangelogVersion: string; // <-- Добавлено
 }
 
 interface SettingsContextType extends SettingsData {
@@ -15,6 +16,7 @@ interface SettingsContextType extends SettingsData {
   setWheelchairOnly: (v: boolean) => void;
   setMapFilter: (v: MapFilterType) => void;
   setHasSeenTutorial: (v: boolean) => void;
+  setLastSeenChangelogVersion: (v: string) => void; // <-- Добавлено
   isLoaded: boolean;
 }
 
@@ -27,10 +29,9 @@ export function SettingsProvider({ children }: { children: React.ReactNode }) {
     wheelchairOnly: false,
     mapFilter: null,
     hasSeenTutorial: false,
+    lastSeenChangelogVersion: '',
   });
   const [isLoaded, setIsLoaded] = useState(false);
-  
-  // Защита от перезаписи данных при самом первом рендере
   const isFirstLoad = useRef(true);
 
   useEffect(() => {
@@ -38,38 +39,27 @@ export function SettingsProvider({ children }: { children: React.ReactNode }) {
       .then((json) => {
         if (json) {
           try {
-            const parsed = JSON.parse(json);
-            setSettings(parsed);
-            console.log('Настройки загружены:', parsed);
-          } catch (e) {
-            console.warn('Ошибка парсинга настроек', e);
-          }
+            setSettings(JSON.parse(json));
+          } catch (e) {}
         }
       })
-      .catch((e) => console.warn('Ошибка загрузки из AsyncStorage', e))
-      .finally(() => {
-        setIsLoaded(true);
-      });
+      .finally(() => setIsLoaded(true));
   }, []);
 
   useEffect(() => {
-    // Если настройки еще не загрузились — не сохраняем (чтобы не затереть реальные данные дефолтными)
     if (!isLoaded) return;
-    
-    // Пропускаем самое первое сохранение сразу после загрузки, чтобы не делать лишних записей
     if (isFirstLoad.current) {
       isFirstLoad.current = false;
       return;
     }
-
-    AsyncStorage.setItem(STORAGE_KEY, JSON.stringify(settings))
-      .catch((e) => console.warn('Ошибка сохранения в AsyncStorage', e));
+    AsyncStorage.setItem(STORAGE_KEY, JSON.stringify(settings)).catch(() => {});
   }, [settings, isLoaded]);
 
   const setAvoidAeroexpress = (v: boolean) => setSettings((p) => ({ ...p, avoidAeroexpress: v }));
   const setWheelchairOnly = (v: boolean) => setSettings((p) => ({ ...p, wheelchairOnly: v }));
   const setMapFilter = (v: MapFilterType) => setSettings((p) => ({ ...p, mapFilter: v }));
   const setHasSeenTutorial = (v: boolean) => setSettings((p) => ({ ...p, hasSeenTutorial: v }));
+  const setLastSeenChangelogVersion = (v: string) => setSettings((p) => ({ ...p, lastSeenChangelogVersion: v }));
 
   return (
     <SettingsContext.Provider value={{ 
@@ -78,6 +68,7 @@ export function SettingsProvider({ children }: { children: React.ReactNode }) {
       setWheelchairOnly, 
       setMapFilter, 
       setHasSeenTutorial,
+      setLastSeenChangelogVersion,
       isLoaded
     }}>
       {children}

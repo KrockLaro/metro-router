@@ -30,14 +30,14 @@ async def dump_schedules_to_sql(output_path: Path) -> int:
     print(f"-> Генерируем init.sql ({len(rows)} записей)...")
     
     def esc(val):
-        """Экранирует значения для SQL."""
+        """Экранирует значения для SQL. Всё, кроме чисел и NULL, берем в кавычки."""
         if val is None:
             return "NULL"
-        # Оборачиваем в кавычки не только строки, но и даты/время
-        if isinstance(val, (str, datetime.time, datetime.datetime, datetime.date)):
-            safe_str = str(val).replace("'", "''")
-            return "'" + safe_str + "'"
-        return str(val)
+        if isinstance(val, (int, float)):
+            return str(val)
+        # Для str, datetime.time, datetime.date и всего остального
+        safe_str = str(val).replace("'", "''")
+        return "'" + safe_str + "'"
 
     # SQL для создания таблицы
     create_table_sql = (

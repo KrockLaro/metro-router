@@ -228,7 +228,7 @@ export const LINES: SchemaLine[] = [
     path: ['dmitrovskaya', 'm_riga'],
   },
 
-    // ══════════════════════════════════════════════════════════════
+  // ══════════════════════════════════════════════════════════════
   // ГОРЬКОВСКОЕ НАПРАВЛЕНИЕ
   // ══════════════════════════════════════════════════════════════
   {
@@ -341,18 +341,19 @@ export const LINES: SchemaLine[] = [
   // ══════════════════════════════════════════════════════════════
   // МЦД-3 (Митьково, между Ленинградским и Казанским)
   // ══════════════════════════════════════════════════════════════
-  {
+    {
     id: 'mcd3',
     name: 'МЦД-3',
     color: '#E5231B',
     kind: 'mcd',
     path: [
-      'petrovsko_razumovskaya', 'ostankino', 'mitkovo',
-      'elektrozavodskaya', 'sortirovochnaya', 'aviamotornaya',
-      'andronovka', 'perovo', 'plyushchevo', 'veshnyaki',
-      'vykhino', 'kosino', 'ukhtomskaya', 'lyubertsy1',
-      'panki', 'tomilino', 'kraskovo', 'malakhovka', 'udelnaya',
-      'bykovo', 'ilyinskaya', 'otdykh', 'kratovo', 'eseninskaya',
+      'zelenograd_krukovo', 'malino', 'firsanovskaya', 'shodnya', 'podrezkovo',
+      'novopodrezkovo', 'molzhaninovo', 'himki', 'levoberezhnaya', 'hovrino',
+      'grachyovskaya', 'mosselsmash', 'likhobory', 'petrovsko_razumovskaya',
+      'ostankino', 'mitkovo', 'elektrozavodskaya', 'sortirovochnaya', 'aviamotornaya',
+      'andronovka', 'perovo', 'plyushchevo', 'veshnyaki', 'vykhino', 'kosino',
+      'ukhtomskaya', 'lyubertsy1', 'panki', 'tomilino', 'kraskovo', 'malakhovka',
+      'udelnaya', 'bykovo', 'ilyinskaya', 'otdykh', 'kratovo', 'eseninskaya',
       'fabrichnaya', 'ramenskoye', 'ippodrom',
     ],
   },
@@ -471,31 +472,15 @@ export const LINES: SchemaLine[] = [
     color: '#7DC242',
     kind: 'mcd',
     path: [
-      'aprelevka',                // Западная конечная МЦД-4, граница МЦД
-      'pobeda',
-      'krekshino',
-      'sanino',
-      'kokoshkino',
-      'tolstopaltsevo',
-      'lesnoy_gorodok',
-      'vnukovo',
-      'michurinets',
-      'peredelkino',
-      'solnechnaya',
-      'meshcherskaya',
-      'ochakovo',
-      'aminievskaya',
-      'matveevskaya',
-      'minskaya',
-      'poklonnaya',               // стыковка с Киевским направлением
-      'kutuzovskaya_4',           // Кутузовская (в будущем — МЦК)
-      'testovskaya',              // Москва-Сити
-      'm_bel',                    // Белорусский вокзал
-      'm_sav',                    // Савёловский вокзал
-      'marya_roshcha',            // Марьина Роща
-      'ploshchad_trekh_vokzalov', // Комсомольская площадь
-      'm_kursk',                  // Курский вокзал
-      'moskva_tovarnaya',         // Серп и Молот
+      'aprelevka', 'pobeda', 'krekshino', 'sanino', 'kokoshkino',
+      'tolstopaltsevo', 'lesnoy_gorodok', 'vnukovo', 'michurinets',
+      'peredelkino', 'solnechnaya', 'meshcherskaya', 'ochakovo',
+      'aminievskaya', 'matveevskaya', 'minskaya', 'poklonnaya',
+      'kutuzovskaya_4', 'testovskaya', 'm_bel', 'm_sav',
+      'marya_roshcha', 'ploshchad_trekh_vokzalov', 'm_kursk',
+      'moskva_tovarnaya', 'nizhegorodskaya', 'chukhlinka', 'kuskovo',
+      'novogireevo', 'reutov', 'nikolskoe', 'saltykovskaya', 'kuchino',
+      'olgino', 'zheleznodorozhnaya'
     ],
   },
 

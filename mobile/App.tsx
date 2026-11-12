@@ -1,5 +1,6 @@
 import 'react-native-gesture-handler';
 import 'react-native-reanimated';
+import ChangelogModal, { CURRENT_BUILD } from './src/screens/ChangelogModal';
 
 import React from 'react';
 import { StatusBar } from 'expo-status-bar';
@@ -19,10 +20,30 @@ const Tab = createBottomTabNavigator();
 
 function Inner() {
   const { theme } = useTheme();
-  const { hasSeenTutorial, setHasSeenTutorial, isLoaded } = useSettings();
+  const { hasSeenTutorial, setHasSeenTutorial, isLoaded, lastSeenChangelogVersion, setLastSeenChangelogVersion } = useSettings();
   const navTheme = theme.name === 'dark' ? DarkTheme : DefaultTheme;
 
-  // Ждем, пока загрузятся настройки (чтобы не мигало)
+  const [showChangelog, setShowChangelog] = React.useState(false);
+
+  React.useEffect(() => {
+    if (isLoaded && hasSeenTutorial) {
+      // Если пользователь уже прошел туториал и версия отличается — показываем что нового
+      if (lastSeenChangelogVersion !== CURRENT_BUILD) {
+        // Если он вообще не видел (пусто), тихо записываем версию и не показываем (для новых юзеров)
+        if (!lastSeenChangelogVersion) {
+          setLastSeenChangelogVersion(CURRENT_BUILD);
+        } else {
+          setShowChangelog(true);
+        }
+      }
+    }
+  }, [isLoaded, hasSeenTutorial, lastSeenChangelogVersion]);
+
+  const handleCloseChangelog = () => {
+    setShowChangelog(false);
+    setLastSeenChangelogVersion(CURRENT_BUILD);
+  };
+
   if (!isLoaded) {
     return (
       <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center', backgroundColor: theme.bg }}>
@@ -31,7 +52,6 @@ function Inner() {
     );
   }
 
-  // Если туториал не пройден - показываем его вместо навигации
   if (!hasSeenTutorial) {
     return <TutorialScreen onFinish={() => setHasSeenTutorial(true)} />;
   }
@@ -76,10 +96,12 @@ function Inner() {
           }}
         />
       </Tab.Navigator>
+
+      {/* Глобальная модалка обновлений */}
+      <ChangelogModal visible={showChangelog} onClose={handleCloseChangelog} />
     </NavigationContainer>
   );
 }
-
 export default function App() {
   return (
     <ThemeProvider>

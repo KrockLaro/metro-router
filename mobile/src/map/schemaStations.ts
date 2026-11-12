@@ -470,7 +470,7 @@ export const STATIONS: Record<string, SchemaStation> = {
   eseninskaya: S('eseninskaya', 'Есенинская', 415, 320, 'kaz', 5, { orientation: 'bottom' }),
   fabrichnaya: S('fabrichnaya', 'Фабричная', 429, 334, 'kaz', 5, { orientation: 'top' }),
   ramenskoye: S('ramenskoye', 'Раменское', 443, 348, 'kaz', 5, { expressStop: true, orientation: 'right' }),
-  ippodrom: S('ippodrom', 'Ипподром', 457, 362, 'kaz', 6, { expressStop: true, orientation: 'right' }),
+  ippodrom: S('ippodrom', 'Ипподром', 457, 362, ['kaz', 'mcd3',], 6, { expressStop: true, orientation: 'right' }),
   sovkhoz: S('sovkhoz', 'Совхоз', 471, 376, 'kaz', 6, { orientation: 'top' }),
   zagornovo: S('zagornovo', 'Загорново', 485, 390, 'kaz', 6, { orientation: 'bottom' }),
   bronnitsy: S('bronnitsy', 'Бронницы', 499, 404, 'kaz', 7, { orientation: 'top' }),
@@ -604,7 +604,7 @@ export const STATIONS: Record<string, SchemaStation> = {
   shcherbinka: S('shcherbinka', 'Щербинка', -111, 292, 'kursk', 4, { expressStop: true, orientation: 'right' }),
   ostafyevo: S('ostafyevo', 'Остафьево', -110, 312, 'kursk', 4, { orientation: 'right' }),
   silikatnaya: S('silikatnaya', 'Силикатная', -109, 332, 'kursk', 5, { orientation: 'right' }),
-  podolsk: S('podolsk', 'Подольск', -108, 352, 'kursk', 5, { expressStop: true, orientation: 'right' }),
+  podolsk: S('podolsk', 'Подольск', -108, 352, ['kursk', 'mcd2'], 5, { expressStop: true, orientation: 'right' }),
   kutuzovskaya_k: S('kutuzovskaya_k', 'Кутузовская', -114, 371, 'kursk', 6, { orientation: 'right' }),
   vesennyaya: S('vesennyaya', 'Весенняя', -120, 390, 'kursk', 6, { orientation: 'right' }),
   grivno: S('grivno', 'Гривно', -126, 409, 'kursk', 6, { expressStop: true, orientation: 'right' }),
@@ -648,8 +648,8 @@ export const STATIONS: Record<string, SchemaStation> = {
         name: 'Ярославский вокзал', 
         shortName: 'Ярославский', 
         kind: 'railway', 
-        description: 'Ярославское направление, экспрессы в Сергиев Посад, Александров', 
-        scheduleStationId: 'm_yar', // <--- ДОБАВЛЕНО
+        description: 'Ярославское направление, поезда в Александров, Красноармейск, Монино и Фрязино', 
+        scheduleStationId: 'm_yar',
         facilities: { wheelchair: 'full', ticketOffice: true, ticketMachines: true, turnstiles: true, lifts: 2, escalators: 4, wc: true, waitingRoom: true, wifi: true, parking: false, bikeRacks: false, luggageStorage: true, helpDesk: true, troikaPayment: true } 
       },
       { 
@@ -657,8 +657,8 @@ export const STATIONS: Record<string, SchemaStation> = {
         name: 'Ленинградский вокзал', 
         shortName: 'Ленинградский', 
         kind: 'railway', 
-        description: 'Ленинградское направление, «Сапсан», «Ласточка» в Тверь и Крюково', 
-        scheduleStationId: 'm_len', // <--- ДОБАВЛЕНО
+        description: 'Ленинградское направление, поезда в Тверь и Конаково', 
+        scheduleStationId: 'm_len',
         facilities: { wheelchair: 'full', ticketOffice: true, ticketMachines: true, turnstiles: true, lifts: 3, escalators: 6, wc: true, waitingRoom: true, wifi: true, parking: false, bikeRacks: false, luggageStorage: true, helpDesk: true, troikaPayment: true } 
       },
       { 
@@ -666,8 +666,8 @@ export const STATIONS: Record<string, SchemaStation> = {
         name: 'Казанский вокзал', 
         shortName: 'Казанский', 
         kind: 'railway', 
-        description: 'Казанское и Рязанское направления, экспрессы в Рязань', 
-        scheduleStationId: 'm_kaz', // <--- ДОБАВЛЕНО
+        description: 'Казанское и Рязанское направления, поезда в Рязань и Черусти', 
+        scheduleStationId: 'm_kaz',
         facilities: { wheelchair: 'full', ticketOffice: true, ticketMachines: true, turnstiles: true, lifts: 2, escalators: 5, wc: true, waitingRoom: true, wifi: true, parking: false, bikeRacks: false, luggageStorage: true, helpDesk: true, troikaPayment: true } 
       },
       { 
@@ -676,8 +676,8 @@ export const STATIONS: Record<string, SchemaStation> = {
         shortName: 'МЦД', 
         kind: 'mcd', 
         description: 'Платформа МЦД-2 и МЦД-4, выход к трём вокзалам', 
-        scheduleStationId: 'ploshchad_trekh_vokzalov', // <--- ДОБАВЛЕНО
-        facilities: { wheelchair: 'partial', ticketOffice: false, ticketMachines: true, turnstiles: true, lifts: 0, escalators: 0, wc: false, waitingRoom: false, wifi: false, parking: false, bikeRacks: true, luggageStorage: false, helpDesk: false, troikaPayment: true } 
+        scheduleStationId: 'ploshchad_trekh_vokzalov',
+        facilities: { wheelchair: 'full', ticketOffice: true, ticketMachines: true, turnstiles: true, lifts: 2, escalators: 4, wc: false, waitingRoom: false, wifi: false, parking: false, bikeRacks: true, luggageStorage: false, helpDesk: false, troikaPayment: true } 
       }
     ],
   }),
@@ -697,7 +697,7 @@ export const STATIONS: Record<string, SchemaStation> = {
   krasnogorskaya: S('krasnogorskaya', 'Красногорская', -245, -300, 'riga', 3, { orientation: 'top' }),
   opalikha: S('opalikha', 'Опалиха', -257, -316, 'riga', 4, { orientation: 'bottom' }),
   anikeevka: S('anikeevka', 'Аникеевка', -269, -332, 'riga', 4, { orientation: 'top' }),
-  nahabino: S('nahabino', 'Нахабино', -281, -348, 'riga', 4, { expressStop: true, orientation: 'bottom' }),
+  nahabino: S('nahabino', 'Нахабино', -281, -348, ['riga', 'mcd2'], 4, { expressStop: true, orientation: 'bottom' }),
   malinovka: S('malinovka', 'Малиновка', -293, -364, 'riga', 5, { orientation: 'top' }),
   dedovsk: S('dedovsk', 'Дедовск', -305, -380, 'riga', 5, { orientation: 'bottom' }),
   miitovskaya: S('miitovskaya', 'Миитовская', -317, -396, 'riga', 5, { orientation: 'top' }),

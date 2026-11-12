@@ -885,6 +885,11 @@ def build_moscow_network() -> RailNetwork:
         "bykovo", "ilyinskaya", "otdykh", "kratovo", "eseninskaya",
         "fabrichnaya", "ramenskoye", "ippodrom",
     ], times=3, kind="local")
+    net.add_segment(mcd3, [
+        "zelenograd_krukovo", "malino", "firsanovskaya", "shodnya", "podrezkovo",
+        "novopodrezkovo", "molzhaninovo", "himki", "levoberezhnaya", "hovrino",
+        "grachyovskaya", "mosselsmash", "likhobory", "petrovsko_razumovskaya"
+    ], times=4, kind="local")
 
     # ─── МЦД-4 ───
     net.add_segment(mcd4, [
@@ -896,6 +901,11 @@ def build_moscow_network() -> RailNetwork:
         "marya_roshcha", "ploshchad_trekh_vokzalov", "m_kursk",
         "moskva_tovarnaya",
     ], times=3, kind="local")
+    net.add_segment(mcd4, [
+        "moskva_tovarnaya", "nizhegorodskaya", "chukhlinka", "kuskovo",
+        "novogireevo", "reutov", "nikolskoe", "saltykovskaya", "kuchino",
+        "olgino", "zheleznodorozhnaya"
+    ], times=4, kind="local")
 
     # ─── Ярославское ───
     net.add_segment(yar, [

@@ -357,7 +357,7 @@ const SchematicMap: React.FC<Props> = ({
 
   useEffect(() => { if (onMapReady) onMapReady({ focusStation, resetView }); }, [onMapReady, focusStation, resetView]);
 
-  // --- АВТОМАТИЧЕСКИЙ ЗУМ НА МАРШРУТ ---
+  // --- ИСПРАВЛЕННЫЙ АВТОМАТИЧЕСКИЙ ЗУМ НА МАРШРУТ ---
   useEffect(() => {
     const routeKey = activeRouteStations?.join(',') || '';
     if (!routeKey) {
@@ -381,26 +381,34 @@ const SchematicMap: React.FC<Props> = ({
     }
 
     if (minX !== Infinity) {
-      const PADDING_X = 120; 
-      const PADDING_Y = 120; 
-      const BOTTOM_UI_SPACE = 220; 
+      // 1. Ширина и высота маршрута в координатах карты
+      const routeW = Math.max(maxX - minX, 10);
+      const routeH = Math.max(maxY - minY, 10);
 
-      const routeWidth = maxX - minX + PADDING_X * 2;
-      const routeHeight = maxY - minY + PADDING_Y + BOTTOM_UI_SPACE;
+      // 2. Доступная ширина и высота экрана (в пикселях)
+      const availW = viewW.value * 0.8; // 80% ширины (отступы по бокам)
+      const availH = viewH.value * 0.4; // 40% высоты (т.к. остальное закрывает плашка)
 
-      const fitZoomX = viewW.value / routeWidth;
-      const fitZoomY = viewH.value / routeHeight;
-      const fitZoom = Math.min(fitZoomX, fitZoomY);
-      const targetZ = Math.max(minZoom.value, Math.min(maxZoom.value * 0.8, fitZoom));
+      // 3. Вычисляем зум, чтобы маршрут влез в эту область
+      const scaleX = availW / routeW;
+      const scaleY = availH / routeH;
+      
+      // 4. Берем минимальный (чтобы всё влезло) и ограничиваем пределами
+      const fitZoom = Math.min(scaleX, scaleY);
+      const targetZ = Math.max(minZoom.value, Math.min(maxZoom.value, fitZoom));
 
+      // 5. Центр маршрута
       const targetCX = (minX + maxX) / 2;
-      const targetCY = (minY + maxY) / 2 + (BOTTOM_UI_SPACE - PADDING_Y) / (2 * targetZ);
+      
+      // 6. Смещаем центр по Y, чтобы маршрут был визуально в верхней половине
+      // (availH/2) / targetZ переводит пиксели в единицы карты
+      const targetCY = (minY + maxY) / 2 + (availH / 2) / targetZ;
 
       zoom.value = withTiming(targetZ, { duration: 600 });
       centerX.value = withTiming(targetCX, { duration: 600 });
       centerY.value = withTiming(targetCY, { duration: 600 });
     }
-  }, [activeRouteStations?.join(','), getOffset, zoom, centerX, centerY, minZoom, maxZoom]);
+  }, [activeRouteStations?.join(','), getOffset, zoom, centerX, centerY, minZoom, maxZoom, viewW, viewH]);
 
   const pan = Gesture.Pan().maxPointers(1).averageTouches(true).minDistance(4)
     .onStart(() => { savedCenterX.value = centerX.value; savedCenterY.value = centerY.value; })
@@ -537,7 +545,6 @@ const SchematicMap: React.FC<Props> = ({
               let strokeCol = theme.stationStroke;
 
               if (isRouteActive) {
-                // Всё, что осталось (маршрутные станции) - красим в золотой
                 fillColor = '#FFD700';
                 strokeCol = '#DAA520';
               } else if (mapFilter) {

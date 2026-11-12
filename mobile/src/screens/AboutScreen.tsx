@@ -1,9 +1,9 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { View, Text, StyleSheet, ScrollView, Linking, TouchableOpacity } from 'react-native';
 import { useTheme } from '../theme/ThemeProvider';
+import ChangelogModal, { CURRENT_BUILD } from './ChangelogModal';
 
 const APP_VERSION = '1.0.0';
-const BUILD = '2026.09';
 
 interface License {
   title: string;
@@ -51,6 +51,7 @@ const LICENSES: License[] = [
 
 export default function AboutScreen() {
   const { theme } = useTheme();
+  const [showChangelog, setShowChangelog] = useState(false);
 
   const openLink = (url?: string) => {
     if (url) Linking.openURL(url);
@@ -60,19 +61,30 @@ export default function AboutScreen() {
     <ScrollView
       style={[styles.container, { backgroundColor: theme.bg }]}
       contentContainerStyle={styles.content}
+      showsVerticalScrollIndicator={false}
     >
       <View style={styles.header}>
         <Text style={[styles.appName, { color: theme.text }]}>Маршрутизатор</Text>
-        <Text style={[styles.version, { color: theme.textMuted }]}>
-          Версия {APP_VERSION} · сборка {BUILD}
-        </Text>
+        
+        {/* Блок с версией и иконкой информации */}
+        <View style={styles.versionRow}>
+          <Text style={[styles.version, { color: theme.textMuted }]}>
+            Версия {APP_VERSION} · сборка {CURRENT_BUILD}
+          </Text>
+          <TouchableOpacity 
+            onPress={() => setShowChangelog(true)}
+            hitSlop={{ top: 15, bottom: 15, left: 15, right: 15 }}
+          >
+            <Text style={[styles.infoIcon, { color: theme.accent }]}>ⓘ</Text>
+          </TouchableOpacity>
+        </View>
       </View>
 
       <Text style={[styles.description, { color: theme.text }]}>
         Приложение для построения маршрутов по электричкам ЦППК, МЦД и МЦК.
         Поддерживает поиск пересадок, отображение доступности станций для
         маломобильных пассажиров, светлую и тёмную темы, интерактивную
-        схематичную карту и многое другое.
+        схематичную карту.
       </Text>
 
       <Text style={[styles.sectionTitle, { color: theme.textMuted }]}>
@@ -112,6 +124,12 @@ export default function AboutScreen() {
       <Text style={[styles.footer, { color: theme.textMuted }]}>
         © 2026 Маршрутизатор · Сделано с ❤️ для пассажиров
       </Text>
+
+      {/* Модальное окно с историей обновлений */}
+      <ChangelogModal 
+        visible={showChangelog} 
+        onClose={() => setShowChangelog(false)} 
+      />
     </ScrollView>
   );
 }
@@ -125,7 +143,14 @@ const styles = StyleSheet.create({
     marginBottom: 24,
   },
   appName: { fontSize: 32, fontWeight: '700' },
-  version: { fontSize: 14, marginTop: 6 },
+  versionRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginTop: 6,
+    gap: 6,
+  },
+  version: { fontSize: 14 },
+  infoIcon: { fontSize: 18, fontWeight: 'bold' },
   description: { fontSize: 15, lineHeight: 22, marginBottom: 24 },
   sectionTitle: {
     fontSize: 12,

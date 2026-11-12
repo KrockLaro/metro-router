@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback, useRef } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import {
   View, Text, StyleSheet, TouchableOpacity, ActivityIndicator,
 } from 'react-native';
@@ -36,6 +36,7 @@ export default function ScheduleBlock({ stationId }: Props) {
   const [loading, setLoading] = useState(false);
   const [data, setData] = useState<StationSchedule | null>(null);
   const [error, setError] = useState<string | null>(null);
+  const [notFound, setNotFound] = useState(false); // <--- НОВОЕ СОСТОЯНИЕ
   const [now, setNow] = useState(Date.now());
 
   const fetchData = useCallback(async () => {
@@ -46,14 +47,19 @@ export default function ScheduleBlock({ stationId }: Props) {
 
     setLoading(true);
     setError(null);
+    setNotFound(false);
+
     try {
       const res = await getStationSchedule(stationId, 3);
       setData(res);
     } catch (e: any) {
-      if (e?.message === 'Network Error') {
+      if (e?.response?.status === 404) {
+        // База вернула 404 - значит, для этой станции нет данных
+        setNotFound(true);
+      } else if (e?.message === 'Network Error') {
         setError('Не удалось связаться с сервером. Проверьте интернет.');
       } else {
-        setError(e?.response?.data?.detail || 'Не удалось загрузить расписание');
+        setError('Не удалось загрузить расписание');
       }
     } finally {
       setLoading(false);
@@ -63,19 +69,18 @@ export default function ScheduleBlock({ stationId }: Props) {
   useEffect(() => {
     setData(null);
     setError(null);
+    setNotFound(false);
     setExpanded(false);
   }, [stationId]);
 
-  // Загружаем при раскрытии
   useEffect(() => {
-    if (expanded && !data && !loading) {
+    if (expanded && !data && !loading && !error && !notFound) {
       fetchData();
     }
-  }, [expanded, data, loading, fetchData]);
+  }, [expanded, data, loading, error, notFound, fetchData]);
 
-  // АВТО-ПОВТОР: Если интернет пропал, а потом появился, и у нас ошибка — перезапрашиваем
   useEffect(() => {
-    if (isConnected && expanded && error && !data) {
+    if (isConnected && expanded && error === 'Нет подключения к интернету' && !data) {
       fetchData();
     }
   }, [isConnected, expanded, error, data, fetchData]);
@@ -160,6 +165,13 @@ export default function ScheduleBlock({ stationId }: Props) {
                 <Text style={[styles.retryText, { color: theme.textMuted }]}>Ожидание сети...</Text>
               )}
             </TouchableOpacity>
+          )}
+
+          {/* ЕСЛИ ДАННЫХ НЕТ, ПОКАЗЫВАЕМ АККУРАТНЫЙ ТЕКСТ */}
+          {notFound && (
+            <Text style={[styles.empty, { color: theme.textMuted }]}>
+              Расписание для этой станции пока не загружено.
+            </Text>
           )}
 
           {data && (
