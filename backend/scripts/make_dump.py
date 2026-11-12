@@ -5,7 +5,7 @@ from dotenv import load_dotenv
 load_dotenv()
 
 from app.db.pool import init_pool, close_pool
-from app.scripts.auto_sync import dump_schedules_to_sql # Берем функцию из нашего скрипта
+from scripts.auto_sync import dump_schedules_to_sql
 
 async def main():
     await init_pool(os.environ["DATABASE_URL"])

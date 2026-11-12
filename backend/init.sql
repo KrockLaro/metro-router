@@ -1,4 +1,22 @@
 -- Auto-generated schedule dump
+CREATE TABLE IF NOT EXISTS schedules (
+    id              BIGSERIAL PRIMARY KEY,
+    station_id      TEXT        NOT NULL,
+    line_id         TEXT        NOT NULL,
+    thread_uid      TEXT        NOT NULL,
+    train_number    TEXT        NOT NULL,
+    train_type      TEXT        NOT NULL,
+    origin          TEXT        NOT NULL,
+    destination     TEXT        NOT NULL,
+    direction       TEXT        NOT NULL,
+    departure       TIME        NOT NULL,
+    arrival         TIME,
+    days_mask       SMALLINT    NOT NULL,
+    platform        TEXT,
+    track           TEXT,
+    fetched_at      TIMESTAMPTZ DEFAULT now(),
+    CONSTRAINT schedules_uq UNIQUE (station_id, thread_uid, departure)
+);
 TRUNCATE TABLE schedules RESTART IDENTITY CASCADE;
 
 INSERT INTO schedules (station_id, line_id, thread_uid, train_number, train_type, origin, destination, direction, departure, arrival, days_mask, platform, track, fetched_at) VALUES ('m_kiev', 'kiev', '6457_0_2000007_g25_4', '6457', 'local', 'Москва (Киевский вокзал)', 'Нара', 'from_moscow', 00:22:00, NULL, 97, '', NULL, 2026-11-12 12:42:16.819015+00:00);
