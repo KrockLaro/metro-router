@@ -5,6 +5,10 @@ on:
     - cron: '0 0 * * 1-6'
   workflow_dispatch:
 
+# Даем права на пуш изменений в репозиторий
+permissions:
+  contents: write
+
 jobs:
   sync:
     runs-on: ubuntu-latest
@@ -24,6 +28,17 @@ jobs:
           --health-timeout 5s
           --health-retries 5
 
+      # arq требует Redis для работы, поэтому добавляем его
+      redis:
+        image: redis:7
+        ports:
+          - 6379:6379
+        options: >-
+          --health-cmd "redis-cli ping"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
@@ -36,11 +51,20 @@ jobs:
       - name: Install dependencies
         run: |
           cd backend
-          pip install -r requirements.txt asyncpg
+          # Явно добавляем arq, redis и asyncpg, чтобы точно установились
+          pip install -r requirements.txt asyncpg arq redis
+
+      # (Опционально) Раскатываем структуру БД, если скрипт с ней работает
+      - name: Init Database
+        env:
+          PGPASSWORD: postgres
+        run: |
+          psql -h localhost -U postgres -d metro_router -f backend/init.sql
 
       - name: Run sync script
         env:
           DATABASE_URL: postgresql://postgres:postgres@localhost:5432/metro_router
+          REDIS_URL: redis://localhost:6379
           YANDEX_RASP_API_KEY: ${{ secrets.YANDEX_RASP_API_KEY }}
         run: |
           cd backend
@@ -51,4 +75,10 @@ jobs:
           git config --global user.name 'GitHub Action'
           git config --global user.email 'action@github.com'
           git add backend/init.sql
-          git diff --quiet && git diff --staged --quiet || (git commit -m "Auto-update schedule" && git push)
+          # Проверяем, есть ли изменения, если есть - коммитим
+          if ! git diff --staged --quiet; then
+            git commit -m "Auto-update schedule [skip ci]"
+            git push
+          else
+            echo "Нет изменений для коммита"
+          fi
