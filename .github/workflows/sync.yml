@@ -5,7 +5,6 @@ on:
     - cron: '0 0 * * 1-6'
   workflow_dispatch:
 
-# Даем права на пуш изменений в репозиторий
 permissions:
   contents: write
 
@@ -28,7 +27,6 @@ jobs:
           --health-timeout 5s
           --health-retries 5
 
-      # arq требует Redis для работы, поэтому добавляем его
       redis:
         image: redis:7
         ports:
@@ -51,11 +49,17 @@ jobs:
       - name: Install dependencies
         run: |
           cd backend
-          # Явно добавляем arq, redis и asyncpg, чтобы точно установились
-          pip install -r requirements.txt asyncpg arq redis
+          # Используем python -m pip, чтобы гарантировать установку в ту же версию Python
+          python -m pip install --upgrade pip
+          python -m pip install -r requirements.txt asyncpg arq redis
+          
+          # Проверка: если шаг дойдет сюда и arq не установится, будет ошибка
+          echo "--- Проверка установки arq ---"
+          python -m pip show arq
 
-      # (Опционально) Раскатываем структуру БД, если скрипт с ней работает
+      # Опциональный шаг, если init.sql еще нет, он не сломает процесс
       - name: Init Database
+        continue-on-error: true
         env:
           PGPASSWORD: postgres
         run: |
@@ -68,6 +72,7 @@ jobs:
           YANDEX_RASP_API_KEY: ${{ secrets.YANDEX_RASP_API_KEY }}
         run: |
           cd backend
+          # Запускаем скрипт именно через python
           python -m scripts.auto_sync
 
       - name: Commit and push changes
@@ -75,7 +80,6 @@ jobs:
           git config --global user.name 'GitHub Action'
           git config --global user.email 'action@github.com'
           git add backend/init.sql
-          # Проверяем, есть ли изменения, если есть - коммитим
           if ! git diff --staged --quiet; then
             git commit -m "Auto-update schedule [skip ci]"
             git push
