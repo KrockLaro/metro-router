@@ -9,7 +9,7 @@ def test_graph_built():
 
 def test_route_fryazino_odin():
     net = build_moscow_network()
-    r = find_route(net, "fryazino", "odin")
+    r = find_route(net, "fryazino", "odintsovo")
     assert r is not None
     assert r.total_minutes > 0
     assert len(r.segments) >= 2
