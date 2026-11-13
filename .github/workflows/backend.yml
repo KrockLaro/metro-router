@@ -1,8 +1,13 @@
-name: Backend CI
+name: backend
 
 on:
   push: { branches: [main] }
   pull_request: { branches: [main] }
+
+# Явно даем права на запись пакетов в GHCR
+permissions:
+  contents: read
+  packages: write
 
 jobs:
   test:
@@ -34,5 +39,5 @@ jobs:
         with:
           context: backend
           push: true
-          # Используем переменную REPO_LC, которую создали выше
-          tags: ghcr.io/${{ env.REPO_LC }}/backend:latest
+          # Исправленный тег: без /backend на конце
+          tags: ghcr.io/${{ env.REPO_LC }}-backend:latest
