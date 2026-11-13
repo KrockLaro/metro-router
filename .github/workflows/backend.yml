@@ -20,13 +20,19 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+
+      - name: Lowercase repository name
+        run: echo "REPO_LC=${GITHUB_REPOSITORY,,}" >> $GITHUB_ENV
+
       - uses: docker/login-action@v3
         with:
           registry: ghcr.io
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
+          
       - uses: docker/build-push-action@v6
         with:
           context: backend
           push: true
-          tags: ghcr.io/${{ github.repository }}/backend:latest
+          # Используем переменную REPO_LC, которую создали выше
+          tags: ghcr.io/${{ env.REPO_LC }}/backend:latest
